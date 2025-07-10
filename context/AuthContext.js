@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { SafeAreaView, Text } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { account } from "../lib/appwrite";
 
 const AuthContext = createContext();
@@ -28,18 +28,22 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
         }
 
-    const signin = async ({email, password}) => {
-        setLoading(true);
-        try {
-           const responseSession= await account.createEmailPasswordSession(email,password);
-           setSession(responseSession);
-           const responseUser= await account.get();
-           setUser(responseUser);
-        } catch (error) {
-            console.error("Error during sign-in:", error);
-        }
-            setLoading(false);
+    const signin = async ({ email, password }) => {
+    setLoading(true);
+    try {
+        const responseSession = await account.createEmailPasswordSession(email, password);
+        setSession(responseSession);
+        const responseUser = await account.get();
+        setUser(responseUser);
+    } catch (error) {
+        console.error("Error during sign-in:", error);
+        throw error;
+    } finally {
+        setLoading(false);
+    }
     };
+
+    
     const signout = async () => {
         setLoading(true);
             await account.deleteSession("current");
@@ -52,8 +56,8 @@ const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={contextData}>
             {loading ? (
-                <SafeAreaView>
-                    <Text>Loading..</Text>
+                <SafeAreaView style={styles.container}>
+                    <ActivityIndicator size="large" />
                 </SafeAreaView>
             ) : (
                 children
@@ -65,6 +69,13 @@ const AuthProvider = ({ children }) => {
 const useAuth = () => {
     return useContext(AuthContext);
 };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export { AuthContext, AuthProvider, useAuth };
 
