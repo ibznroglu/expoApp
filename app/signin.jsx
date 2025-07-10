@@ -11,12 +11,14 @@ import {
 import TextCustom from "./components/TextCustom";
 
 const signin = () => {
-    const { session } = useAuth();
+    const { session,signin } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async () => {};
+    const handleSubmit = async () => {
+        signin({email,password})
+    };
 
     if (session) return <Redirect href="/" />;
     return (

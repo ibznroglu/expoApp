@@ -4,36 +4,46 @@ import { StyleSheet, View } from 'react-native'
 import { config, database } from '../../lib/appwrite'
 import TextCustom from './TextCustom'
 
-const ListItem = ({task}) => {
-    const {body, $id, complete} = task
-    const [check, setCheck] = useState(complete)
+interface Task {
+  $id: string;
+  body: string;
+  complete: boolean;
+}
 
-    const handleUpdate = async () => {
-        try{
-            database.updateDocument(config.db, config.col.tasks, $id, {complete:!complete})
-            setCheck(!check)
-        }catch(error){
-            console.log(error)
-        }
+interface ListItemProps {
+  task: Task;
+}
+
+const ListItem: React.FC<ListItemProps> = ({ task }) => {
+  const { body, $id, complete } = task;
+  const [check, setCheck] = useState(complete);
+
+  const handleUpdate = async () => {
+    try {
+      await database.updateDocument(config.db, config.col.tasks, $id, { complete: !check });
+      setCheck(!check);
+    } catch (error) {
+      console.log(error);
     }
+  };
 
   return (
     <View style={styles.itemWrapper}>
-      <Checkbox value={check} onValueChange={handleUpdate}/>
+      <Checkbox value={check} onValueChange={handleUpdate} />
       <TextCustom fontSize={18}>{body}</TextCustom>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-    itemWrapper:{
-        display:'flex',
-        flexDirection:'row',
-        alignItems:'flex-start',
-        gap:10,
-        paddingHorizontal:15,
-        paddingVertical:5
-    }
-})
+  itemWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+  },
+});
 
-export default ListItem
+export default ListItem;
