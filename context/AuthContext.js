@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
+import { ActivityIndicator, Platform, SafeAreaView, StyleSheet } from "react-native";
 import { account } from "../lib/appwrite";
-
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -52,7 +51,24 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
     };
 
-    const contextData = { session, user, signin, signout };
+   // AuthContext.js
+    // AuthContext.js - createPasswordRecovery fonksiyonunu şöyle güncelle:
+const createPasswordRecovery = async (email) => {
+  try {
+    // EXPO WEB URL'sini kullan
+    const resetUrl = Platform.OS === 'web' 
+      ? `${window.location.origin}/reset-password`
+      : 'https://yourapp.com/reset-password'; // Production'da kendi domain'in
+    
+    await account.createRecovery(email, resetUrl);
+    return { success: true };
+  } catch (error) {
+    console.error("Password recovery error:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+    const contextData = { session, user, signin, signout,createPasswordRecovery };
     return (
         <AuthContext.Provider value={contextData}>
             {loading ? (
