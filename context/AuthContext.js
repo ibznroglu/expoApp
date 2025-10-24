@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Platform, SafeAreaView, StyleSheet } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { account } from "../lib/appwrite";
 const AuthContext = createContext();
 
@@ -50,15 +50,9 @@ const AuthProvider = ({ children }) => {
             setUser(null);
             setLoading(false);
     };
-
-   // AuthContext.js
-    // AuthContext.js - createPasswordRecovery fonksiyonunu şöyle güncelle:
 const createPasswordRecovery = async (email) => {
   try {
-    // EXPO WEB URL'sini kullan
-    const resetUrl = Platform.OS === 'web' 
-      ? `${window.location.origin}/reset-password`
-      : 'https://yourapp.com/reset-password'; // Production'da kendi domain'in
+    const resetUrl = "https://reset-expo.vercel.app/reset-password"
     
     await account.createRecovery(email, resetUrl);
     return { success: true };
