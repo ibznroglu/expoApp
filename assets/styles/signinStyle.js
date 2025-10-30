@@ -27,6 +27,16 @@ export const SignInStyles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
+  signUpButton: {
+  marginTop: 12,
+  alignItems: 'center',
+  paddingVertical: 12,
+},
+signUpText: {
+  color: '#00C851', // Yeşil tonu - farklı olsun
+  fontSize: 16,
+  fontWeight: '600',
+},
   buttonDisabled: {
     opacity: 0.6,
   },

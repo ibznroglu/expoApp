@@ -174,6 +174,13 @@ const SignIn = () => {
           >
             <Text style={SignInStyles.forgotPasswordText}>Şifremi Unuttum</Text>
           </TouchableOpacity>
+            <TouchableOpacity 
+            style={SignInStyles.signUpButton}
+            onPress={() => router.push('/signup')}
+            disabled={loading}
+          >
+          <Text style={SignInStyles.signUpText}>Hesabın yok mu? Kayıt Ol</Text>
+        </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
+import { ActivityIndicator, Platform, SafeAreaView, StyleSheet } from "react-native";
 import { account } from "../lib/appwrite";
 const AuthContext = createContext();
 
@@ -50,6 +50,50 @@ const AuthProvider = ({ children }) => {
             setUser(null);
             setLoading(false);
     };
+// AuthContext.js - signup fonksiyonunu şu şekilde değiştir:
+// AuthContext.js - web için farklı bir yaklaşım
+const signup = async ({ email, password, name }) => {
+    setLoading(true);
+    try {
+        console.log('🌐 Web platformu - signup deneniyor');
+        
+        // WEB ÖZEL: AppWrite REST API direkt kullanımı
+        if (Platform.OS === 'web') {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/account`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Appwrite-Project': process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+                },
+                body: JSON.stringify({
+                    userId: 'unique()', // AppWrite'un otomatik oluşturması için
+                    email: email,
+                    password: password,
+                    name: name
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('✅ Web signup başarılı:', result);
+            return { success: true };
+        } else {
+            // Mobile için normal SDK
+            await account.create(email, password);
+            if (name) await account.updateName(name);
+            return { success: true };
+        }
+        
+    } catch (error) {
+        console.error("❌ Sign-up error:", error);
+        throw error;
+    } finally {
+        setLoading(false);
+    }
+};
 const createPasswordRecovery = async (email) => {
   try {
     const resetUrl = "https://reset-expo.vercel.app/reset-password"
@@ -62,7 +106,7 @@ const createPasswordRecovery = async (email) => {
   }
 };
 
-    const contextData = { session, user, signin, signout,createPasswordRecovery };
+    const contextData = { session, user, signin, signout,signup,createPasswordRecovery };
     return (
         <AuthContext.Provider value={contextData}>
             {loading ? (
