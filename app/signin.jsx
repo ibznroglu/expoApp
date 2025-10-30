@@ -2,19 +2,17 @@ import { useAuth } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
   Dimensions,
   Image,
   ImageBackground,
-  Platform,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
-
 import TextCustom from "./components/TextCustom";
+import { showToast } from "./utils/toast.js";
 
 const { width } = Dimensions.get("window");
 
@@ -25,6 +23,8 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: false, password: false });
+  const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const handleSubmit = async () => {
     const emailError = email.trim() === "";
@@ -37,22 +37,61 @@ const SignIn = () => {
       if (passwordError) message.push("Parola");
       const errorMsg = `${message.join(" ve ")} alanı boş olamaz!`;
 
-      Platform.OS === "web" ? window.alert(errorMsg) : Alert.alert("Eksik Bilgi", errorMsg);
+      showToast.error("Eksik Bilgi", errorMsg);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showToast.error("Geçersiz E-posta", "Lütfen geçerli bir e-posta adresi giriniz.");
+      setErrors(prev => ({ ...prev, email: true }));
       return;
     }
 
     setErrors({ email: false, password: false });
+    setLoading(true);
 
     try {
       await signin({ email, password });
+      // Başarılı giriş - toast göster
+      showToast.success(
+        "Giriş Başarılı!",
+        "Bilgi Arenası'na hoş geldiniz 🎉"
+      );
     } catch (error) {
-      Platform.OS === "web" 
-        ? window.alert("E-posta ya da parola hatalı!")
-        : Alert.alert("Giriş Başarısız", "E-posta ya da parola hatalı!");
+      console.error('Sign in error:', error);
+      
+      let errorMessage = "Giriş başarısız";
+      let errorDescription = "E-posta veya parola hatalı!";
+      
+      if (error.code === 401 || error.type === 'invalid_credentials') {
+        errorMessage = "Kimlik Doğrulama Hatası";
+        errorDescription = "E-posta veya parolanız hatalı. Lütfen tekrar deneyin.";
+      } else if (error.code === 429) {
+        errorMessage = "Çok Fazla İstek";
+        errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
+      } else if (error.message?.includes('network') || error.code === 0) {
+        errorMessage = "Ağ Hatası";
+        errorDescription = "İnternet bağlantınızı kontrol edin.";
+      }
+      
+      showToast.error(errorMessage, errorDescription);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (session) return <Redirect href="/" />;
+  if (session && !redirecting) {
+    setRedirecting(true);
+    // Toast'ı göster ve 2 saniye sonra yönlendir
+    showToast.success("Giriş başarılı!", "Ana sayfaya yönlendiriliyorsunuz...");
+    
+    setTimeout(() => {
+      // Burada router kullanmak yerine Redirect component'i zaten çalışacak
+    }, 2000);
+    
+    return <Redirect href="/" />;
+  }
 
   return (
     <ImageBackground
@@ -95,6 +134,7 @@ const SignIn = () => {
             }}
             autoCapitalize="none"
             keyboardType="email-address"
+            editable={!loading}
           />
           <TextInput
             style={[
@@ -111,15 +151,26 @@ const SignIn = () => {
                 setErrors((prev) => ({ ...prev, password: false }));
               }
             }}
+            editable={!loading}
           />
 
-          <TouchableOpacity style={SignInStyles.button} onPress={handleSubmit}>
-            <Text style={SignInStyles.buttonText}>Giriş Yap & Başla</Text>
+          <TouchableOpacity 
+            style={[
+              SignInStyles.button, 
+              loading && SignInStyles.buttonDisabled
+            ]} 
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            <Text style={SignInStyles.buttonText}>
+              {loading ? "Giriş Yapılıyor..." : "Giriş Yap & Başla"}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={SignInStyles.forgotPasswordButton}
             onPress={() => router.push('/forgot-password')}
+            disabled={loading}
           >
             <Text style={SignInStyles.forgotPasswordText}>Şifremi Unuttum</Text>
           </TouchableOpacity>

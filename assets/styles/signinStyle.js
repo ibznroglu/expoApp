@@ -27,6 +27,9 @@ export const SignInStyles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
   logo: {
     width: 80,
     height: 80,
