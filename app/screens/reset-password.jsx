@@ -2,7 +2,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Account, Client } from 'react-native-appwrite';
-import { showToast } from "./utils/toast.js";
+import { showToast } from "../utils/toast.js";
 
 export default function ResetPasswordScreen() {
   const { userId, secret } = useLocalSearchParams();

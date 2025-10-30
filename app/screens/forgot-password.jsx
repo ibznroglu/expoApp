@@ -2,8 +2,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SignInStyles } from '../assets/styles/signinStyle.js';
-import { showToast } from "./utils/toast.js";
+import { SignInStyles } from '../../assets/styles/signinStyle.js';
+import { showToast } from "../utils/toast.js";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
