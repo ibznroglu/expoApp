@@ -4,10 +4,15 @@ import { Image, ImageBackground, SafeAreaView, Text, TouchableOpacity, View } fr
 import { homeStyles } from "../../assets/styles/homeStyle";
 import { useAuth } from "../../context/AuthContext";
 import TextCustom from "../components/TextCustom";
+import { uploadQuestions } from '../utils/uploadQuestions';
 
 export default function Index() {
   const { user, signout } = useAuth();
   const router = useRouter();
+  const handleUpload = async () => {
+    await uploadQuestions();
+    alert('Sorular yüklendi!');
+  };
 
   return (
     <ImageBackground
@@ -45,6 +50,9 @@ export default function Index() {
           <TextCustom style={homeStyles.subtitle}>
             Bilgi Arenası'na hazır mısın?
           </TextCustom>
+           <TouchableOpacity onPress={handleUpload}>
+        <Text>Soruları Yükle</Text>
+      </TouchableOpacity>
 
           {/* Action Cards */}
           <View style={homeStyles.cardsContainer}>
@@ -83,6 +91,7 @@ export default function Index() {
                 Başarılarını ve istatistiklerini gör
               </Text>
             </TouchableOpacity>
+           
           </View>
 
           {/* Daily Challenge */}
