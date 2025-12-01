@@ -3,16 +3,17 @@ import { useAuth } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Dimensions,
-    Image,
-    ImageBackground,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  ImageBackground,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import TextCustom from "./components/TextCustom";
+import { validateEmail } from "./utils/emailValidation.js";
 import { showToast } from "./utils/toast.js";
 
 const { width } = Dimensions.get("window");
@@ -57,9 +58,10 @@ const handleSubmit = async () => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      showToast.error("Geçersiz E-posta", "Lütfen geçerli bir e-posta adresi giriniz.");
+    // E-posta validasyonu (format + disposable email kontrolü)
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      showToast.error("Geçersiz E-posta", emailValidation.error || "Lütfen geçerli bir e-posta adresi giriniz.");
       setErrors(prev => ({ ...prev, email: true }));
       return;
     }
@@ -80,46 +82,64 @@ const handleSubmit = async () => {
     setLoading(true);
 
     try {
-      await signup({ 
+      const result = await signup({ 
         name: name,
         email: email,
         password: password
       });
       
-      showToast.success(
-        "Kayıt Başarılı!",
-        "Bilgi Arenası'na hoş geldiniz 🎉"
-      );
+      // E-posta doğrulama gerekiyorsa bilgilendir
+      if (result?.requiresVerification) {
+        showToast.success(
+          "Kayıt Başarılı!",
+          "E-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktifleştirin 📧"
+        );
+      } else {
+        showToast.success(
+          "Kayıt Başarılı!",
+          "Bilgi Arenası'na hoş geldiniz 🎉"
+        );
+      }
     } catch (error) {
-  console.error('Sign up error DETAILS:', {
-    message: error.message,
-    code: error.code,
-    type: error.type,
-    response: error.response,
-    stack: error.stack
-  });
-  
-  let errorMessage = "Kayıt başarısız";
-  let errorDescription = "Lütfen bilgilerinizi kontrol edin.";
-  
-  // Önce en spesifik hataları kontrol et
-  if (error.code === 409 || error.message?.includes('already') || error.message?.includes('exists')) {
-    errorMessage = "Kullanıcı Mevcut";
-    errorDescription = "Bu e-posta adresi ile zaten bir hesap bulunuyor.";
-  } else if (error.code === 429) {
-    errorMessage = "Çok Fazla İstek";
-    errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
-  } else if (error.code === 400) {
-    errorMessage = "Geçersiz Bilgi";
-    errorDescription = "Lütfen geçerli bir e-posta ve şifre giriniz.";
-  } else if (error.message?.includes('network') || error.code === 0) {
-    errorMessage = "Ağ Hatası";
-    errorDescription = "İnternet bağlantınızı kontrol edin.";
-  }
-  
-  // Hatanın detayını göster
-  console.log('Toast gösteriliyor:', errorMessage, errorDescription);
-  showToast.error(errorMessage, errorDescription);
+      console.error('Sign up error DETAILS:', {
+        message: error.message,
+        code: error.code,
+        type: error.type,
+        response: error.response,
+        stack: error.stack
+      });
+      
+      let errorMessage = "Kayıt başarısız";
+      let errorDescription = "Lütfen bilgilerinizi kontrol edin.";
+      
+      // Önce en spesifik hataları kontrol et
+      if (error.code === 409 || error.message?.includes('already') || error.message?.includes('exists')) {
+        errorMessage = "Kullanıcı Mevcut";
+        errorDescription = "Bu e-posta adresi ile zaten bir hesap bulunuyor.";
+      } else if (error.code === 429) {
+        errorMessage = "Çok Fazla İstek";
+        errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
+      } else if (error.code === 400) {
+        errorMessage = "Geçersiz Bilgi";
+        errorDescription = error.message || "Lütfen geçerli bir e-posta ve şifre giriniz.";
+      } else if (error.code === 401) {
+        errorMessage = "Yetkilendirme Hatası";
+        errorDescription = error.message || "Lütfen bilgilerinizi kontrol edin.";
+      } else if (error.code === 500 || error.code === 502 || error.code === 503) {
+        errorMessage = "Sunucu Hatası";
+        errorDescription = "Sunucu şu anda yanıt veremiyor. Lütfen daha sonra tekrar deneyin.";
+      } else if (error.message?.includes('network') || error.message?.includes('Network') || error.code === 0) {
+        errorMessage = "Ağ Hatası";
+        errorDescription = "İnternet bağlantınızı kontrol edin.";
+      } else if (error.message) {
+        // Genel hata mesajını göster
+        errorMessage = "Kayıt Başarısız";
+        errorDescription = error.message;
+      }
+      
+      // Hatanın detayını göster
+      console.log('Toast gösteriliyor:', errorMessage, errorDescription);
+      showToast.error(errorMessage, errorDescription);
 } finally {
       setLoading(false);
     }
