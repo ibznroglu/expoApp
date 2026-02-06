@@ -1,17 +1,40 @@
 // app/index.jsx
 import { useRouter } from "expo-router";
-import { Image, ImageBackground, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { homeStyles } from "../../assets/styles/homeStyle";
 import { useAuth } from "../../context/AuthContext";
 import TextCustom from "../components/TextCustom";
-import { uploadQuestions } from '../utils/uploadQuestions';
+import { showToast } from "../utils/toast";
+import { uploadQuestions } from "../utils/uploadQuestions";
 
 export default function Index() {
   const { user, signout } = useAuth();
   const router = useRouter();
   const handleUpload = async () => {
-    await uploadQuestions();
-    alert('Sorular yüklendi!');
+    try {
+      const result = await uploadQuestions();
+
+      if (result.added === 0) {
+        showToast.info(
+          "Yeni soru yok",
+          "Tüm sorular zaten veritabanında mevcut.",
+        );
+      } else {
+        showToast.success(
+          "Sorular yüklendi",
+          `${result.added} yeni soru eklendi 🎉`,
+        );
+      }
+    } catch (error) {
+      showToast.error("Soru yüklenemedi", "Lütfen tekrar deneyin.");
+    }
   };
 
   return (
@@ -22,14 +45,11 @@ export default function Index() {
       style={homeStyles.bg}
     >
       <View style={homeStyles.overlay} />
-      
+
       <SafeAreaView style={homeStyles.safeArea}>
         {/* Header */}
         <View style={homeStyles.header}>
-          <TouchableOpacity 
-            style={homeStyles.logoutButton}
-            onPress={signout} 
-          >
+          <TouchableOpacity style={homeStyles.logoutButton} onPress={signout}>
             <Text style={homeStyles.logoutButtonText}>Çıkış Yap</Text>
           </TouchableOpacity>
         </View>
@@ -42,22 +62,25 @@ export default function Index() {
             }}
             style={homeStyles.logo}
           />
-          
+
           <TextCustom style={homeStyles.welcomeText} fontSize={28}>
             Hoş Geldin {user.name}!
           </TextCustom>
-          
+
           <TextCustom style={homeStyles.subtitle}>
             Bilgi Arenası'na hazır mısın?
           </TextCustom>
-           <TouchableOpacity onPress={handleUpload}>
-        <Text>Soruları Yükle</Text>
-      </TouchableOpacity>
+          <TouchableOpacity onPress={handleUpload}>
+            <Text>Soruları Yükle</Text>
+          </TouchableOpacity>
 
           {/* Action Cards */}
           <View style={homeStyles.cardsContainer}>
             {/* Hızlı Oyun Kartı */}
-            <TouchableOpacity style={[homeStyles.card, homeStyles.quickGameCard]} onPress={() => router.push('/game/quick-game')}>
+            <TouchableOpacity
+              style={[homeStyles.card, homeStyles.quickGameCard]}
+              onPress={() => router.push("/game/quick-game")}
+            >
               <Text style={homeStyles.cardIcon}>⚡</Text>
               <Text style={homeStyles.cardTitle}>Hızlı Oyun</Text>
               <Text style={homeStyles.cardDescription}>
@@ -66,7 +89,9 @@ export default function Index() {
             </TouchableOpacity>
 
             {/* Arkadaşla Oyna Kartı */}
-            <TouchableOpacity style={[homeStyles.card, homeStyles.friendGameCard]}>
+            <TouchableOpacity
+              style={[homeStyles.card, homeStyles.friendGameCard]}
+            >
               <Text style={homeStyles.cardIcon}>👥</Text>
               <Text style={homeStyles.cardTitle}>Arkadaşla Oyna</Text>
               <Text style={homeStyles.cardDescription}>
@@ -75,7 +100,9 @@ export default function Index() {
             </TouchableOpacity>
 
             {/* Turnuva Kartı */}
-            <TouchableOpacity style={[homeStyles.card, homeStyles.tournamentCard]}>
+            <TouchableOpacity
+              style={[homeStyles.card, homeStyles.tournamentCard]}
+            >
               <Text style={homeStyles.cardIcon}>🏆</Text>
               <Text style={homeStyles.cardTitle}>Turnuva</Text>
               <Text style={homeStyles.cardDescription}>
@@ -91,7 +118,6 @@ export default function Index() {
                 Başarılarını ve istatistiklerini gör
               </Text>
             </TouchableOpacity>
-           
           </View>
 
           {/* Daily Challenge */}
