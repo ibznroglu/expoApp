@@ -9,12 +9,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import TextCustom from "./components/TextCustom";
 import { validateEmail } from "./utils/emailValidation.js";
-import { showToast } from "./utils/toast.js";
+import { showToast } from "./utils/toast";
 
 const { width } = Dimensions.get("window");
 
@@ -26,94 +26,114 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({ 
-    name: false, 
-    email: false, 
-    password: false, 
-    confirmPassword: false 
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
   });
   const [loading, setLoading] = useState(false);
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
     const nameError = name.trim() === "";
     const emailError = email.trim() === "";
     const passwordError = password.trim() === "";
     const confirmPasswordError = confirmPassword.trim() === "";
-     console.log('🔄 HandleSubmit state:', { name, email, password, confirmPassword });
+    console.log("🔄 HandleSubmit state:", {
+      name,
+      email,
+      password,
+      confirmPassword,
+    });
 
     if (nameError || emailError || passwordError || confirmPasswordError) {
-      setErrors({ 
-        name: nameError, 
-        email: emailError, 
-        password: passwordError, 
-        confirmPassword: confirmPasswordError 
+      setErrors({
+        name: nameError,
+        email: emailError,
+        password: passwordError,
+        confirmPassword: confirmPasswordError,
       });
-      
+
       const message = [];
       if (nameError) message.push("Ad Soyad");
       if (emailError) message.push("E-posta");
       if (passwordError) message.push("Parola");
       if (confirmPasswordError) message.push("Parola Tekrarı");
-      
-      showToast.error("Eksik Bilgi", `${message.join(", ")} alanları boş olamaz!`);
+
+      showToast.error(
+        "Eksik Bilgi",
+        `${message.join(", ")} alanları boş olamaz!`,
+      );
       return;
     }
 
     // E-posta validasyonu (format + disposable email kontrolü)
     const emailValidation = validateEmail(email);
     if (!emailValidation.valid) {
-      showToast.error("Geçersiz E-posta", emailValidation.error || "Lütfen geçerli bir e-posta adresi giriniz.");
-      setErrors(prev => ({ ...prev, email: true }));
+      showToast.error(
+        "Geçersiz E-posta",
+        emailValidation.error || "Lütfen geçerli bir e-posta adresi giriniz.",
+      );
+      setErrors((prev) => ({ ...prev, email: true }));
       return;
     }
 
     if (password.length < 8) {
       showToast.error("Geçersiz Şifre", "Şifre en az 8 karakter olmalıdır.");
-      setErrors(prev => ({ ...prev, password: true }));
+      setErrors((prev) => ({ ...prev, password: true }));
       return;
     }
 
     if (password !== confirmPassword) {
       showToast.error("Hata", "Şifreler eşleşmiyor.");
-      setErrors(prev => ({ ...prev, confirmPassword: true }));
+      setErrors((prev) => ({ ...prev, confirmPassword: true }));
       return;
     }
 
-    setErrors({ name: false, email: false, password: false, confirmPassword: false });
+    setErrors({
+      name: false,
+      email: false,
+      password: false,
+      confirmPassword: false,
+    });
     setLoading(true);
 
     try {
-      const result = await signup({ 
+      const result = await signup({
         name: name,
         email: email,
-        password: password
+        password: password,
       });
-      
+
       // E-posta doğrulama gerekiyorsa bilgilendir
       if (result?.requiresVerification) {
         showToast.success(
           "Kayıt Başarılı!",
-          "E-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktifleştirin 📧"
+          "E-posta adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktifleştirin 📧",
         );
       } else {
         showToast.success(
           "Kayıt Başarılı!",
-          "Bilgi Arenası'na hoş geldiniz 🎉"
+          "Bilgi Arenası'na hoş geldiniz 🎉",
         );
       }
     } catch (error) {
-      console.error('Sign up error DETAILS:', {
+      console.error("Sign up error DETAILS:", {
         message: error.message,
         code: error.code,
         type: error.type,
         response: error.response,
-        stack: error.stack
+        stack: error.stack,
       });
-      
+
       let errorMessage = "Kayıt başarısız";
       let errorDescription = "Lütfen bilgilerinizi kontrol edin.";
-      
+
       // Önce en spesifik hataları kontrol et
-      if (error.code === 409 || error.message?.includes('already') || error.message?.includes('exists')) {
+      if (
+        error.code === 409 ||
+        error.message?.includes("already") ||
+        error.message?.includes("exists")
+      ) {
         errorMessage = "Kullanıcı Mevcut";
         errorDescription = "Bu e-posta adresi ile zaten bir hesap bulunuyor.";
       } else if (error.code === 429) {
@@ -121,14 +141,25 @@ const handleSubmit = async () => {
         errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
       } else if (error.code === 400) {
         errorMessage = "Geçersiz Bilgi";
-        errorDescription = error.message || "Lütfen geçerli bir e-posta ve şifre giriniz.";
+        errorDescription =
+          error.message || "Lütfen geçerli bir e-posta ve şifre giriniz.";
       } else if (error.code === 401) {
         errorMessage = "Yetkilendirme Hatası";
-        errorDescription = error.message || "Lütfen bilgilerinizi kontrol edin.";
-      } else if (error.code === 500 || error.code === 502 || error.code === 503) {
+        errorDescription =
+          error.message || "Lütfen bilgilerinizi kontrol edin.";
+      } else if (
+        error.code === 500 ||
+        error.code === 502 ||
+        error.code === 503
+      ) {
         errorMessage = "Sunucu Hatası";
-        errorDescription = "Sunucu şu anda yanıt veremiyor. Lütfen daha sonra tekrar deneyin.";
-      } else if (error.message?.includes('network') || error.message?.includes('Network') || error.code === 0) {
+        errorDescription =
+          "Sunucu şu anda yanıt veremiyor. Lütfen daha sonra tekrar deneyin.";
+      } else if (
+        error.message?.includes("network") ||
+        error.message?.includes("Network") ||
+        error.code === 0
+      ) {
         errorMessage = "Ağ Hatası";
         errorDescription = "İnternet bağlantınızı kontrol edin.";
       } else if (error.message) {
@@ -136,11 +167,11 @@ const handleSubmit = async () => {
         errorMessage = "Kayıt Başarısız";
         errorDescription = error.message;
       }
-      
+
       // Hatanın detayını göster
-      console.log('Toast gösteriliyor:', errorMessage, errorDescription);
+      console.log("Toast gösteriliyor:", errorMessage, errorDescription);
       showToast.error(errorMessage, errorDescription);
-} finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -175,23 +206,20 @@ const handleSubmit = async () => {
 
         <View style={SignInStyles.form}>
           <TextInput
-            style={[
-              SignInStyles.input,
-              errors.name && SignInStyles.inputError,
-            ]}
+            style={[SignInStyles.input, errors.name && SignInStyles.inputError]}
             placeholder="Ad Soyad"
             placeholderTextColor="#eee"
             value={name}
             onChangeText={(text) => {
               setName(text);
               if (errors.name && text.trim() !== "") {
-                setErrors(prev => ({ ...prev, name: false }));
+                setErrors((prev) => ({ ...prev, name: false }));
               }
             }}
             autoCapitalize="words"
             editable={!loading}
           />
-          
+
           <TextInput
             style={[
               SignInStyles.input,
@@ -203,14 +231,14 @@ const handleSubmit = async () => {
             onChangeText={(text) => {
               setEmail(text);
               if (errors.email && text.trim() !== "") {
-                setErrors(prev => ({ ...prev, email: false }));
+                setErrors((prev) => ({ ...prev, email: false }));
               }
             }}
             autoCapitalize="none"
             keyboardType="email-address"
             editable={!loading}
           />
-          
+
           <TextInput
             style={[
               SignInStyles.input,
@@ -223,12 +251,12 @@ const handleSubmit = async () => {
             onChangeText={(text) => {
               setPassword(text);
               if (errors.password && text.trim() !== "") {
-                setErrors(prev => ({ ...prev, password: false }));
+                setErrors((prev) => ({ ...prev, password: false }));
               }
             }}
             editable={!loading}
           />
-          
+
           <TextInput
             style={[
               SignInStyles.input,
@@ -241,17 +269,17 @@ const handleSubmit = async () => {
             onChangeText={(text) => {
               setConfirmPassword(text);
               if (errors.confirmPassword && text.trim() !== "") {
-                setErrors(prev => ({ ...prev, confirmPassword: false }));
+                setErrors((prev) => ({ ...prev, confirmPassword: false }));
               }
             }}
             editable={!loading}
           />
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              SignInStyles.button, 
-              loading && SignInStyles.buttonDisabled
-            ]} 
+              SignInStyles.button,
+              loading && SignInStyles.buttonDisabled,
+            ]}
             onPress={handleSubmit}
             disabled={loading}
           >
@@ -260,9 +288,9 @@ const handleSubmit = async () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={SignInStyles.forgotPasswordButton}
-            onPress={() => router.push('/signin')}
+            onPress={() => router.push("/signin")}
             disabled={loading}
           >
             <Text style={SignInStyles.forgotPasswordText}>

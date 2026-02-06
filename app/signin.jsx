@@ -8,11 +8,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import TextCustom from "./components/TextCustom";
-import { showToast } from "./utils/toast.js";
+import { showToast } from "./utils/toast";
 
 const { width } = Dimensions.get("window");
 
@@ -43,8 +43,11 @@ const SignIn = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast.error("Geçersiz E-posta", "Lütfen geçerli bir e-posta adresi giriniz.");
-      setErrors(prev => ({ ...prev, email: true }));
+      showToast.error(
+        "Geçersiz E-posta",
+        "Lütfen geçerli bir e-posta adresi giriniz.",
+      );
+      setErrors((prev) => ({ ...prev, email: true }));
       return;
     }
 
@@ -54,27 +57,25 @@ const SignIn = () => {
     try {
       await signin({ email, password });
       // Başarılı giriş - toast göster
-      showToast.success(
-        "Giriş Başarılı!",
-        "Bilgi Arenası'na hoş geldiniz 🎉"
-      );
+      showToast.success("Giriş Başarılı!", "Bilgi Arenası'na hoş geldiniz 🎉");
     } catch (error) {
-      console.error('Sign in error:', error);
-      
+      console.error("Sign in error:", error);
+
       let errorMessage = "Giriş başarısız";
       let errorDescription = "E-posta veya parola hatalı!";
-      
-      if (error.code === 401 || error.type === 'invalid_credentials') {
+
+      if (error.code === 401 || error.type === "invalid_credentials") {
         errorMessage = "Kimlik Doğrulama Hatası";
-        errorDescription = "E-posta veya parolanız hatalı. Lütfen tekrar deneyin.";
+        errorDescription =
+          "E-posta veya parolanız hatalı. Lütfen tekrar deneyin.";
       } else if (error.code === 429) {
         errorMessage = "Çok Fazla İstek";
         errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
-      } else if (error.message?.includes('network') || error.code === 0) {
+      } else if (error.message?.includes("network") || error.code === 0) {
         errorMessage = "Ağ Hatası";
         errorDescription = "İnternet bağlantınızı kontrol edin.";
       }
-      
+
       showToast.error(errorMessage, errorDescription);
     } finally {
       setLoading(false);
@@ -85,11 +86,11 @@ const SignIn = () => {
     setRedirecting(true);
     // Toast'ı göster ve 2 saniye sonra yönlendir
     showToast.success("Giriş başarılı!", "Ana sayfaya yönlendiriliyorsunuz...");
-    
+
     setTimeout(() => {
       // Burada router kullanmak yerine Redirect component'i zaten çalışacak
     }, 2000);
-    
+
     return <Redirect href="/" />;
   }
 
@@ -154,11 +155,11 @@ const SignIn = () => {
             editable={!loading}
           />
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              SignInStyles.button, 
-              loading && SignInStyles.buttonDisabled
-            ]} 
+              SignInStyles.button,
+              loading && SignInStyles.buttonDisabled,
+            ]}
             onPress={handleSubmit}
             disabled={loading}
           >
@@ -167,20 +168,22 @@ const SignIn = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={SignInStyles.forgotPasswordButton}
-            onPress={() => router.push('/forgot-password')}
+            onPress={() => router.push("/forgot-password")}
             disabled={loading}
           >
             <Text style={SignInStyles.forgotPasswordText}>Şifremi Unuttum</Text>
           </TouchableOpacity>
-            <TouchableOpacity 
+          <TouchableOpacity
             style={SignInStyles.signUpButton}
-            onPress={() => router.push('/signup')}
+            onPress={() => router.push("/signup")}
             disabled={loading}
           >
-          <Text style={SignInStyles.signUpText}>Hesabın yok mu? Kayıt Ol</Text>
-        </TouchableOpacity>
+            <Text style={SignInStyles.signUpText}>
+              Hesabın yok mu? Kayıt Ol
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>

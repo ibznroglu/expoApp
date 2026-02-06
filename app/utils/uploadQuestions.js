@@ -3,11 +3,11 @@ import { database } from "../../lib/appwrite";
 
 const questions = [
   {
-    question: "En büyük 2 basamaklı tek sayı kaçtır?",
-    options: ["-11", "11", "-99", "99"],
-    correctAnswer: 3,
-    category: "matematik",
-    difficulty: "kolay",
+    question: "Halley Kuyruklu Yıldızı kaç yılda bir Dünya’dan gözlemlenir?",
+    options: ["120", "76", "100", "50"],
+    correctAnswer: 1,
+    category: "astronomi",
+    difficulty: "orta",
   },
 ];
 
@@ -17,7 +17,10 @@ export const uploadQuestions = async () => {
       "expoAppNew",
       "questions",
     );
-
+    console.log(
+      "📊 Veritabanındaki toplam soru sayısı:",
+      existingQuestions.total,
+    );
     const existingQuestionMap = new Map();
     existingQuestions.documents.forEach((doc) => {
       existingQuestionMap.set(doc.question, true);

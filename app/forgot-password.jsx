@@ -1,70 +1,84 @@
-import { useAuth } from '@/context/AuthContext';
-import { Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SignInStyles } from '../assets/styles/signinStyle.js';
-import { showToast } from "./utils/toast.js";
+import { useAuth } from "@/context/AuthContext";
+import { Stack, useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SignInStyles } from "../assets/styles/signinStyle.js";
+import { showToast } from "./utils/toast";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
   const { createPasswordRecovery } = useAuth();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSendResetLink = async () => {
     if (!email.trim()) {
-      showToast.error('Eksik Bilgi', 'Lütfen e-posta adresinizi giriniz');
+      showToast.error("Eksik Bilgi", "Lütfen e-posta adresinizi giriniz");
       return;
     }
 
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast.error('Geçersiz E-posta', 'Lütfen geçerli bir e-posta adresi giriniz.');
+      showToast.error(
+        "Geçersiz E-posta",
+        "Lütfen geçerli bir e-posta adresi giriniz.",
+      );
       return;
     }
 
     setLoading(true);
     try {
-      console.log('⏳ createPasswordRecovery çağrılıyor...');
+      console.log("⏳ createPasswordRecovery çağrılıyor...");
       const result = await createPasswordRecovery(email);
-      
+
       if (result.success) {
-        console.log('✅ Sonuç:', result);
+        console.log("✅ Sonuç:", result);
         showToast.success(
-          'Başarılı', 
-          'Şifre sıfırlama linki e-posta adresinize gönderildi'
+          "Başarılı",
+          "Şifre sıfırlama linki e-posta adresinize gönderildi",
         );
-        
+
         // 2 saniye sonra geri dön
         setTimeout(() => {
           router.back();
         }, 2000);
       } else {
-        let errorMessage = 'Şifre sıfırlama başarısız';
-        let errorDescription = 'Lütfen tekrar deneyin.';
-        
-        if (result.error?.includes('user') || result.error?.includes('found')) {
-          errorMessage = 'Kullanıcı Bulunamadı';
-          errorDescription = 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.';
-        } else if (result.error?.includes('rate limit') || result.error?.includes('too many')) {
-          errorMessage = 'Çok Fazla İstek';
-          errorDescription = 'Lütfen bir süre bekleyip tekrar deneyin.';
+        let errorMessage = "Şifre sıfırlama başarısız";
+        let errorDescription = "Lütfen tekrar deneyin.";
+
+        if (result.error?.includes("user") || result.error?.includes("found")) {
+          errorMessage = "Kullanıcı Bulunamadı";
+          errorDescription =
+            "Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.";
+        } else if (
+          result.error?.includes("rate limit") ||
+          result.error?.includes("too many")
+        ) {
+          errorMessage = "Çok Fazla İstek";
+          errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
         }
-        
+
         showToast.error(errorMessage, errorDescription);
       }
     } catch (error) {
-      console.error('Şifre sıfırlama hatası:', error);
-      
-      let errorMessage = 'Şifre Sıfırlama Hatası';
-      let errorDescription = 'Bir hata oluştu, lütfen tekrar deneyin.';
-      
-      if (error.message?.includes('network') || error.code === 0) {
-        errorMessage = 'Ağ Hatası';
-        errorDescription = 'İnternet bağlantınızı kontrol edin.';
+      console.error("Şifre sıfırlama hatası:", error);
+
+      let errorMessage = "Şifre Sıfırlama Hatası";
+      let errorDescription = "Bir hata oluştu, lütfen tekrar deneyin.";
+
+      if (error.message?.includes("network") || error.code === 0) {
+        errorMessage = "Ağ Hatası";
+        errorDescription = "İnternet bağlantınızı kontrol edin.";
       }
-      
+
       showToast.error(errorMessage, errorDescription);
     } finally {
       setLoading(false);
@@ -72,16 +86,18 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Stack.Screen options={{ title: 'Şifremi Unuttum' }} />
-      
+      <Stack.Screen options={{ title: "Şifremi Unuttum" }} />
+
       <View style={SignInStyles.bg}>
         <View style={SignInStyles.overlay} />
         <View style={SignInStyles.container}>
-          <Text style={SignInStyles.forgotPasswordHeadline}>Şifremi Unuttum</Text>
+          <Text style={SignInStyles.forgotPasswordHeadline}>
+            Şifremi Unuttum
+          </Text>
           <Text style={SignInStyles.forgotPasswordSubHeadline}>
             Şifre sıfırlama linkini almak için{"\n"}e-posta adresinizi girin
           </Text>
@@ -99,25 +115,27 @@ export default function ForgotPasswordScreen() {
               editable={!loading}
             />
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
                 SignInStyles.button,
-                loading && SignInStyles.buttonDisabled
+                loading && SignInStyles.buttonDisabled,
               ]}
               onPress={handleSendResetLink}
               disabled={loading}
             >
               <Text style={SignInStyles.buttonText}>
-                {loading ? 'Gönderiliyor...' : 'Şifre Sıfırlama Linki Gönder'}
+                {loading ? "Gönderiliyor..." : "Şifre Sıfırlama Linki Gönder"}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={SignInStyles.forgotPasswordButton}
               onPress={() => router.back()}
               disabled={loading}
             >
-              <Text style={SignInStyles.forgotPasswordText}>Giriş Sayfasına Dön</Text>
+              <Text style={SignInStyles.forgotPasswordText}>
+                Giriş Sayfasına Dön
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
