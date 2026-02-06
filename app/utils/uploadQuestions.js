@@ -1,18 +1,25 @@
 // utils/uploadQuestions.js
+import { Query } from "react-native-appwrite"; // Eğer hata verirse söyle, import'u projene göre düzeltelim.
 import { database } from "../../lib/appwrite";
 
 const questions = [
   {
-    question: "Halley Kuyruklu Yıldızı kaç yılda bir Dünya’dan gözlemlenir?",
-    options: ["120", "76", "100", "50"],
-    correctAnswer: 1,
+    question: "Hangi gezegenin etrafında en fazla uydu bulunur?",
+    options: ["Uranüs", "Neptün", "Satürn", "Jüpiter"],
+    correctAnswer: 3,
     category: "astronomi",
-    difficulty: "orta",
+    difficulty: "kolay",
   },
 ];
 
+let isUploading = false; // aynı anda iki kez çalışmayı engellemek için
+
 export const uploadQuestions = async () => {
+  if (isUploading) return { added: 0, skipped: 0, alreadyRunning: true };
+  isUploading = true;
+
   try {
+    // Toplam sayıyı görmek istiyorsan:
     const existingQuestions = await database.listDocuments(
       "expoAppNew",
       "questions",
@@ -21,26 +28,31 @@ export const uploadQuestions = async () => {
       "📊 Veritabanındaki toplam soru sayısı:",
       existingQuestions.total,
     );
-    const existingQuestionMap = new Map();
-    existingQuestions.documents.forEach((doc) => {
-      existingQuestionMap.set(doc.question, true);
-    });
 
-    const newQuestions = questions.filter(
-      (q) => !existingQuestionMap.has(q.question),
-    );
+    let added = 0;
+    let skipped = 0;
 
-    if (newQuestions.length === 0) {
-      return { added: 0 };
-    }
+    for (const q of questions) {
+      // Aynı soru var mı? (pagination yok, nokta atışı)
+      const found = await database.listDocuments("expoAppNew", "questions", [
+        Query.equal("question", q.question),
+        Query.limit(1),
+      ]);
 
-    for (const q of newQuestions) {
+      if (found.total > 0) {
+        skipped++;
+        continue;
+      }
+
       await database.createDocument("expoAppNew", "questions", "unique()", q);
+      added++;
     }
 
-    return { added: newQuestions.length };
+    return { added, skipped };
   } catch (error) {
     console.error("❌ Soru yükleme hatası:", error);
     throw error;
+  } finally {
+    isUploading = false;
   }
 };
