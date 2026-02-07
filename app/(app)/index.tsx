@@ -3,11 +3,11 @@ import { useRouter } from "expo-router";
 import {
   Image,
   ImageBackground,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { homeStyles } from "../../assets/styles/homeStyle";
 import { useAuth } from "../../context/AuthContext";
 import TextCustom from "../components/TextCustom";

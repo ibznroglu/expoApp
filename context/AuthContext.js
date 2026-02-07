@@ -1,10 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-} from "react-native";
+import { ActivityIndicator, Platform, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { account } from "../lib/appwrite";
 const AuthContext = createContext();
 

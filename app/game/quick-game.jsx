@@ -1,16 +1,11 @@
 // app/quick-game.jsx
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import {
-  ImageBackground,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { quickGameStyles } from "../../assets/styles/quickGameStyle";
-import TextCustom from '../components/TextCustom';
-import { getQuestions } from '../services/questionService';
+import TextCustom from "../components/TextCustom";
+import { getQuestions } from "../services/questionService";
 
 export default function QuickGame() {
   const router = useRouter();
@@ -29,19 +24,19 @@ export default function QuickGame() {
     loadQuestions();
   }, []);
 
- const loadQuestions = async () => {
-  try {
-    setLoading(true);
-    const randomQuestions = await getQuestions(10);
-    setQuestions(randomQuestions);
-  } catch (error) {
-    console.error('Sorular yüklenirken hata:', error);
-    const fallbackQuestions = await getQuestions(10);
-    setQuestions(fallbackQuestions);
-  } finally {
-    setLoading(false);
-  }
-};
+  const loadQuestions = async () => {
+    try {
+      setLoading(true);
+      const randomQuestions = await getQuestions(10);
+      setQuestions(randomQuestions);
+    } catch (error) {
+      console.error("Sorular yüklenirken hata:", error);
+      const fallbackQuestions = await getQuestions(10);
+      setQuestions(fallbackQuestions);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (!currentQuestion || gameCompleted || loading) return;
 
@@ -62,9 +57,9 @@ export default function QuickGame() {
     if (selectedAnswer !== null) return;
 
     setSelectedAnswer(answerIndex);
-    
+
     if (answerIndex === currentQuestion.correctAnswer) {
-      setScore(prev => prev + 10);
+      setScore((prev) => prev + 10);
     }
 
     setTimeout(() => {
@@ -74,7 +69,7 @@ export default function QuickGame() {
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
       setSelectedAnswer(null);
       setTimeLeft(15);
     } else {
@@ -83,33 +78,39 @@ export default function QuickGame() {
   };
 
   const restartGame = async () => {
-  try {
-    setLoading(true);
-    const randomQuestions = await getQuestions(10);
-    setQuestions(randomQuestions);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setSelectedAnswer(null);
-    setTimeLeft(15);
-    setGameCompleted(false);
-  } catch (error) {
-    console.error('Oyun yeniden başlatılırken hata:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+      const randomQuestions = await getQuestions(10);
+      setQuestions(randomQuestions);
+      setCurrentQuestionIndex(0);
+      setScore(0);
+      setSelectedAnswer(null);
+      setTimeLeft(15);
+      setGameCompleted(false);
+    } catch (error) {
+      console.error("Oyun yeniden başlatılırken hata:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
       <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" }}
+        source={{
+          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+        }}
         style={quickGameStyles.bg}
       >
         <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container}>
+        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
           <View style={quickGameStyles.loadingContainer}>
-            <Text style={quickGameStyles.loadingText}>Sorular yükleniyor...</Text>
-            <Text style={quickGameStyles.loadingSubText}>Bilgi yarışması hazırlanıyor</Text>
+            <Text style={quickGameStyles.loadingText}>
+              Sorular yükleniyor...
+            </Text>
+            <Text style={quickGameStyles.loadingSubText}>
+              Bilgi yarışması hazırlanıyor
+            </Text>
           </View>
         </SafeAreaView>
       </ImageBackground>
@@ -119,14 +120,19 @@ export default function QuickGame() {
   if (questions.length === 0) {
     return (
       <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" }}
+        source={{
+          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+        }}
         style={quickGameStyles.bg}
       >
         <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container}>
+        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
           <View style={quickGameStyles.errorContainer}>
             <Text style={quickGameStyles.errorText}>Sorular yüklenemedi</Text>
-            <TouchableOpacity style={quickGameStyles.retryButton} onPress={loadQuestions}>
+            <TouchableOpacity
+              style={quickGameStyles.retryButton}
+              onPress={loadQuestions}
+            >
               <Text style={quickGameStyles.retryButtonText}>Tekrar Dene</Text>
             </TouchableOpacity>
           </View>
@@ -138,28 +144,35 @@ export default function QuickGame() {
   if (gameCompleted) {
     return (
       <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" }}
+        source={{
+          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+        }}
         style={quickGameStyles.bg}
       >
         <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container}>
+        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
           <View style={quickGameStyles.resultCard}>
             <Text style={quickGameStyles.resultTitle}>Oyun Tamamlandı! 🎉</Text>
             <Text style={quickGameStyles.scoreText}>Puan: {score}</Text>
             <Text style={quickGameStyles.detailText}>
               {questions.length} sorudan {score / 10} doğru
             </Text>
-            
+
             <View style={quickGameStyles.resultButtons}>
-              <TouchableOpacity style={quickGameStyles.primaryButton} onPress={restartGame}>
+              <TouchableOpacity
+                style={quickGameStyles.primaryButton}
+                onPress={restartGame}
+              >
                 <Text style={quickGameStyles.buttonText}>Tekrar Oyna</Text>
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={quickGameStyles.secondaryButton} 
+
+              <TouchableOpacity
+                style={quickGameStyles.secondaryButton}
                 onPress={() => router.back()}
               >
-                <Text style={quickGameStyles.secondaryButtonText}>Ana Menü</Text>
+                <Text style={quickGameStyles.secondaryButtonText}>
+                  Ana Menü
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -170,19 +183,25 @@ export default function QuickGame() {
 
   return (
     <ImageBackground
-      source={{ uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" }}
+      source={{
+        uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+      }}
       style={quickGameStyles.bg}
     >
       <View style={quickGameStyles.overlay} />
-      <SafeAreaView style={quickGameStyles.container}>
-        
+      <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
         {/* Header */}
         <View style={quickGameStyles.header}>
           <View style={quickGameStyles.scoreContainer}>
             <Text style={quickGameStyles.scoreText}>Puan: {score}</Text>
           </View>
           <View style={quickGameStyles.timerContainer}>
-            <Text style={[quickGameStyles.timerText, timeLeft <= 5 && quickGameStyles.timerWarning]}>
+            <Text
+              style={[
+                quickGameStyles.timerText,
+                timeLeft <= 5 && quickGameStyles.timerWarning,
+              ]}
+            >
               ⏱️ {timeLeft}s
             </Text>
           </View>
@@ -196,7 +215,7 @@ export default function QuickGame() {
         {/* Soru */}
         <View style={quickGameStyles.questionContainer}>
           <Text style={quickGameStyles.categoryBadge}>
-            {currentQuestion.category?.toUpperCase() || 'GENEL KÜLTÜR'}
+            {currentQuestion.category?.toUpperCase() || "GENEL KÜLTÜR"}
           </Text>
           <TextCustom style={quickGameStyles.questionText} fontSize={20}>
             {currentQuestion.question}
@@ -211,21 +230,26 @@ export default function QuickGame() {
               style={[
                 quickGameStyles.optionButton,
                 selectedAnswer === index && quickGameStyles.selectedOption,
-                selectedAnswer !== null && 
-                  index === currentQuestion.correctAnswer && quickGameStyles.correctOption,
-                selectedAnswer !== null && 
-                  selectedAnswer === index && 
-                  selectedAnswer !== currentQuestion.correctAnswer && quickGameStyles.wrongOption
+                selectedAnswer !== null &&
+                  index === currentQuestion.correctAnswer &&
+                  quickGameStyles.correctOption,
+                selectedAnswer !== null &&
+                  selectedAnswer === index &&
+                  selectedAnswer !== currentQuestion.correctAnswer &&
+                  quickGameStyles.wrongOption,
               ]}
               onPress={() => handleAnswerSelect(index)}
               disabled={selectedAnswer !== null}
             >
-              <Text style={[
-                quickGameStyles.optionText,
-                (selectedAnswer === index || 
-                 (selectedAnswer !== null && index === currentQuestion.correctAnswer)) && 
-                quickGameStyles.optionTextSelected
-              ]}>
+              <Text
+                style={[
+                  quickGameStyles.optionText,
+                  (selectedAnswer === index ||
+                    (selectedAnswer !== null &&
+                      index === currentQuestion.correctAnswer)) &&
+                    quickGameStyles.optionTextSelected,
+                ]}
+              >
                 {String.fromCharCode(65 + index)}. {option}
               </Text>
             </TouchableOpacity>
@@ -234,9 +258,15 @@ export default function QuickGame() {
 
         {/* İlerleme Çubuğu */}
         <View style={quickGameStyles.progressContainer}>
-          <View style={[quickGameStyles.progressBar, { width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }]} />
+          <View
+            style={[
+              quickGameStyles.progressBar,
+              {
+                width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
+              },
+            ]}
+          />
         </View>
-
       </SafeAreaView>
     </ImageBackground>
   );
