@@ -9,6 +9,7 @@ const SOURCES = {
   wrong: require("../assets/sounds/wrong.mp3"),
   tick: require("../assets/sounds/tick.mp3"),
   gameOver: require("../assets/sounds/game-over.mp3"),
+  completed: require("../assets/sounds/completed.mp3"),
 };
 
 export const initSounds = async () => {
@@ -28,6 +29,7 @@ export const initSounds = async () => {
   players.wrong = createAudioPlayer(SOURCES.wrong);
   players.tick = createAudioPlayer(SOURCES.tick);
   players.gameOver = createAudioPlayer(SOURCES.gameOver);
+  players.completed = createAudioPlayer(SOURCES.completed);
 
   // SFX için kısa ve net
   Object.values(players).forEach((p) => {

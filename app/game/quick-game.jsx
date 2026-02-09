@@ -81,7 +81,7 @@ export default function QuickGame() {
       setSelectedAnswer(null);
       setTimeLeft(15);
     } else {
-      playSound("gameOver");
+      playSound("completed");
       setGameCompleted(true);
     }
   };
