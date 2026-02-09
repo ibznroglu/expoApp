@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Account, Client } from "react-native-appwrite";
-import { showToast } from "../utils/toast";
+import { showToast } from "../../utils/toast";
 
 export default function ResetPasswordScreen() {
   const { userId, secret } = useLocalSearchParams();

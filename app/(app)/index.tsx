@@ -10,9 +10,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { homeStyles } from "../../assets/styles/homeStyle";
 import { useAuth } from "../../context/AuthContext";
+import { showToast } from "../../utils/toast";
+import { uploadQuestions } from "../../utils/uploadQuestions";
 import TextCustom from "../components/TextCustom";
-import { showToast } from "../utils/toast";
-import { uploadQuestions } from "../utils/uploadQuestions";
 
 export default function Index() {
   const { user, signout } = useAuth();

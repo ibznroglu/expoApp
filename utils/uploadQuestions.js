@@ -1,6 +1,6 @@
 // utils/uploadQuestions.js
 import { Query } from "react-native-appwrite"; // Eğer hata verirse söyle, import'u projene göre düzeltelim.
-import { database } from "../../lib/appwrite";
+import { database } from "../lib/appwrite";
 
 const questions = [
   {

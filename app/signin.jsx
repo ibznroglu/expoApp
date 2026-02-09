@@ -11,8 +11,8 @@ import {
   View,
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
+import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
-import { showToast } from "./utils/toast";
 
 const { width } = Dimensions.get("window");
 

@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
-import { showToast } from "./utils/toast";
+import { showToast } from "../utils/toast";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();

@@ -12,9 +12,9 @@ import {
   View,
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
+import { validateEmail } from "../utils/emailValidation";
+import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
-import { validateEmail } from "./utils/emailValidation.js";
-import { showToast } from "./utils/toast";
 
 const { width } = Dimensions.get("window");
 

@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { quickGameStyles } from "../../assets/styles/quickGameStyle";
+import { getQuestions } from "../../services/questionService";
+import { initSounds, playSound, unloadSounds } from "../../utils/sound";
 import TextCustom from "../components/TextCustom";
-import { getQuestions } from "../services/questionService";
 
 export default function QuickGame() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function QuickGame() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [soundsReady, setSoundsReady] = useState(false);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -46,6 +48,9 @@ export default function QuickGame() {
           handleNextQuestion();
           return 15;
         }
+        if (prev <= 6 && soundsReady) {
+          playSound("tick");
+        }
         return prev - 1;
       });
     }, 1000);
@@ -60,6 +65,9 @@ export default function QuickGame() {
 
     if (answerIndex === currentQuestion.correctAnswer) {
       setScore((prev) => prev + 10);
+      if (soundsReady) playSound("correct");
+    } else {
+      playSound("wrong");
     }
 
     setTimeout(() => {
@@ -73,6 +81,7 @@ export default function QuickGame() {
       setSelectedAnswer(null);
       setTimeLeft(15);
     } else {
+      playSound("gameOver");
       setGameCompleted(true);
     }
   };
@@ -93,6 +102,25 @@ export default function QuickGame() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        await initSounds();
+        setSoundsReady(true);
+        console.log("✅ Sounds ready");
+      } catch (e) {
+        console.warn("🔇 initSounds failed:", e);
+      }
+    })();
+
+    return () => {
+      // cleanup
+      unloadSounds().catch(() => {});
+      mounted = false;
+    };
+  }, []);
 
   if (loading) {
     return (

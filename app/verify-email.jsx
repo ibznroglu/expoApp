@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import { account } from "../lib/appwrite";
+import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
-import { showToast } from "./utils/toast";
 
 export default function VerifyEmailScreen() {
   const router = useRouter();
