@@ -2,19 +2,16 @@ import { useAuth } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Dimensions,
   Image,
   ImageBackground,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
-
-const { width } = Dimensions.get("window");
 
 const SignIn = () => {
   const { session, signin } = useAuth();

@@ -3,7 +3,6 @@ import { useAuth } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Dimensions,
   Image,
   ImageBackground,
   Text,
@@ -15,8 +14,6 @@ import { SignInStyles } from "../assets/styles/signinStyle.js";
 import { validateEmail } from "../utils/emailValidation";
 import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
-
-const { width } = Dimensions.get("window");
 
 const SignUp = () => {
   const { session, signup } = useAuth();

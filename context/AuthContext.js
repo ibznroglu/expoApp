@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { ActivityIndicator, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { account } from "../lib/appwrite";
@@ -9,23 +15,14 @@ const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(false);
   const [user, setUser] = useState(false);
 
-  useEffect(() => {
-    init();
-  }, []);
-
-  const init = async () => {
-    checkAuth();
-  };
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
-      // Session varsa devam
       const responseSession = await account.getSession("current");
       setSession(responseSession);
 
       const responseUser = await account.get();
       setUser(responseUser);
     } catch (error) {
-      // Session yoksa bu normal durum: temizle ve log basma
       setSession(null);
       setUser(null);
 
@@ -44,7 +41,11 @@ const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const signin = async ({ email, password }) => {
     setLoading(true);

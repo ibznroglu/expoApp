@@ -1,6 +1,4 @@
-import { Dimensions, Platform, StyleSheet } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { Platform, StyleSheet } from "react-native";
 
 export const SignInStyles = StyleSheet.create({
   bg: {
@@ -28,15 +26,15 @@ export const SignInStyles = StyleSheet.create({
     elevation: 6,
   },
   signUpButton: {
-  marginTop: 12,
-  alignItems: 'center',
-  paddingVertical: 12,
-},
-signUpText: {
-  color: '#00C851', // Yeşil tonu - farklı olsun
-  fontSize: 16,
-  fontWeight: '600',
-},
+    marginTop: 12,
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  signUpText: {
+    color: "#00C851", // Yeşil tonu - farklı olsun
+    fontSize: 16,
+    fontWeight: "600",
+  },
   buttonDisabled: {
     opacity: 0.6,
   },
@@ -87,32 +85,32 @@ signUpText: {
     letterSpacing: 1,
   },
   forgotPasswordButton: {
-  marginTop: 20,
-  alignItems: 'center',
-  paddingVertical: 12,
-},
-forgotPasswordText: {
-  color: '#FF8C00',
-  fontSize: 16,
-  fontWeight: '600',
-},
-forgotPasswordHeadline: {
-  color: "#fff",
-  fontSize: 32,
-  fontWeight: "bold",
-  textAlign: "center",
-  marginBottom: 8,
-  textShadowColor: "#000",
-  textShadowOffset: { width: 1, height: 2 },
-  textShadowRadius: 6,
-},
-forgotPasswordSubHeadline: {
-  color: "#f0f0f0",
-  fontSize: 16,
-  textAlign: "center",
-  marginBottom: 24,
-  lineHeight: 22,
-},
+    marginTop: 20,
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  forgotPasswordText: {
+    color: "#FF8C00",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  forgotPasswordHeadline: {
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+    textShadowColor: "#000",
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 6,
+  },
+  forgotPasswordSubHeadline: {
+    color: "#f0f0f0",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 22,
+  },
 });
 export const Colors = {
   primary: "#FF8C00",

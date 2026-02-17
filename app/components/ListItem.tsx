@@ -1,8 +1,8 @@
-import Checkbox from 'expo-checkbox'
-import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { config, database } from '../../lib/appwrite'
-import TextCustom from './TextCustom'
+import { Checkbox } from "expo-checkbox";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { config, database } from "../../lib/appwrite";
+import TextCustom from "./TextCustom";
 
 interface Task {
   $id: string;
@@ -20,7 +20,9 @@ const ListItem: React.FC<ListItemProps> = ({ task }) => {
 
   const handleUpdate = async () => {
     try {
-      await database.updateDocument(config.db, config.col.tasks, $id, { complete: !check });
+      await database.updateDocument(config.db, config.col.tasks, $id, {
+        complete: !check,
+      });
       setCheck(!check);
     } catch (error) {
       console.log(error);
@@ -37,9 +39,9 @@ const ListItem: React.FC<ListItemProps> = ({ task }) => {
 
 const styles = StyleSheet.create({
   itemWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 10,
     paddingHorizontal: 15,
     paddingVertical: 5,

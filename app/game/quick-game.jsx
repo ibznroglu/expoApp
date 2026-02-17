@@ -1,6 +1,6 @@
 // app/quick-game.jsx
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { quickGameStyles } from "../../assets/styles/quickGameStyle";
@@ -10,6 +10,7 @@ import TextCustom from "../components/TextCustom";
 
 export default function QuickGame() {
   const router = useRouter();
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -21,24 +22,85 @@ export default function QuickGame() {
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Soruları yükle
-  useEffect(() => {
-    loadQuestions();
-  }, []);
-
-  const loadQuestions = async () => {
+  // ✅ Soruları yükle (stabil)
+  const loadQuestions = useCallback(async () => {
     try {
       setLoading(true);
       const randomQuestions = await getQuestions(10);
       setQuestions(randomQuestions);
     } catch (error) {
       console.error("Sorular yüklenirken hata:", error);
-      const fallbackQuestions = await getQuestions(10);
-      setQuestions(fallbackQuestions);
+      // fallback (aynı kaynaktan geliyorsa bile mevcut davranışı bozmuyor)
+      try {
+        const fallbackQuestions = await getQuestions(10);
+        setQuestions(fallbackQuestions);
+      } catch (e) {
+        console.error("Fallback sorular da yüklenemedi:", e);
+        setQuestions([]);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // ✅ İlk yükleme
+  useEffect(() => {
+    loadQuestions();
+  }, [loadQuestions]);
+
+  // ✅ Sesleri hazırla
+  useEffect(() => {
+    (async () => {
+      try {
+        await initSounds();
+        setSoundsReady(true);
+        console.log("✅ Sounds ready");
+      } catch (e) {
+        console.warn("🔇 initSounds failed:", e);
+        setSoundsReady(false);
+      }
+    })();
+
+    return () => {
+      unloadSounds().catch(() => {});
+    };
+  }, []);
+
+  // ✅ Sonraki soruya geç (stabil)
+  const handleNextQuestion = useCallback(() => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setSelectedAnswer(null);
+      setTimeLeft(15);
+    } else {
+      if (soundsReady) playSound("completed");
+      setGameCompleted(true);
+    }
+  }, [currentQuestionIndex, questions.length, soundsReady]);
+
+  // ✅ Cevap seçimi (stabil)
+  const handleAnswerSelect = useCallback(
+    (answerIndex) => {
+      if (!currentQuestion) return;
+      if (selectedAnswer !== null) return;
+
+      setSelectedAnswer(answerIndex);
+
+      if (answerIndex === currentQuestion.correctAnswer) {
+        setScore((prev) => prev + 10);
+        if (soundsReady) playSound("correct");
+      } else {
+        if (soundsReady) playSound("wrong");
+      }
+
+      setTimeout(() => {
+        handleNextQuestion();
+      }, 1000);
+    },
+    [currentQuestion, selectedAnswer, soundsReady, handleNextQuestion],
+  );
+
+  // ✅ Oyun timer'ı (ESLint deps tam)
   useEffect(() => {
     if (!currentQuestion || gameCompleted || loading) return;
 
@@ -48,45 +110,26 @@ export default function QuickGame() {
           handleNextQuestion();
           return 15;
         }
+
         if (prev <= 6 && soundsReady) {
           playSound("tick");
         }
+
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentQuestionIndex, gameCompleted, loading]);
+  }, [
+    currentQuestion,
+    gameCompleted,
+    loading,
+    soundsReady,
+    handleNextQuestion,
+  ]);
 
-  const handleAnswerSelect = (answerIndex) => {
-    if (selectedAnswer !== null) return;
-
-    setSelectedAnswer(answerIndex);
-
-    if (answerIndex === currentQuestion.correctAnswer) {
-      setScore((prev) => prev + 10);
-      if (soundsReady) playSound("correct");
-    } else {
-      playSound("wrong");
-    }
-
-    setTimeout(() => {
-      handleNextQuestion();
-    }, 1000);
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
-      setSelectedAnswer(null);
-      setTimeLeft(15);
-    } else {
-      playSound("completed");
-      setGameCompleted(true);
-    }
-  };
-
-  const restartGame = async () => {
+  // ✅ Yeniden başlat
+  const restartGame = useCallback(async () => {
     try {
       setLoading(true);
       const randomQuestions = await getQuestions(10);
@@ -101,26 +144,9 @@ export default function QuickGame() {
     } finally {
       setLoading(false);
     }
-  };
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      try {
-        await initSounds();
-        setSoundsReady(true);
-        console.log("✅ Sounds ready");
-      } catch (e) {
-        console.warn("🔇 initSounds failed:", e);
-      }
-    })();
-
-    return () => {
-      // cleanup
-      unloadSounds().catch(() => {});
-      mounted = false;
-    };
   }, []);
+
+  // --- UI STATES ---
 
   if (loading) {
     return (
@@ -209,6 +235,11 @@ export default function QuickGame() {
     );
   }
 
+  // Guard (normalde questions.length===0 yakalıyor ama güvenli)
+  if (!currentQuestion) {
+    return null;
+  }
+
   return (
     <ImageBackground
       source={{
@@ -223,6 +254,7 @@ export default function QuickGame() {
           <View style={quickGameStyles.scoreContainer}>
             <Text style={quickGameStyles.scoreText}>Puan: {score}</Text>
           </View>
+
           <View style={quickGameStyles.timerContainer}>
             <Text
               style={[
@@ -233,6 +265,7 @@ export default function QuickGame() {
               ⏱️ {timeLeft}s
             </Text>
           </View>
+
           <View style={quickGameStyles.questionCounter}>
             <Text style={quickGameStyles.counterText}>
               {currentQuestionIndex + 1}/{questions.length}

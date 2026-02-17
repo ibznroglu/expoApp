@@ -51,7 +51,7 @@ export const playSound = (key) => {
     p.play();
   } catch (e) {
     // sessizce geç (oyunu bozmasın)
-    // console.warn("playSound error", e);
+    console.warn("playSound error", e);
   }
 };
 

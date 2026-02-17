@@ -33,6 +33,7 @@ export default function Index() {
         );
       }
     } catch (error) {
+      console.error("uploadQuestions error:", error);
       showToast.error("Soru yüklenemedi", "Lütfen tekrar deneyin.");
     }
   };
@@ -68,7 +69,7 @@ export default function Index() {
           </TextCustom>
 
           <TextCustom style={homeStyles.subtitle}>
-            Bilgi Arenası'na hazır mısın?
+            Bilgi Arenası&apos;na hazır mısın?
           </TextCustom>
           <TouchableOpacity onPress={handleUpload}>
             <Text>Soruları Yükle</Text>

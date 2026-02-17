@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import { account } from "../lib/appwrite";
@@ -9,9 +9,57 @@ import TextCustom from "./components/TextCustom";
 export default function VerifyEmailScreen() {
   const router = useRouter();
   const { userId, secret } = useLocalSearchParams();
-  const [status, setStatus] = useState("verifying"); // verifying, success, error
+
+  const [status, setStatus] = useState("verifying"); // verifying | success | error
   const [errorMessage, setErrorMessage] = useState("");
 
+  // ✅ verifyEmail stabilize edildi
+  const verifyEmail = useCallback(async () => {
+    try {
+      console.log("📧 E-posta doğrulanıyor...", { userId, secret });
+
+      await account.updateVerification(userId, secret);
+
+      console.log("✅ E-posta başarıyla doğrulandı");
+      setStatus("success");
+
+      showToast.success(
+        "E-posta Doğrulandı!",
+        "Hesabınız başarıyla aktifleştirildi. Giriş yapabilirsiniz.",
+      );
+
+      // 2 saniye sonra giriş ekranına yönlendir
+      setTimeout(() => {
+        router.replace("/signin");
+      }, 2000);
+    } catch (error) {
+      console.error("❌ E-posta doğrulama hatası:", error);
+      setStatus("error");
+
+      let errorMsg = "E-posta doğrulanamadı. Lütfen tekrar deneyin.";
+
+      if (
+        error?.message?.includes("expired") ||
+        error?.message?.includes("süresi")
+      ) {
+        errorMsg =
+          "Doğrulama linkinin süresi dolmuş. Lütfen yeni bir doğrulama e-postası isteyin.";
+      } else if (
+        error?.message?.includes("invalid") ||
+        error?.message?.includes("geçersiz")
+      ) {
+        errorMsg =
+          "Doğrulama linki geçersiz. Lütfen yeni bir doğrulama e-postası isteyin.";
+      } else if (error?.message) {
+        errorMsg = error.message;
+      }
+
+      setErrorMessage(errorMsg);
+      showToast.error("Doğrulama Hatası", errorMsg);
+    }
+  }, [userId, secret, router]);
+
+  // ✅ useEffect dependency doğru ve temiz
   useEffect(() => {
     if (userId && secret) {
       verifyEmail();
@@ -21,51 +69,7 @@ export default function VerifyEmailScreen() {
         "E-posta doğrulama linki geçersiz veya eksik parametreler var.",
       );
     }
-  }, [userId, secret]);
-
-  const verifyEmail = async () => {
-    try {
-      console.log("📧 E-posta doğrulanıyor...", { userId, secret });
-
-      // AppWrite'da e-posta doğrulama
-      await account.updateVerification(userId, secret);
-
-      console.log("✅ E-posta başarıyla doğrulandı");
-      setStatus("success");
-      showToast.success(
-        "E-posta Doğrulandı!",
-        "Hesabınız başarıyla aktifleştirildi. Giriş yapabilirsiniz.",
-      );
-
-      // 2 saniye sonra giriş sayfasına yönlendir
-      setTimeout(() => {
-        router.replace("/signin");
-      }, 2000);
-    } catch (error) {
-      console.error("❌ E-posta doğrulama hatası:", error);
-      setStatus("error");
-
-      let errorMsg = "E-posta doğrulanamadı. Lütfen tekrar deneyin.";
-      if (
-        error.message?.includes("expired") ||
-        error.message?.includes("süresi")
-      ) {
-        errorMsg =
-          "Doğrulama linkinin süresi dolmuş. Lütfen yeni bir doğrulama e-postası isteyin.";
-      } else if (
-        error.message?.includes("invalid") ||
-        error.message?.includes("geçersiz")
-      ) {
-        errorMsg =
-          "Doğrulama linki geçersiz. Lütfen yeni bir doğrulama e-postası isteyin.";
-      } else if (error.message) {
-        errorMsg = error.message;
-      }
-
-      setErrorMessage(errorMsg);
-      showToast.error("Doğrulama Hatası", errorMsg);
-    }
-  };
+  }, [userId, secret, verifyEmail]);
 
   return (
     <View
@@ -115,6 +119,7 @@ export default function VerifyEmailScreen() {
           >
             {errorMessage}
           </TextCustom>
+
           <TouchableOpacity
             style={[SignInStyles.button, { marginTop: 10 }]}
             onPress={() => router.replace("/signin")}
