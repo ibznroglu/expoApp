@@ -55,6 +55,17 @@ export const playSound = (key) => {
   }
 };
 
+export const stopSound = (key) => {
+  try {
+    const p = players[key];
+    if (!p) return;
+    p.pause?.();
+    p.seekTo(0);
+  } catch (e) {
+    console.warn("stopSound error", e);
+  }
+};
+
 export const unloadSounds = async () => {
   try {
     Object.values(players).forEach((p) => {

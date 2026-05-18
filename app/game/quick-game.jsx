@@ -5,7 +5,7 @@ import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { quickGameStyles } from "../../assets/styles/quickGameStyle";
 import { getQuestions } from "../../services/questionService";
-import { initSounds, playSound, unloadSounds } from "../../utils/sound";
+import { initSounds, playSound, stopSound, unloadSounds } from "../../utils/sound";
 import TextCustom from "../components/TextCustom";
 
 export default function QuickGame() {
@@ -85,6 +85,7 @@ export default function QuickGame() {
       if (selectedAnswer !== null) return;
 
       setSelectedAnswer(answerIndex);
+      if (soundsReady) stopSound("tick");
 
       if (answerIndex === currentQuestion.correctAnswer) {
         setScore((prev) => prev + 10);
@@ -102,7 +103,7 @@ export default function QuickGame() {
 
   // ✅ Oyun timer'ı (ESLint deps tam)
   useEffect(() => {
-    if (!currentQuestion || gameCompleted || loading) return;
+    if (!currentQuestion || gameCompleted || loading || selectedAnswer !== null) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -126,6 +127,7 @@ export default function QuickGame() {
     loading,
     soundsReady,
     handleNextQuestion,
+    selectedAnswer,
   ]);
 
   // ✅ Yeniden başlat
