@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Bilgi Arenası" (Knowledge Arena) — a Turkish-language trivia/quiz mobile app built with Expo + React Native. Users authenticate, then play timed quiz games with sound feedback. Backend is Appwrite (self-hosted or cloud).
+"Bilgi Arenasi" (Knowledge Arena) — a Turkish-language trivia/quiz mobile app built with Expo + React Native. Users authenticate, then play timed quiz games with sound feedback. Backend is Appwrite (self-hosted or cloud).
 
 ## Commands
 
@@ -87,16 +87,17 @@ Styled in `utils/toastConfig.js`.
 - **Mixed JS/TS**: newer files use TypeScript; older screens (signin, game) are plain `.jsx`. Follow the existing convention for the file you're editing.
 - **New Architecture** is enabled (`newArchEnabled: true` in `app.json`). Avoid libraries that haven't been migrated.
 
-## Context Yönetimi
+## Context Management
 
-- Context %60'ı geçmeden /compact veya /clear çalıştır
-- Her büyük görev için sırayı takip et: Research → Plan → Implement → Validate
-- Araştırma görevlerini subagent'e devret, ana context'i kirletme
-- Compaction sırasında şunları koru: değiştirilen dosya listesi, aktif plan yolu, çalışan komutlar
+- Run /compact or /clear before context reaches 60%
+- Follow this order for every major task: Research -> Plan -> Implement -> Validate
+- Delegate research tasks to a subagent to keep the main context clean
+- On compaction, preserve: list of changed files, active plan path, running commands
 
-## Kısıtlamalar
+## Constraints
 
-- Aynı hatayı 2 kereden fazla düzeltme — /clear yap, daha iyi prompt yaz
-- node_modules, .expo klasörlerine dokunma
-- .env dosyasına asla yazma
-- Büyük değişiklikten önce git commit al
+- Do not fix the same error more than twice — run /clear and write a better prompt
+- Do not touch node_modules or .expo directories
+- Never write to .env files
+- Commit before making large changes
+- All file names, folder names, variable names, function names, comments, and everything inside code must be in English. No Turkish characters.
