@@ -1,29 +1,30 @@
 ---
 name: research_codebase
-description: Mevcut kodu araştır. KESİNLİKLE kod yazma, sadece oku ve raporla.
+description: Research the existing codebase. DO NOT write code — read and report only.
+disable-model-invocation: true
 ---
 
-Araştırma konusu: $ARGUMENTS
+Research topic: $ARGUMENTS
 
-## Kurallar
-- Bu fazda asla kod yazma veya değiştirme
-- Sadece oku, anla, raporla
+## Rules
+- Never write or modify code in this phase
+- Read, understand, and report only
 
-## Adımlar
+## Steps
 
-1. Araştırma konusuyla ilgili tüm dosyaları bul
-2. Her dosyanın ilgili kısımlarını oku
-3. thoughts/shared/research/ klasöründe daha önce bu konuyla ilgili araştırma var mı kontrol et
+1. Find all files related to the research topic
+2. Read the relevant sections of each file
+3. Check thoughts/shared/research/ for any prior research on this topic
 
-## Çıktı
+## Output
 
-Araştırma bitince şu dosyayı oluştur:
-thoughts/shared/research/YYYY-MM-DD_[konu].md
+When research is complete, create the following file:
+thoughts/shared/research/YYYY-MM-DD_[topic].md
 
-İçerik:
-- Özet (3-5 cümle)
-- İlgili dosyalar (dosya yolu ve ne işe yaradığı)
-- Mevcut mimari kararlar
-- Açık sorular
+Content:
+- Summary (3-5 sentences)
+- Related files (file path and what it does)
+- Existing architectural decisions
+- Open questions
 
-Dosyayı oluşturduktan sonra kullanıcıya bildir.
+Notify the user after the file is created.

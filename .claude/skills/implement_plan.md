@@ -1,35 +1,36 @@
 ---
 name: implement_plan
-description: Planı faz faz uygula. Her fazdan sonra doğrulama çalıştır, manuel doğrulama için dur.
+description: Implement the plan phase by phase. Run validation after each phase and stop for manual review.
+disable-model-invocation: true
 ---
 
-Plan dosyası: $ARGUMENTS
+Plan file: $ARGUMENTS
 
-## Adımlar
+## Steps
 
-1. thoughts/shared/plans/ klasöründe belirtilen plan dosyasını oku
-2. Kullanıcıya hangi fazı uygulamak istediğini sor
-3. Sadece o fazı uygula, planda olmayan dosyalara dokunma
-4. Faz bitince npm run lint çalıştır
-5. Kullanıcıya şunu göster:
+1. Read the specified plan file in thoughts/shared/plans/
+2. Ask the user which phase they want to implement
+3. Implement only that phase — do not touch files not in the plan
+4. Run npm run lint when the phase is done
+5. Show the user the following:
 
-## Faz Tamamlama Raporu
+## Phase Completion Report
 
-✅ Faz [N] tamamlandı
+Phase [N] complete
 
-Değiştirilen dosyalar:
-- [dosya yolu]
+Changed files:
+- [file path]
 
-Doğrulama:
-- [ ] npm run lint: [sonuç]
+Validation:
+- [ ] npm run lint: [result]
 
-Manuel kontrol et:
-- [ ] [kontrol edilmesi gereken şeyler]
+Manual checks:
+- [ ] [things to verify]
 
-Context durumu: [%X]
-%60'ı aştıysa: /compact çalıştır, sonra devam et.
+Context usage: [X%]
+If over 60%: run /compact, then continue.
 
-## Hata Protokolü
+## Error Protocol
 
-- Hata çıkarsa kök nedeni çöz, semptomu bastırma
-- 2 denemede düzelmezse dur, kullanıcıya bildir
+- If an error occurs, fix the root cause — do not suppress the symptom
+- If not resolved in 2 attempts, stop and notify the user

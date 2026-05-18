@@ -1,32 +1,33 @@
 ---
 name: create_plan
-description: Araştırma çıktısından detaylı uygulama planı oluştur. Kod yazmadan önce planı kullanıcıyla iterate et.
+description: Create a detailed implementation plan from research output. Iterate with the user before writing any code.
+disable-model-invocation: true
 ---
 
-Plan konusu: $ARGUMENTS
+Plan topic: $ARGUMENTS
 
-## Adımlar
+## Steps
 
-1. thoughts/shared/research/ klasöründe ilgili araştırma dosyasını bul ve oku
-2. Şu soruları yanıtlayan bir plan taslağı oluştur:
-   - Hangi dosyalar değişecek? (tam yollarıyla)
-   - Kaç fazda yapılacak?
-   - Her fazın başarı kriteri nedir?
-   - Risk ve edge case'ler neler?
-3. Planı kullanıcıya göster ve şunu sor: "Yanlış veya eksik gördüğün bir şey var mı?"
-4. Kullanıcı geri bildirimine göre güncelle, en az 1 iterasyon yap
+1. Find and read the relevant research file in thoughts/shared/research/
+2. Draft a plan that answers the following questions:
+   - Which files will change? (with full paths)
+   - How many phases will it take?
+   - What is the success criterion for each phase?
+   - What are the risks and edge cases?
+3. Show the plan to the user and ask: "Do you see anything missing or incorrect?"
+4. Update based on user feedback — do at least one iteration
 
-## Plan Formatı
+## Plan Format
 
-Her faz için:
-- Ne yapılacak
-- Hangi dosyalar değişecek
-- Doğrulama komutu (npm run lint vb.)
-- Başarı kriteri
+For each phase:
+- What will be done
+- Which files will change
+- Validation command (npm run lint, etc.)
+- Success criterion
 
-## Çıktı
+## Output
 
-Onaylanan planı şuraya kaydet:
-thoughts/shared/plans/YYYY-MM-DD_[konu].md
+Save the approved plan to:
+thoughts/shared/plans/YYYY-MM-DD_[topic].md
 
-Kullanıcıya bildir, implement_plan ile devam edebileceğini söyle.
+Notify the user and tell them they can continue with implement_plan.

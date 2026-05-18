@@ -1,38 +1,39 @@
 ---
 name: validate_plan
-description: Tamamlanan implementasyonu plan ile karşılaştır, doğrulama raporu üret.
+description: Compare the completed implementation against the plan and produce a validation report.
+disable-model-invocation: true
 ---
 
-Plan dosyası: $ARGUMENTS
+Plan file: $ARGUMENTS
 
-## Adımlar
+## Steps
 
-1. thoughts/shared/plans/ klasöründe ilgili plan dosyasını oku
-2. git log --oneline -10 ile son commit'lere bak
-3. npm run lint çalıştır
-4. Değişen dosyaları plan ile karşılaştır
+1. Read the relevant plan file in thoughts/shared/plans/
+2. Check recent commits with git log --oneline -10
+3. Run npm run lint
+4. Compare changed files against the plan
 
-## Rapor Formatı
+## Report Format
 
-thoughts/shared/prs/YYYY-MM-DD_[konu]-validation.md dosyasına kaydet:
+Save to thoughts/shared/prs/YYYY-MM-DD_[topic]-validation.md:
 
 ---
-## Doğrulama Raporu — [tarih]
+## Validation Report — [date]
 
-### ✅ Doğru Uygulananlar
-- [madde]
+### Correctly Implemented
+- [item]
 
-### ⚠️ Plandan Sapmalar
-- [madde] — [açıklama]
+### Deviations from Plan
+- [item] — [explanation]
 
-### ❌ Eksik veya Hatalı
-- [madde]
+### Missing or Incorrect
+- [item]
 
-### Doğrulama
-- [ ] npm run lint: [sonuç]
+### Validation
+- [ ] npm run lint: [result]
 
-### Genel Durum
-[HAZIR / DÜZELTME GEREKİYOR / KRİTİK SORUN]
+### Overall Status
+[READY / NEEDS FIXES / CRITICAL ISSUE]
 ---
 
-Raporu kullanıcıya göster. HAZIR ise commit öner.
+Show the report to the user. If READY, suggest a commit.
