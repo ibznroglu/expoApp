@@ -42,3 +42,6 @@ app-example
 
 # personal notes
 thoughts/personal/
+
+# local Claude Code settings
+.claude/settings.local.json
