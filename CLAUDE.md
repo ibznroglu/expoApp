@@ -101,3 +101,33 @@ Styled in `utils/toastConfig.js`.
 - Never write to .env files
 - Commit before making large changes
 - All file names, folder names, variable names, function names, comments, and everything inside code must be in English. No Turkish characters.
+
+## Compaction Instructions
+
+When compacting, always preserve:
+- Full list of modified files with paths
+- Active plan file path (thoughts/shared/plans/)
+- Failed approaches and why they failed
+- Working test and lint commands
+
+When compacting, drop:
+- Contents of files that were read but not modified
+- Intermediate error messages
+- Exploration output
+
+## Common Failure Patterns — Never Do These
+
+- Kitchen sink session: starting one task, asking something unrelated, returning to first task. Fix: /clear between unrelated tasks.
+- Correcting over and over: if Claude is wrong twice in a row, /clear and write a better prompt.
+- Over-specified CLAUDE.md: if CLAUDE.md grows too long, Claude ignores rules. Keep it under 200 lines, move reference content to skills.
+- Trust-then-verify gap: never ship code without verification. Always run lint or tests.
+- Infinite exploration: never investigate without scope. Use subagents so exploration doesn't consume main context.
+
+## Session Management
+
+- Use /clear between unrelated tasks
+- Use /compact with instructions: /compact Focus on API changes
+- Use /btw for quick questions that don't need to stay in context
+- Use /rewind to restore previous state if something goes wrong
+- Name sessions with /rename for multi-session work
+- Resume with: claude --continue or claude --resume
