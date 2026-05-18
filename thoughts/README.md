@@ -1,16 +1,16 @@
-# thoughts/ — Hafıza Sistemi
+# thoughts/ — Memory System
 
-Bu dizin Claude Code oturumları arasında bilgiyi taşır.
+This directory carries knowledge between Claude Code sessions.
 
-## Yapı
+## Structure
 
-- shared/research/ → araştırma çıktıları (git'e gider)
-- shared/plans/ → uygulama planları (git'e gider)
-- shared/prs/ → doğrulama raporları (git'e gider)
-- personal/notes/ → kişisel notlar (git'e gitmez)
+- shared/research/ -> research outputs (tracked by git)
+- shared/plans/    -> implementation plans (tracked by git)
+- shared/prs/      -> validation reports (tracked by git)
+- personal/notes/  -> personal notes (not tracked by git)
 
-## Kullanım
+## Usage
 
-Yeni oturumda: @thoughts/shared/plans/[plan-dosyası] ile bağlam ver
-Research sonrası: /compact çalıştır
-Faz geçişlerinde: /clear çalıştır
+New session: provide context with @thoughts/shared/plans/[plan-file]
+After research: run /compact
+Between phases: run /clear
