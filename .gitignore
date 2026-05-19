@@ -45,3 +45,6 @@ thoughts/personal/
 
 # local Claude Code settings
 .claude/settings.local.json
+
+# MCP server config (contains API keys)
+.mcp.json
