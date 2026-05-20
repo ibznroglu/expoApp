@@ -112,10 +112,3 @@ export const SignInStyles = StyleSheet.create({
     lineHeight: 22,
   },
 });
-export const Colors = {
-  primary: "#FF8C00",
-  error: "#FF4136",
-  white: "#fff",
-  transparentWhite: "rgba(255,255,255,0.1)",
-  darkOverlay: "rgba(0,0,50,0.5)",
-};
