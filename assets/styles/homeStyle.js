@@ -229,10 +229,11 @@ export const homeStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 6,
+    paddingVertical: 8,
+    paddingTop: 10,
   },
-  navIcon: { fontSize: 24, marginBottom: 2, opacity: 0.5 },
-  navIconActive: { fontSize: 28, marginBottom: 2, opacity: 1 },
+  navIcon: { fontSize: 22, marginBottom: 2 },
+  navIconActive: { fontSize: 26, marginBottom: 2 },
   navLabel: {
     fontFamily: Typography.family.semibold,
     fontSize: 10,
@@ -240,11 +241,10 @@ export const homeStyles = StyleSheet.create({
   },
   navLabelActive: { color: '#FF6B35', fontFamily: Typography.family.extrabold },
   navActiveIndicator: {
-    position: 'absolute',
-    top: -2,
     width: 32,
     height: 4,
     borderRadius: Radius.full,
     backgroundColor: Colors.brand.primary,
+    marginBottom: 4,
   },
 });
