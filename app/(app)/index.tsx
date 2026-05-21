@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { showToast } from '@/utils/toast';
 import { homeStyles } from '@/assets/styles/homeStyle';
@@ -19,7 +20,8 @@ interface GameMode {
 
 interface NavItem {
   id: string;
-  icon: string;
+  iconName: React.ComponentProps<typeof Ionicons>['name'];
+  iconNameActive: React.ComponentProps<typeof Ionicons>['name'];
   label: string;
   onPress: () => void;
 }
@@ -83,10 +85,10 @@ export default function HomeScreen() {
   ];
 
   const NAV_ITEMS: NavItem[] = [
-    { id: 'home', icon: '🏠', label: 'Ana Sayfa', onPress: () => {} },
-    { id: 'play', icon: '🎮', label: 'Oyna', onPress: () => router.push('/game/quick-game') },
-    { id: 'leaderboard', icon: '🏅', label: 'Sıralama', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
-    { id: 'profile', icon: '👤', label: 'Profil', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
+    { id: 'home', iconName: 'home-outline', iconNameActive: 'home', label: 'Ana Sayfa', onPress: () => {} },
+    { id: 'play', iconName: 'game-controller-outline', iconNameActive: 'game-controller', label: 'Oyna', onPress: () => router.push('/game/quick-game') },
+    { id: 'leaderboard', iconName: 'trophy-outline', iconNameActive: 'trophy', label: 'Sıralama', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
+    { id: 'profile', iconName: 'person-outline', iconNameActive: 'person', label: 'Profil', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
   ];
 
   return (
@@ -200,7 +202,11 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             {activeTab === item.id && <View style={homeStyles.navActiveIndicator} />}
-            <Text style={activeTab === item.id ? homeStyles.navIconActive : homeStyles.navIcon}>{item.icon}</Text>
+            <Ionicons
+              name={activeTab === item.id ? item.iconNameActive : item.iconName}
+              size={activeTab === item.id ? 26 : 22}
+              color={activeTab === item.id ? '#FF6B35' : 'rgba(255,255,255,0.4)'}
+            />
             <Text style={[homeStyles.navLabel, activeTab === item.id && homeStyles.navLabelActive]}>
               {item.label}
             </Text>
