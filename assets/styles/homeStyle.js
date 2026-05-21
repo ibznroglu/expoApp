@@ -232,6 +232,7 @@ export const homeStyles = StyleSheet.create({
     paddingTop: Spacing.sm,
   },
   navIcon: { fontSize: 22, marginBottom: 2 },
+  navIconActive: { fontSize: 26, marginBottom: 2 },
   navLabel: {
     fontFamily: Typography.family.semibold,
     fontSize: Typography.size.xs,
