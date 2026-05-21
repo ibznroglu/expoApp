@@ -47,10 +47,10 @@ export const Colors = {
 
   // Game modes
   modes: {
-    quick: { from: '#FF6B35', to: '#FF9500' },
-    friends: { from: '#0D9488', to: '#2DD4BF' },
-    daily: { from: '#7C3AED', to: '#A78BFA' },
-    tournament: { from: '#1D4ED8', to: '#60A5FA' },
+    quick: { from: '#FF4500', to: '#FF8C00' },
+    friends: { from: '#00897B', to: '#00E5CC' },
+    daily: { from: '#6B21D4', to: '#C084FC' },
+    tournament: { from: '#1565C0', to: '#42A5F5' },
     leaderboard: { from: '#B7791F', to: '#FFD700' },
   },
 };

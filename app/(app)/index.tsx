@@ -36,7 +36,7 @@ export default function HomeScreen(): JSX.Element {
   const XP_CURRENT = 340;
   const XP_MAX = 500;
   const LEVEL = 12;
-  const DAYS = ['Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
   const TODAY_INDEX = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
   const xpPercent = (XP_CURRENT / XP_MAX) * 100;
 
@@ -97,7 +97,7 @@ export default function HomeScreen(): JSX.Element {
       />
       <SafeAreaView style={homeStyles.safeArea} edges={['top']}>
         <ScrollView
-          contentContainerStyle={homeStyles.scrollContent}
+          contentContainerStyle={[homeStyles.scrollContent, { paddingBottom: 68 + (insets.bottom || 8) + 16 }]}
           showsVerticalScrollIndicator={false}
         >
           {/* Top Bar */}
@@ -200,7 +200,7 @@ export default function HomeScreen(): JSX.Element {
             activeOpacity={0.7}
           >
             {activeTab === item.id && <View style={homeStyles.navActiveIndicator} />}
-            <Text style={homeStyles.navIcon}>{item.icon}</Text>
+            <Text style={activeTab === item.id ? homeStyles.navIconActive : homeStyles.navIcon}>{item.icon}</Text>
             <Text style={[homeStyles.navLabel, activeTab === item.id && homeStyles.navLabelActive]}>
               {item.label}
             </Text>

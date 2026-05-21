@@ -8,7 +8,7 @@ export const homeStyles = StyleSheet.create({
   // Layout
   container: { flex: 1 },
   safeArea: { flex: 1 },
-  scrollContent: { paddingBottom: 120 },
+  scrollContent: { paddingBottom: 0 },
 
   // Top bar
   topBar: {
@@ -161,10 +161,10 @@ export const homeStyles = StyleSheet.create({
     minHeight: 130,
     ...Shadows.card,
   },
-  modeIcon: { fontSize: 32, marginBottom: Spacing.sm },
+  modeIcon: { fontSize: 36, marginBottom: Spacing.sm },
   modeTitle: {
-    fontFamily: Typography.family.extrabold,
-    fontSize: Typography.size.md,
+    fontFamily: Typography.family.bold,
+    fontSize: 17,
     color: Colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.xs,
@@ -218,7 +218,7 @@ export const homeStyles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 68,
-    backgroundColor: Colors.bg.card,
+    backgroundColor: 'rgba(18,8,46,0.95)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -232,6 +232,7 @@ export const homeStyles = StyleSheet.create({
     paddingTop: Spacing.sm,
   },
   navIcon: { fontSize: 22, marginBottom: 2 },
+  navIconActive: { fontSize: 26, marginBottom: 2 },
   navLabel: {
     fontFamily: Typography.family.semibold,
     fontSize: Typography.size.xs,
