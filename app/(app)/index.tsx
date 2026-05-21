@@ -1,138 +1,212 @@
-// app/index.jsx
-import { useRouter } from "expo-router";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { homeStyles } from "../../assets/styles/homeStyle";
-import { useAuth } from "../../context/AuthContext";
-import { showToast } from "../../utils/toast";
-import { uploadQuestions } from "../../utils/uploadQuestions";
-import TextCustom from "../components/TextCustom";
+import React, { useMemo, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
+import { showToast } from '@/utils/toast';
+import { homeStyles } from '@/assets/styles/homeStyle';
+import { Colors } from '@/constants/theme';
 
-export default function Index() {
-  const { user, signout } = useAuth();
+interface GameMode {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  gradientColors: readonly [string, string];
+  onPress: () => void;
+}
+
+interface NavItem {
+  id: string;
+  icon: string;
+  label: string;
+  onPress: () => void;
+}
+
+export default function HomeScreen(): JSX.Element {
+  const { user } = useAuth();
   const router = useRouter();
-  const handleUpload = async () => {
-    try {
-      const result = await uploadQuestions();
+  const insets = useSafeAreaInsets();
+  const [activeTab, setActiveTab] = useState<string>('home');
 
-      if (result.added === 0) {
-        showToast.info(
-          "Yeni soru yok",
-          "Tüm sorular zaten veritabanında mevcut.",
-        );
-      } else {
-        showToast.success(
-          "Sorular yüklendi",
-          `${result.added} yeni soru eklendi 🎉`,
-        );
-      }
-    } catch (error) {
-      console.error("uploadQuestions error:", error);
-      showToast.error("Soru yüklenemedi", "Lütfen tekrar deneyin.");
-    }
-  };
+  const HARDCODED_COINS = 1250;
+  const HARDCODED_LIVES = 5;
+  const HARDCODED_STREAK = 7;
+  const XP_CURRENT = 340;
+  const XP_MAX = 500;
+  const LEVEL = 12;
+  const DAYS = ['Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const TODAY_INDEX = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+  const xpPercent = (XP_CURRENT / XP_MAX) * 100;
+
+  const avatarInitials = useMemo(() => {
+    if (!user?.name) return '??';
+    const parts = (user.name as string).trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+  }, [user?.name]);
+
+  const GAME_MODES: GameMode[] = [
+    {
+      id: 'quick',
+      title: 'Hızlı Oyun',
+      subtitle: '10 Soru · 15 sn',
+      icon: '⚡',
+      gradientColors: [Colors.modes.quick.from, Colors.modes.quick.to],
+      onPress: () => router.push('/game/quick-game'),
+    },
+    {
+      id: 'friends',
+      title: 'Arkadaşlar',
+      subtitle: 'Arkadaşlarla Oyna',
+      icon: '👥',
+      gradientColors: [Colors.modes.friends.from, Colors.modes.friends.to],
+      onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
+    },
+    {
+      id: 'daily',
+      title: 'Günlük Görev',
+      subtitle: 'Günlük Mücadele',
+      icon: '📅',
+      gradientColors: [Colors.modes.daily.from, Colors.modes.daily.to],
+      onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
+    },
+    {
+      id: 'tournament',
+      title: 'Turnuva',
+      subtitle: 'Turnuvaya Katıl',
+      icon: '🏆',
+      gradientColors: [Colors.modes.tournament.from, Colors.modes.tournament.to],
+      onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
+    },
+  ];
+
+  const NAV_ITEMS: NavItem[] = [
+    { id: 'home', icon: '🏠', label: 'Ana Sayfa', onPress: () => {} },
+    { id: 'play', icon: '🎮', label: 'Oyna', onPress: () => router.push('/game/quick-game') },
+    { id: 'leaderboard', icon: '🏅', label: 'Sıralama', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
+    { id: 'profile', icon: '👤', label: 'Profil', onPress: () => showToast.info('Yakında', 'Bu özellik yakında geliyor!') },
+  ];
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      }}
-      style={homeStyles.bg}
-    >
-      <View style={homeStyles.overlay} />
-
-      <SafeAreaView style={homeStyles.safeArea}>
-        {/* Header */}
-        <View style={homeStyles.header}>
-          <TouchableOpacity style={homeStyles.logoutButton} onPress={signout}>
-            <Text style={homeStyles.logoutButtonText}>Çıkış Yap</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Main Content */}
-        <View style={homeStyles.container}>
-          <Image
-            source={{
-              uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-            }}
-            style={homeStyles.logo}
-          />
-
-          <TextCustom style={homeStyles.welcomeText} fontSize={28}>
-            Hoş Geldin {user.name}!
-          </TextCustom>
-
-          <TextCustom style={homeStyles.subtitle}>
-            Bilgi Arenası&apos;na hazır mısın?
-          </TextCustom>
-          <TouchableOpacity onPress={handleUpload}>
-            <Text>Soruları Yükle</Text>
-          </TouchableOpacity>
-
-          {/* Action Cards */}
-          <View style={homeStyles.cardsContainer}>
-            {/* Hızlı Oyun Kartı */}
-            <TouchableOpacity
-              style={[homeStyles.card, homeStyles.quickGameCard]}
-              onPress={() => router.push("/game/quick-game")}
-            >
-              <Text style={homeStyles.cardIcon}>⚡</Text>
-              <Text style={homeStyles.cardTitle}>Hızlı Oyun</Text>
-              <Text style={homeStyles.cardDescription}>
-                Rastgele sorularla tek başına yarış
-              </Text>
-            </TouchableOpacity>
-
-            {/* Arkadaşla Oyna Kartı */}
-            <TouchableOpacity
-              style={[homeStyles.card, homeStyles.friendGameCard]}
-            >
-              <Text style={homeStyles.cardIcon}>👥</Text>
-              <Text style={homeStyles.cardTitle}>Arkadaşla Oyna</Text>
-              <Text style={homeStyles.cardDescription}>
-                Arkadaşını davet et ve bilgini test et
-              </Text>
-            </TouchableOpacity>
-
-            {/* Turnuva Kartı */}
-            <TouchableOpacity
-              style={[homeStyles.card, homeStyles.tournamentCard]}
-            >
-              <Text style={homeStyles.cardIcon}>🏆</Text>
-              <Text style={homeStyles.cardTitle}>Turnuva</Text>
-              <Text style={homeStyles.cardDescription}>
-                Çok oyunculu turnuvalara katıl
-              </Text>
-            </TouchableOpacity>
-
-            {/* Profil Kartı */}
-            <TouchableOpacity style={[homeStyles.card, homeStyles.profileCard]}>
-              <Text style={homeStyles.cardIcon}>📊</Text>
-              <Text style={homeStyles.cardTitle}>İstatistiklerim</Text>
-              <Text style={homeStyles.cardDescription}>
-                Başarılarını ve istatistiklerini gör
-              </Text>
-            </TouchableOpacity>
+    <View style={homeStyles.container}>
+      <LinearGradient
+        colors={[Colors.bg.primary, Colors.bg.secondary, Colors.bg.card]}
+        style={StyleSheet.absoluteFill}
+      />
+      <SafeAreaView style={homeStyles.safeArea} edges={['top']}>
+        <ScrollView
+          contentContainerStyle={homeStyles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Top Bar */}
+          <View style={homeStyles.topBar}>
+            <View style={homeStyles.topBarSlot}>
+              <Text style={homeStyles.topBarIcon}>🪙</Text>
+              <Text style={homeStyles.topBarValue}>{HARDCODED_COINS.toLocaleString('tr-TR')}</Text>
+            </View>
+            <View style={homeStyles.topBarSlot}>
+              <Text style={homeStyles.topBarIcon}>❤️</Text>
+              <Text style={homeStyles.topBarLives}>{HARDCODED_LIVES}</Text>
+            </View>
           </View>
 
-          {/* Daily Challenge */}
-          <View style={homeStyles.dailyChallenge}>
-            <Text style={homeStyles.challengeTitle}>Günlük Mücadele</Text>
-            <Text style={homeStyles.challengeDescription}>
-              Bugün 10 soruyu doğru cevapla ve 100 puan kazan!
+          {/* User Card */}
+          <View style={homeStyles.userCard}>
+            <View style={homeStyles.avatarCircle}>
+              <Text style={homeStyles.avatarInitials}>{avatarInitials}</Text>
+            </View>
+            <View style={homeStyles.userInfo}>
+              <View style={homeStyles.levelBadge}>
+                <Text style={homeStyles.levelBadgeText}>Seviye {LEVEL}</Text>
+              </View>
+              <Text style={homeStyles.userName}>{user?.name ?? 'Oyuncu'}</Text>
+              <View style={homeStyles.xpBarTrack}>
+                <View style={[homeStyles.xpBarFill, { width: `${xpPercent}%` as `${number}%` }]} />
+              </View>
+              <Text style={homeStyles.xpLabel}>{XP_CURRENT} / {XP_MAX} XP</Text>
+            </View>
+          </View>
+
+          {/* Streak Card */}
+          <View style={homeStyles.streakCard}>
+            <View style={homeStyles.streakHeader}>
+              <Text style={homeStyles.streakIcon}>🔥</Text>
+              <Text style={homeStyles.streakTitle}>{HARDCODED_STREAK} günlük seri!</Text>
+            </View>
+            <View style={homeStyles.streakDaysRow}>
+              {DAYS.map((day, index) => (
+                <View key={day} style={{ alignItems: 'center' as const, gap: 4 }}>
+                  <View style={[homeStyles.dayCircle, index <= TODAY_INDEX && homeStyles.dayCircleActive]}>
+                    <Text style={{ fontSize: 10 }}>{index <= TODAY_INDEX ? '✓' : ' '}</Text>
+                  </View>
+                  <Text style={[homeStyles.dayLabel, index <= TODAY_INDEX && homeStyles.dayLabelActive]}>
+                    {day}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Game Mode Grid */}
+          <Text style={homeStyles.sectionTitle}>Oyun Modları</Text>
+          <View style={homeStyles.gridContainer}>
+            {GAME_MODES.map((mode) => (
+              <TouchableOpacity key={mode.id} onPress={mode.onPress} activeOpacity={0.85}>
+                <LinearGradient
+                  colors={mode.gradientColors}
+                  style={homeStyles.modeCard}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={homeStyles.modeIcon}>{mode.icon}</Text>
+                  <Text style={homeStyles.modeTitle}>{mode.title}</Text>
+                  <Text style={homeStyles.modeSubtitle}>{mode.subtitle}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Daily Challenge Banner */}
+          <LinearGradient
+            colors={[Colors.modes.daily.from, Colors.modes.daily.to]}
+            style={homeStyles.challengeBanner}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <Text style={homeStyles.challengeBannerTitle}>Günün Mücadelesi</Text>
+            <Text style={homeStyles.challengeBannerDesc}>
+              Bugünkü soruları çöz, bonus XP kazan!
             </Text>
-            <TouchableOpacity style={homeStyles.challengeButton}>
-              <Text style={homeStyles.challengeButtonText}>Başla</Text>
+            <TouchableOpacity
+              style={homeStyles.challengeCtaButton}
+              onPress={() => showToast.info('Yakında', 'Bu özellik yakında geliyor!')}
+              activeOpacity={0.85}
+            >
+              <Text style={homeStyles.challengeCtaText}>Başla →</Text>
             </TouchableOpacity>
-          </View>
-        </View>
+          </LinearGradient>
+        </ScrollView>
       </SafeAreaView>
-    </ImageBackground>
+
+      {/* Bottom Nav — pinned outside ScrollView */}
+      <View style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}>
+        {NAV_ITEMS.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={homeStyles.navItem}
+            onPress={() => { setActiveTab(item.id); item.onPress(); }}
+            activeOpacity={0.7}
+          >
+            {activeTab === item.id && <View style={homeStyles.navActiveIndicator} />}
+            <Text style={homeStyles.navIcon}>{item.icon}</Text>
+            <Text style={[homeStyles.navLabel, activeTab === item.id && homeStyles.navLabelActive]}>
+              {item.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
   );
 }

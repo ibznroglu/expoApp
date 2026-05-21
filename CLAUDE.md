@@ -100,7 +100,7 @@ Styled in `utils/toastConfig.js`.
 - Do not touch node_modules or .expo directories
 - Never write to .env files
 - Commit before making large changes
-- All file names, folder names, variable names, function names, comments, and everything inside code must be in English. No Turkish characters.
+- All file names, folder names, variable names, function names, and code comments must be in English. No Turkish characters in identifiers or comments. User-facing string literals (UI text, toast messages, labels) must use correct Turkish with proper characters (ş, ğ, ı, ö, ü, ç etc.).
 
 ## Compaction Instructions
 
