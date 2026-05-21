@@ -53,7 +53,7 @@ export default function HomeScreen() {
       title: 'Hızlı Oyun',
       subtitle: '10 Soru · 15 sn',
       icon: '⚡',
-      gradientColors: [Colors.modes.quick.from, Colors.modes.quick.to],
+      gradientColors: ['#FF4500', '#FF8C00'] as const,
       onPress: () => router.push('/game/quick-game'),
     },
     {
@@ -61,7 +61,7 @@ export default function HomeScreen() {
       title: 'Arkadaşlar',
       subtitle: 'Arkadaşlarla Oyna',
       icon: '👥',
-      gradientColors: [Colors.modes.friends.from, Colors.modes.friends.to],
+      gradientColors: ['#00897B', '#00E5CC'] as const,
       onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
     },
     {
@@ -69,7 +69,7 @@ export default function HomeScreen() {
       title: 'Günlük Görev',
       subtitle: 'Günlük Mücadele',
       icon: '📅',
-      gradientColors: [Colors.modes.daily.from, Colors.modes.daily.to],
+      gradientColors: ['#6B21D4', '#C084FC'] as const,
       onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
     },
     {
@@ -77,7 +77,7 @@ export default function HomeScreen() {
       title: 'Turnuva',
       subtitle: 'Turnuvaya Katıl',
       icon: '🏆',
-      gradientColors: [Colors.modes.tournament.from, Colors.modes.tournament.to],
+      gradientColors: ['#1565C0', '#42A5F5'] as const,
       onPress: () => showToast.info('Yakında', 'Bu mod yakında geliyor!'),
     },
   ];
