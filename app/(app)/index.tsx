@@ -24,7 +24,7 @@ interface NavItem {
   onPress: () => void;
 }
 
-export default function HomeScreen(): JSX.Element {
+export default function HomeScreen() {
   const { user } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
