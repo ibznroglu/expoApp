@@ -6,6 +6,7 @@
   "permissions": {
     "allow": [
       "Bash(npm run lint)",
+      "Bash(npx tsc --noEmit *)",
       "Bash(npm start)",
       "Bash(git status)",
       "Bash(git log *)",
@@ -22,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "npm run lint 2>&1 | tail -5"
+            "command": "npm run lint 2>&1 | tail -5 && npx tsc --noEmit 2>&1 | tail -5"
           }
         ]
       }
