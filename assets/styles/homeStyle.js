@@ -146,7 +146,7 @@ export const homeStyles = StyleSheet.create({
   gameModeSubtitle: {
     fontFamily: Typography.family.regular,
     fontSize: Typography.size.xs,
-    color: 'rgba(255,255,255,0.75)',
+    color: 'rgba(255,255,255,0.75)', // subtitle on gradient card — no theme token
     marginBottom: Spacing.sm,
   },
   gameModePlayBtn: {
@@ -175,7 +175,7 @@ export const homeStyles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#FFFFFF', // light theme nav — no theme token
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.08)',
+    borderTopColor: 'rgba(0,0,0,0.08)', // nav border on light bg — no theme token
     paddingTop: Spacing.sm,
   },
   navItem: {
