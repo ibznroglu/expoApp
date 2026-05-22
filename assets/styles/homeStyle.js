@@ -1,14 +1,10 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors, Spacing, Radius, Typography, Shadows } from '@/constants/theme';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2;
 
 export const homeStyles = StyleSheet.create({
   // Layout
   container: { flex: 1 },
   safeArea: { flex: 1 },
-  scrollContent: { paddingBottom: 120 },
 
   // Top bar
   topBar: {
@@ -17,38 +13,13 @@ export const homeStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.sm,
-    paddingBottom: Spacing.md,
+    paddingBottom: Spacing.xs,
   },
-  topBarSlot: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  topBarIcon: { fontSize: Typography.size.xl },
-  topBarValue: {
-    fontFamily: Typography.family.black,
-    fontSize: Typography.size.lg,
-    color: Colors.accent.gold,
-  },
-  topBarLives: {
-    fontFamily: Typography.family.black,
-    fontSize: Typography.size.lg,
-    color: Colors.wrong,
-  },
-
-  // User card
-  userCard: {
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
-    backgroundColor: Colors.bg.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.border.default,
-    ...Shadows.card,
-  },
+  topBarLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  topBarRight: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   avatarCircle: {
-    width: 52,
-    height: 52,
+    width: 38,
+    height: 38,
     borderRadius: Radius.full,
     backgroundColor: Colors.brand.primary,
     alignItems: 'center',
@@ -56,37 +27,53 @@ export const homeStyles = StyleSheet.create({
   },
   avatarInitials: {
     fontFamily: Typography.family.black,
-    fontSize: Typography.size.xl,
+    fontSize: Typography.size.sm,
     color: Colors.text.primary,
   },
-  userInfo: { flex: 1 },
-  userName: {
+  usernameText: {
     fontFamily: Typography.family.bold,
-    fontSize: Typography.size.lg,
+    fontSize: Typography.size.sm,
     color: Colors.text.primary,
-    marginBottom: Spacing.xs,
+    maxWidth: 90,
   },
   levelBadge: {
-    alignSelf: 'flex-start',
     backgroundColor: Colors.accent.purple,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.xs + 2,
     paddingVertical: 2,
     borderRadius: Radius.full,
-    marginBottom: Spacing.xs,
   },
   levelBadgeText: {
     fontFamily: Typography.family.bold,
     fontSize: Typography.size.xs,
     color: Colors.text.primary,
   },
+  statChip: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  statChipValueGold: {
+    fontFamily: Typography.family.black,
+    fontSize: Typography.size.sm,
+    color: Colors.accent.gold,
+  },
+  statChipValueRed: {
+    fontFamily: Typography.family.black,
+    fontSize: Typography.size.sm,
+    color: Colors.wrong,
+  },
+  statChipValueFire: {
+    fontFamily: Typography.family.black,
+    fontSize: Typography.size.sm,
+    color: Colors.brand.secondary,
+  },
+
+  // XP bar
+  xpRow: { paddingHorizontal: Spacing.lg, paddingBottom: Spacing.sm, gap: 4 },
   xpBarTrack: {
-    height: 6,
+    height: 5,
     backgroundColor: Colors.border.white,
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
   xpBarFill: {
-    height: 6,
+    height: 5,
     backgroundColor: Colors.brand.primary,
     borderRadius: Radius.full,
   },
@@ -94,145 +81,106 @@ export const homeStyles = StyleSheet.create({
     fontFamily: Typography.family.regular,
     fontSize: Typography.size.xs,
     color: Colors.text.muted,
-    marginTop: 3,
+    textAlign: 'right',
   },
 
-  // Streak card
-  streakCard: {
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
+  // Mode tabs
+  tabRow: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    marginTop: Spacing.sm,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.full,
+    alignItems: 'center',
     backgroundColor: Colors.bg.surface,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border.default,
-    ...Shadows.card,
   },
-  streakHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    marginBottom: Spacing.md,
+  tabButtonActive: {
+    backgroundColor: Colors.brand.primary,
+    borderColor: Colors.brand.primary,
   },
-  streakIcon: { fontSize: Typography.size.xl },
-  streakTitle: {
-    fontFamily: Typography.family.extrabold,
-    fontSize: Typography.size.lg,
-    color: Colors.text.primary,
-  },
-  streakDaysRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  dayCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.bg.elevated,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayCircleActive: { backgroundColor: Colors.brand.primary, ...Shadows.button },
-  dayLabel: {
-    fontFamily: Typography.family.semibold,
-    fontSize: Typography.size.xs,
+  tabLabel: {
+    fontFamily: Typography.family.bold,
+    fontSize: Typography.size.sm,
     color: Colors.text.muted,
   },
-  dayLabelActive: { color: Colors.text.primary },
+  tabLabelActive: { color: Colors.text.primary },
 
-  // Game mode grid
-  sectionTitle: {
-    fontFamily: Typography.family.extrabold,
-    fontSize: Typography.size.lg,
-    color: Colors.text.primary,
+  // Play button
+  playWrapper: {
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
+    borderRadius: Radius.xl,
+    ...Shadows.button,
   },
-  gridContainer: {
+  playGradient: {
+    height: 110,
+    minHeight: 90,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: Spacing.lg,
-    gap: Spacing.md,
-    marginBottom: Spacing.md,
-  },
-  modeCard: {
-    width: CARD_WIDTH,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 130,
-    ...Shadows.card,
+    gap: Spacing.md,
   },
-  modeIcon: { fontSize: 32, marginBottom: Spacing.sm },
-  modeTitle: {
-    fontFamily: Typography.family.extrabold,
-    fontSize: Typography.size.md,
+  playLabel: {
+    fontFamily: Typography.family.black,
+    fontSize: Typography.size.xxxl,
     color: Colors.text.primary,
-    textAlign: 'center',
-    marginBottom: Spacing.xs,
-  },
-  modeSubtitle: {
-    fontFamily: Typography.family.regular,
-    fontSize: Typography.size.xs,
-    color: 'rgba(255,255,255,0.8)',
-    textAlign: 'center',
+    letterSpacing: 3,
   },
 
-  // Daily challenge banner
-  challengeBanner: {
-    marginHorizontal: Spacing.lg,
-    borderRadius: Radius.lg,
-    padding: Spacing.xl,
-    marginBottom: Spacing.md,
-    ...Shadows.glow,
+  // Stats row
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
+    marginBottom: Spacing.lg,
   },
-  challengeBannerTitle: {
+  statCard: {
+    flex: 1,
+    backgroundColor: Colors.bg.surface,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border.default,
+  },
+  statCardValue: {
     fontFamily: Typography.family.black,
     fontSize: Typography.size.xl,
     color: Colors.text.primary,
-    marginBottom: Spacing.xs,
+    marginBottom: 2,
   },
-  challengeBannerDesc: {
+  statCardLabel: {
     fontFamily: Typography.family.regular,
-    fontSize: Typography.size.md,
-    color: 'rgba(255,255,255,0.85)',
-    marginBottom: Spacing.lg,
-    lineHeight: 22,
-  },
-  challengeCtaButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: Colors.text.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.sm,
-    borderRadius: Radius.full,
-    ...Shadows.button,
-  },
-  challengeCtaText: {
-    fontFamily: Typography.family.extrabold,
-    fontSize: Typography.size.md,
-    color: Colors.modes.daily.from,
+    fontSize: Typography.size.xs,
+    color: Colors.text.muted,
+    textAlign: 'center',
   },
 
   // Bottom nav
   bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 68,
-    backgroundColor: Colors.bg.card,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+    backgroundColor: Colors.bg.card,
     borderTopWidth: 1,
     borderTopColor: Colors.border.default,
+    paddingTop: Spacing.sm,
   },
   navItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Spacing.sm,
+    gap: 3,
+    paddingBottom: Spacing.sm,
   },
-  navIcon: { fontSize: 22, marginBottom: 2 },
-  navIconActive: { fontSize: 26, marginBottom: 2 },
   navLabel: {
     fontFamily: Typography.family.semibold,
     fontSize: Typography.size.xs,
@@ -242,7 +190,7 @@ export const homeStyles = StyleSheet.create({
   navActiveIndicator: {
     position: 'absolute',
     top: 0,
-    width: 24,
+    width: 28,
     height: 3,
     borderRadius: Radius.full,
     backgroundColor: Colors.brand.primary,
