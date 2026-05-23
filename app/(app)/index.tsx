@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +16,8 @@ const QUICK_GRADIENT = ['#FF6B35', '#FFB800'] as const;
 const FRIENDS_GRADIENT = ['#1565C0', '#42A5F5'] as const;
 const NAV_GRADIENT = ['#3D1580', '#1A0A4A'] as const;
 const DAY_REWARDS = [50, 100, 140, 170, 190, 200, 300];
+const NAV_WAVE_H = 16;
+const SCREEN_W = Dimensions.get('window').width;
 
 type NavId = 'home' | 'leaderboard' | 'quests' | 'profile';
 
@@ -35,6 +38,17 @@ interface GameMode {
   gradientColors: readonly [string, string];
   buttonLabel: string;
   onPress: () => void;
+}
+
+function NavWave() {
+  const w = SCREEN_W;
+  const h = NAV_WAVE_H;
+  const d = `M0,${h} Q${w * 0.25},0 ${w * 0.5},${h * 0.5} Q${w * 0.75},${h} ${w},${h * 0.3} L${w},${h} Z`;
+  return (
+    <Svg width={w} height={h} style={{ position: 'absolute', top: -(h - 1), left: 0 }}>
+      <Path d={d} fill="#3D1580" />
+    </Svg>
+  );
 }
 
 interface RewardCellProps {
@@ -232,7 +246,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Daily reward pulse button */}
-          <View style={{ alignItems: 'center', marginTop: Spacing.md }}>
+          <View style={{ alignItems: 'flex-start', marginLeft: 24, marginTop: Spacing.md }}>
             <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
               <Animated.View
                 style={[
@@ -247,34 +261,44 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Bottom nav — dark gradient */}
-        <LinearGradient
-          colors={NAV_GRADIENT}
-          style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        >
-          {NAV_ITEMS.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={homeStyles.navItem}
-              onPress={() => { setActiveNav(item.id); item.onPress(); }}
-              activeOpacity={0.7}
-            >
-              {activeNav === item.id && (
-                <View style={[homeStyles.navActiveIndicator, { backgroundColor: item.activeColor }]} />
-              )}
-              <Ionicons
-                name={activeNav === item.id ? item.iconNameActive : item.iconName}
-                size={activeNav === item.id ? 30 : 26}
-                color={activeNav === item.id ? item.activeColor : 'rgba(255,255,255,0.4)'}
-              />
-              <Text style={[homeStyles.navLabel, activeNav === item.id && homeStyles.navLabelActive, activeNav === item.id && { color: item.activeColor }]}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </LinearGradient>
+        {/* Bottom nav — dark gradient with wave top edge */}
+        <View style={{ overflow: 'visible' }}>
+          <LinearGradient
+            colors={NAV_GRADIENT}
+            style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          >
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeNav === item.id;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={homeStyles.navItem}
+                  onPress={() => { setActiveNav(item.id); item.onPress(); }}
+                  activeOpacity={0.7}
+                >
+                  <View
+                    style={[
+                      homeStyles.navIconContainer,
+                      isActive && { backgroundColor: `${item.activeColor}30` },
+                    ]}
+                  >
+                    <Ionicons
+                      name={isActive ? item.iconNameActive : item.iconName}
+                      size={isActive ? 30 : 26}
+                      color={isActive ? item.activeColor : 'rgba(255,255,255,0.4)'}
+                    />
+                  </View>
+                  <Text style={[homeStyles.navLabel, isActive && homeStyles.navLabelActive, isActive && { color: item.activeColor }]}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </LinearGradient>
+          <NavWave />
+        </View>
 
         <Modal
           visible={rewardModalVisible}
