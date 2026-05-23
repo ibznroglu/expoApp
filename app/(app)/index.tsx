@@ -13,7 +13,7 @@ import { Colors, Spacing } from '@/constants/theme';
 const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'] as const;
 const QUICK_GRADIENT = ['#FF6B35', '#FFB800'] as const;
 const FRIENDS_GRADIENT = ['#1565C0', '#42A5F5'] as const;
-const NAV_GRADIENT = ['#0D0527', '#1A0A4A'] as const;
+const NAV_GRADIENT = ['#3D1580', '#1A0A4A'] as const;
 const DAY_REWARDS = [50, 100, 140, 170, 190, 200, 300];
 
 type NavId = 'home' | 'leaderboard' | 'quests' | 'profile';
@@ -231,26 +231,20 @@ export default function HomeScreen() {
             ))}
           </View>
 
-          {/* Daily reward card */}
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => setRewardModalVisible(true)}
-            style={{ marginHorizontal: Spacing.lg, marginTop: Spacing.md }}
-          >
-            <View style={homeStyles.rewardCard}>
-              <Text style={homeStyles.rewardCardEmoji}>🎁</Text>
-              <View style={homeStyles.rewardCardText}>
-                <Text style={homeStyles.rewardCardTitle}>Günlük Ödül</Text>
-                <Text style={homeStyles.rewardCardSubtitle}>Bugün oyna, ödülünü kazan!</Text>
-              </View>
+          {/* Daily reward pulse button */}
+          <View style={{ alignItems: 'center', marginTop: Spacing.md }}>
+            <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
               <Animated.View
                 style={[
-                  StyleSheet.absoluteFillObject,
-                  { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, opacity: shimmerAnim },
+                  homeStyles.rewardPulse,
+                  { opacity: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1.0] }) },
                 ]}
-              />
-            </View>
-          </TouchableOpacity>
+              >
+                <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
+                <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Bottom nav — dark gradient */}

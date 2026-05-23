@@ -167,8 +167,6 @@ export const homeStyles = StyleSheet.create({
   bottomNav: {
     flexDirection: 'row',
     minHeight: 72,
-    borderTopWidth: 1.5,
-    borderTopColor: 'rgba(155,89,245,0.5)',
     paddingTop: Spacing.sm,
   },
   navItem: {
@@ -194,34 +192,22 @@ export const homeStyles = StyleSheet.create({
     borderRadius: Radius.full,
   },
 
-  // Daily reward card (horizontal banner)
-  rewardCard: {
-    flexDirection: 'row',
+  // Daily reward pulse button
+  rewardPulse: {
+    borderRadius: 999,
+    borderWidth: 2.5,
+    borderColor: 'rgba(255,165,0,0.8)',
+    padding: 16,
     alignItems: 'center',
-    gap: Spacing.md,
-    backgroundColor: 'rgba(155,89,245,0.2)',
-    borderWidth: 1,
-    borderColor: 'rgba(155,89,245,0.4)',
-    borderRadius: 16,
-    padding: Spacing.md,
-    overflow: 'hidden',
+    gap: 4,
   },
-  rewardCardEmoji: {
+  rewardPulseEmoji: {
     fontSize: 52,
   },
-  rewardCardText: {
-    flex: 1,
-  },
-  rewardCardTitle: {
+  rewardPulseLabel: {
     fontFamily: Typography.family.bold,
-    fontSize: 18,
+    fontSize: 14,
     color: Colors.text.primary,
-  },
-  rewardCardSubtitle: {
-    fontFamily: Typography.family.regular,
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 2,
   },
 
   // Daily reward modal
