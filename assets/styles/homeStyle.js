@@ -3,9 +3,14 @@ import { Colors, Spacing, Radius, Typography, Shadows } from '@/constants/theme'
 
 export const homeStyles = StyleSheet.create({
   // Layout
-  container: { flex: 1, backgroundColor: '#F8F0FF' }, // no light-bg token in theme
+  container: { flex: 1, backgroundColor: '#0D0527' }, // match dark gradient bottom
   safeArea: { flex: 1 },
-  scrollContent: { paddingBottom: 16 },
+  mainContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
+  },
 
   // User card
   userCard: {
@@ -32,9 +37,9 @@ export const homeStyles = StyleSheet.create({
   },
   userNameText: {
     fontFamily: Typography.family.bold,
-    fontSize: Typography.size.md,
+    fontSize: Typography.size.xl,
     color: Colors.text.primary,
-    maxWidth: 120,
+    maxWidth: 130,
   },
   levelBadge: {
     flexDirection: 'row',
@@ -49,7 +54,7 @@ export const homeStyles = StyleSheet.create({
   },
   levelBadgeText: {
     fontFamily: Typography.family.bold,
-    fontSize: Typography.size.xs,
+    fontSize: Typography.size.sm,
     color: Colors.text.primary,
   },
   xpRow: { marginTop: Spacing.sm, gap: 4 },
@@ -84,16 +89,16 @@ export const homeStyles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: Spacing.sm,
     alignItems: 'center',
-    minWidth: 64,
+    minWidth: 72,
   },
   statBoxValue: {
     fontFamily: Typography.family.black,
-    fontSize: Typography.size.sm,
+    fontSize: Typography.size.xxl,
     color: Colors.text.primary,
   },
   statBoxLabel: {
     fontFamily: Typography.family.regular,
-    fontSize: Typography.size.xs,
+    fontSize: Typography.size.sm,
     color: 'rgba(255,255,255,0.6)',
   },
 
@@ -101,21 +106,16 @@ export const homeStyles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     paddingHorizontal: Spacing.lg,
-    marginTop: Spacing.xl,
+    marginTop: Spacing.md,
     marginBottom: Spacing.md,
   },
   sectionHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   sectionHeaderTitle: {
     fontFamily: Typography.family.bold,
     fontSize: Typography.size.lg,
-    color: '#1A1035', // dark text on light bg — no theme token
-  },
-  sectionHeaderLink: {
-    fontFamily: Typography.family.semibold,
-    fontSize: Typography.size.sm,
-    color: Colors.accent.purple,
+    color: Colors.text.primary,
   },
 
   // Game mode grid
@@ -198,5 +198,124 @@ export const homeStyles = StyleSheet.create({
     height: 3,
     borderRadius: Radius.full,
     backgroundColor: Colors.accent.purple,
+  },
+
+  // Daily reward banner
+  rewardBanner: {
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    overflow: 'hidden',
+    minHeight: 64,
+  },
+  rewardBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    flex: 1,
+  },
+  rewardBannerIcon: {
+    fontSize: 32,
+  },
+  rewardBannerTitle: {
+    fontFamily: Typography.family.bold,
+    fontSize: Typography.size.lg,
+    color: Colors.text.primary,
+  },
+  rewardBannerSubtitle: {
+    fontFamily: Typography.family.regular,
+    fontSize: Typography.size.xs,
+    color: 'rgba(255,255,255,0.85)', // near-white on gold bg — no theme token
+  },
+  rewardBannerGlow: {
+    position: 'absolute',
+    right: 16,
+    width: 48,
+    height: 48,
+    borderRadius: Radius.full,
+    backgroundColor: 'rgba(255,255,255,0.3)', // pulsing white circle — no theme token
+  },
+
+  // Daily reward modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)', // dark overlay — no theme token
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  modalCard: {
+    backgroundColor: '#FFFFFF', // white card — no theme token (theme has only dark surfaces)
+    borderRadius: Radius.lg,
+    padding: Spacing.xl,
+    width: '100%',
+    position: 'relative',
+  },
+  modalCloseBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accent.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  modalCloseBtnText: {
+    fontSize: Typography.size.xl,
+    color: Colors.text.primary,
+    lineHeight: 22,
+  },
+  modalTitle: {
+    fontFamily: Typography.family.black,
+    fontSize: Typography.size.xl,
+    color: Colors.bg.primary, // '#12082E' dark purple text on white card
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+    marginTop: Spacing.sm,
+  },
+  rewardGrid: {
+    gap: Spacing.sm,
+  },
+  rewardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.sm,
+  },
+  rewardCell: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: Colors.bg.secondary,
+    borderRadius: Radius.md,
+    padding: Spacing.sm,
+    gap: 4,
+  },
+  rewardCellToday: {
+    backgroundColor: Colors.accent.purple,
+    transform: [{ scale: 1.05 }],
+    ...Shadows.glow,
+  },
+  rewardCellEmoji: {
+    fontSize: 28,
+  },
+  rewardCellDay: {
+    fontFamily: Typography.family.semibold,
+    fontSize: Typography.size.xs,
+    color: Colors.text.secondary,
+  },
+  rewardCoinBadge: {
+    backgroundColor: Colors.bg.primary,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+  },
+  rewardCoinText: {
+    fontFamily: Typography.family.bold,
+    fontSize: 13, // between Typography.size.sm(12) and .md(14) — no exact token
+    color: Colors.accent.gold,
   },
 });
