@@ -184,24 +184,28 @@ export const homeStyles = StyleSheet.create({
   navLabelActive: {
     fontFamily: Typography.family.bold,
   },
-  navDot: {
-    position: 'absolute',
-    bottom: 6,
-    width: 32,
-    height: 4,
-    borderRadius: 2,
-  },
 
   // Daily reward pulse button
-  rewardPulse: {
-    borderRadius: 999,
-    borderWidth: 2.5,
-    padding: 12,
+  rewardHaloOuter: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: 'rgba(168,85,247,0.15)',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+  },
+  rewardHaloInner: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: 'rgba(255,107,53,0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,107,53,0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rewardPulseEmoji: {
-    fontSize: 36,
+    fontSize: 40,
   },
   rewardPulseLabel: {
     fontFamily: Typography.family.bold,

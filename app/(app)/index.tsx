@@ -80,7 +80,6 @@ export default function HomeScreen() {
   const [activeNav, setActiveNav] = useState<NavId>('home');
   const [rewardModalVisible, setRewardModalVisible] = useState(false);
   const shimmerAnim = useRef(new Animated.Value(0)).current;
-  const rainbowAnim = useRef(new Animated.Value(0)).current;
 
   const typedUser = user && typeof user !== 'boolean' ? user : null;
 
@@ -104,9 +103,6 @@ export default function HomeScreen() {
         Animated.timing(shimmerAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
         Animated.timing(shimmerAnim, { toValue: 0, duration: 900, useNativeDriver: true }),
       ])
-    ).start();
-    Animated.loop(
-      Animated.timing(rainbowAnim, { toValue: 1, duration: 2700, useNativeDriver: false })
     ).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -252,28 +248,23 @@ export default function HomeScreen() {
           {/* Daily reward pulse button */}
           <View style={{ alignItems: 'flex-start', marginLeft: 24, marginVertical: Spacing.md }}>
             <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
-              <Animated.View
-                style={[
-                  homeStyles.rewardPulse,
-                  {
-                    borderColor: rainbowAnim.interpolate({
-                      inputRange: [0, 0.33, 0.66, 1],
-                      outputRange: ['#FF6B35', '#A855F7', '#00D4FF', '#FF6B35'],
-                    }),
-                  },
-                ]}
-              >
+              <View style={{ alignItems: 'center', gap: 8 }}>
                 <Animated.View
-                  style={{
-                    opacity: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1.0] }),
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
+                  style={[
+                    homeStyles.rewardHaloOuter,
+                    {
+                      transform: [{
+                        scale: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [1.0, 1.08] }),
+                      }],
+                    },
+                  ]}
                 >
-                  <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
-                  <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
+                  <View style={homeStyles.rewardHaloInner}>
+                    <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
+                  </View>
                 </Animated.View>
-              </Animated.View>
+                <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -303,9 +294,6 @@ export default function HomeScreen() {
                   <Text style={[homeStyles.navLabel, isActive && homeStyles.navLabelActive, isActive && { color: item.activeColor }]}>
                     {item.label}
                   </Text>
-                  {isActive && (
-                    <View style={[homeStyles.navDot, { backgroundColor: item.activeColor }]} />
-                  )}
                 </TouchableOpacity>
               );
             })}
