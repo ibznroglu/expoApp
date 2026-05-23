@@ -248,23 +248,19 @@ export default function HomeScreen() {
           {/* Daily reward pulse button */}
           <View style={{ alignItems: 'flex-start', marginLeft: 24, marginVertical: Spacing.md }}>
             <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
-              <View style={{ alignItems: 'center', gap: 8 }}>
-                <Animated.View
-                  style={[
-                    homeStyles.rewardHaloOuter,
-                    {
-                      transform: [{
-                        scale: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [1.0, 1.08] }),
-                      }],
-                    },
-                  ]}
-                >
-                  <View style={homeStyles.rewardHaloInner}>
-                    <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
-                  </View>
-                </Animated.View>
+              <Animated.View
+                style={[
+                  homeStyles.rewardCircle,
+                  {
+                    transform: [{
+                      scale: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [1.0, 1.06] }),
+                    }],
+                  },
+                ]}
+              >
+                <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
                 <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
-              </View>
+              </Animated.View>
             </TouchableOpacity>
           </View>
         </View>

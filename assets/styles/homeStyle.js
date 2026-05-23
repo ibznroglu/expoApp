@@ -186,15 +186,7 @@ export const homeStyles = StyleSheet.create({
   },
 
   // Daily reward pulse button
-  rewardHaloOuter: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    backgroundColor: 'rgba(168,85,247,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rewardHaloInner: {
+  rewardCircle: {
     width: 90,
     height: 90,
     borderRadius: 45,
@@ -203,14 +195,16 @@ export const homeStyles = StyleSheet.create({
     borderColor: 'rgba(255,107,53,0.6)',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 2,
   },
   rewardPulseEmoji: {
-    fontSize: 40,
+    fontSize: 32,
   },
   rewardPulseLabel: {
     fontFamily: Typography.family.bold,
-    fontSize: 12,
+    fontSize: 10,
     color: Colors.text.primary,
+    textAlign: 'center',
   },
 
   // Daily reward modal
