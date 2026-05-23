@@ -184,19 +184,18 @@ export const homeStyles = StyleSheet.create({
   navLabelActive: {
     fontFamily: Typography.family.bold,
   },
-  navIconContainer: {
-    width: 48,
-    height: 32,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+  navDot: {
+    position: 'absolute',
+    bottom: 6,
+    width: 32,
+    height: 4,
+    borderRadius: 2,
   },
 
   // Daily reward pulse button
   rewardPulse: {
     borderRadius: 999,
     borderWidth: 2.5,
-    borderColor: 'rgba(255,165,0,0.8)',
     padding: 12,
     alignItems: 'center',
     gap: 4,

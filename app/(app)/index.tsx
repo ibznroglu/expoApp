@@ -80,6 +80,7 @@ export default function HomeScreen() {
   const [activeNav, setActiveNav] = useState<NavId>('home');
   const [rewardModalVisible, setRewardModalVisible] = useState(false);
   const shimmerAnim = useRef(new Animated.Value(0)).current;
+  const rainbowAnim = useRef(new Animated.Value(0)).current;
 
   const typedUser = user && typeof user !== 'boolean' ? user : null;
 
@@ -103,6 +104,9 @@ export default function HomeScreen() {
         Animated.timing(shimmerAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
         Animated.timing(shimmerAnim, { toValue: 0, duration: 900, useNativeDriver: true }),
       ])
+    ).start();
+    Animated.loop(
+      Animated.timing(rainbowAnim, { toValue: 1, duration: 2700, useNativeDriver: false })
     ).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -147,7 +151,7 @@ export default function HomeScreen() {
       title: 'Turnuvalar',
       subtitle: 'Diğer oyunculara karşı yerini al!',
       iconName: 'trophy',
-      gradientColors: [Colors.modes.tournament.from, Colors.modes.tournament.to] as [string, string],
+      gradientColors: ['#059669', '#10B981'] as [string, string],
       buttonLabel: '▶ Keşfet',
       onPress: () => { playSound('correct'); showToast.info('Yakında', 'Turnuvalar yakında geliyor!'); },
     },
@@ -246,16 +250,29 @@ export default function HomeScreen() {
           </View>
 
           {/* Daily reward pulse button */}
-          <View style={{ alignItems: 'flex-start', marginLeft: 24, marginTop: Spacing.md }}>
+          <View style={{ alignItems: 'flex-start', marginLeft: 24, marginVertical: Spacing.md }}>
             <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
               <Animated.View
                 style={[
                   homeStyles.rewardPulse,
-                  { opacity: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1.0] }) },
+                  {
+                    borderColor: rainbowAnim.interpolate({
+                      inputRange: [0, 0.33, 0.66, 1],
+                      outputRange: ['#FF6B35', '#A855F7', '#00D4FF', '#FF6B35'],
+                    }),
+                  },
                 ]}
               >
-                <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
-                <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
+                <Animated.View
+                  style={{
+                    opacity: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1.0] }),
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <Text style={homeStyles.rewardPulseEmoji}>🎁</Text>
+                  <Text style={homeStyles.rewardPulseLabel}>Günlük Ödül</Text>
+                </Animated.View>
               </Animated.View>
             </TouchableOpacity>
           </View>
@@ -278,21 +295,17 @@ export default function HomeScreen() {
                   onPress={() => { setActiveNav(item.id); item.onPress(); }}
                   activeOpacity={0.7}
                 >
-                  <View
-                    style={[
-                      homeStyles.navIconContainer,
-                      isActive && { backgroundColor: `${item.activeColor}30` },
-                    ]}
-                  >
-                    <Ionicons
-                      name={isActive ? item.iconNameActive : item.iconName}
-                      size={isActive ? 30 : 26}
-                      color={isActive ? item.activeColor : 'rgba(255,255,255,0.4)'}
-                    />
-                  </View>
+                  <Ionicons
+                    name={isActive ? item.iconNameActive : item.iconName}
+                    size={isActive ? 30 : 26}
+                    color={isActive ? item.activeColor : 'rgba(255,255,255,0.4)'}
+                  />
                   <Text style={[homeStyles.navLabel, isActive && homeStyles.navLabelActive, isActive && { color: item.activeColor }]}>
                     {item.label}
                   </Text>
+                  {isActive && (
+                    <View style={[homeStyles.navDot, { backgroundColor: item.activeColor }]} />
+                  )}
                 </TouchableOpacity>
               );
             })}
