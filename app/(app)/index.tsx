@@ -13,8 +13,7 @@ import { Colors, Spacing } from '@/constants/theme';
 const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'] as const;
 const QUICK_GRADIENT = ['#FF6B35', '#FFB800'] as const;
 const FRIENDS_GRADIENT = ['#1565C0', '#42A5F5'] as const;
-const REWARD_GRADIENT = ['#F59E0B', '#F97316'] as const;
-const NAV_GRADIENT = ['#1A0A4A', '#2D1B69'] as const;
+const NAV_GRADIENT = ['#0D0527', '#1A0A4A'] as const;
 const DAY_REWARDS = [50, 100, 140, 170, 190, 200, 300];
 
 type NavId = 'home' | 'leaderboard' | 'quests' | 'profile';
@@ -142,7 +141,7 @@ export default function HomeScreen() {
 
   const NAV_ITEMS: NavItem[] = [
     { id: 'home',        iconName: 'home-outline',  iconNameActive: 'home',   label: 'Ana Sayfa', activeColor: '#FF6B35', onPress: () => {} },
-    { id: 'leaderboard', iconName: 'trophy-outline', iconNameActive: 'trophy', label: 'Sıralama',  activeColor: '#FFD700', onPress: () => showToast.info('Yakında', 'Sıralama yakında geliyor!') },
+    { id: 'leaderboard', iconName: 'bar-chart-outline', iconNameActive: 'bar-chart', label: 'Sıralama',  activeColor: '#00D4FF', onPress: () => showToast.info('Yakında', 'Sıralama yakında geliyor!') },
     { id: 'quests',      iconName: 'gift-outline',   iconNameActive: 'gift',   label: 'Görevler',  activeColor: '#22C55E', onPress: () => showToast.info('Yakında', 'Görevler yakında geliyor!') },
     { id: 'profile',     iconName: 'person-outline', iconNameActive: 'person', label: 'Profil',    activeColor: '#A78BFA', onPress: () => showToast.info('Yakında', 'Profil yakında geliyor!') },
   ];
@@ -232,26 +231,26 @@ export default function HomeScreen() {
             ))}
           </View>
 
-          {/* Daily reward button — compact centered pill */}
-          <View style={{ alignItems: 'center', marginTop: Spacing.md }}>
-            <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
-              <LinearGradient
-                colors={REWARD_GRADIENT}
-                style={homeStyles.rewardButtonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                <Ionicons name="gift" size={48} color={Colors.text.primary} />
-                <Text style={homeStyles.rewardButtonLabel}>Günlük Ödül</Text>
-                <Animated.View
-                  style={[
-                    StyleSheet.absoluteFillObject,
-                    { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 999, opacity: shimmerAnim },
-                  ]}
-                />
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
+          {/* Daily reward card */}
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setRewardModalVisible(true)}
+            style={{ marginHorizontal: Spacing.lg, marginTop: Spacing.md }}
+          >
+            <View style={homeStyles.rewardCard}>
+              <Text style={homeStyles.rewardCardEmoji}>🎁</Text>
+              <View style={homeStyles.rewardCardText}>
+                <Text style={homeStyles.rewardCardTitle}>Günlük Ödül</Text>
+                <Text style={homeStyles.rewardCardSubtitle}>Bugün oyna, ödülünü kazan!</Text>
+              </View>
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, opacity: shimmerAnim },
+                ]}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Bottom nav — dark gradient */}
@@ -259,7 +258,7 @@ export default function HomeScreen() {
           colors={NAV_GRADIENT}
           style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          end={{ x: 0, y: 1 }}
         >
           {NAV_ITEMS.map((item) => (
             <TouchableOpacity
@@ -273,10 +272,10 @@ export default function HomeScreen() {
               )}
               <Ionicons
                 name={activeNav === item.id ? item.iconNameActive : item.iconName}
-                size={activeNav === item.id ? 28 : 24}
+                size={activeNav === item.id ? 30 : 26}
                 color={activeNav === item.id ? item.activeColor : 'rgba(255,255,255,0.4)'}
               />
-              <Text style={[homeStyles.navLabel, activeNav === item.id && { color: item.activeColor }]}>
+              <Text style={[homeStyles.navLabel, activeNav === item.id && homeStyles.navLabelActive, activeNav === item.id && { color: item.activeColor }]}>
                 {item.label}
               </Text>
             </TouchableOpacity>

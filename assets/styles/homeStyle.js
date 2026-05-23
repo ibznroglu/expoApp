@@ -166,8 +166,9 @@ export const homeStyles = StyleSheet.create({
   // Bottom nav (LinearGradient wrapper in JSX)
   bottomNav: {
     flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: Colors.accent.purple,
+    minHeight: 72,
+    borderTopWidth: 1.5,
+    borderTopColor: 'rgba(155,89,245,0.5)',
     paddingTop: Spacing.sm,
   },
   navItem: {
@@ -179,8 +180,11 @@ export const homeStyles = StyleSheet.create({
   },
   navLabel: {
     fontFamily: Typography.family.semibold,
-    fontSize: Typography.size.xs,
+    fontSize: 11,
     color: 'rgba(255,255,255,0.4)',
+  },
+  navLabelActive: {
+    fontFamily: Typography.family.bold,
   },
   navActiveIndicator: {
     position: 'absolute',
@@ -190,19 +194,34 @@ export const homeStyles = StyleSheet.create({
     borderRadius: Radius.full,
   },
 
-  // Daily reward button (compact centered pill)
-  rewardButtonGradient: {
-    borderRadius: 999,
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
+  // Daily reward card (horizontal banner)
+  rewardCard: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.md,
+    backgroundColor: 'rgba(155,89,245,0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(155,89,245,0.4)',
+    borderRadius: 16,
+    padding: Spacing.md,
     overflow: 'hidden',
   },
-  rewardButtonLabel: {
+  rewardCardEmoji: {
+    fontSize: 52,
+  },
+  rewardCardText: {
+    flex: 1,
+  },
+  rewardCardTitle: {
     fontFamily: Typography.family.bold,
     fontSize: 18,
     color: Colors.text.primary,
+  },
+  rewardCardSubtitle: {
+    fontFamily: Typography.family.regular,
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 2,
   },
 
   // Daily reward modal
