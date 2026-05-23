@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,14 +8,17 @@ import { useAuth } from '@/context/AuthContext';
 import { showToast } from '@/utils/toast';
 import { initSounds, playSound } from '@/utils/sound';
 import { homeStyles } from '@/assets/styles/homeStyle';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
-// Light background — no light-theme tokens in Colors.bg
-const BG_GRADIENT = ['#F8F0FF', '#EDE0FF', '#E8D5FF'] as const;
+const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'] as const;
 // Quick mode: spec uses #FF6B35; theme has darker #FF4500
 const QUICK_GRADIENT = ['#FF6B35', '#FFB800'] as const;
 // Friends mode: spec uses blue; theme has teal (#00897B→#00E5CC)
 const FRIENDS_GRADIENT = ['#1565C0', '#42A5F5'] as const;
+// Daily reward banner gradient — not in theme.ts
+const REWARD_GRADIENT = ['#F59E0B', '#F97316'] as const;
+// Coin rewards per streak day
+const DAY_REWARDS = [50, 100, 140, 170, 190, 200, 300];
 
 type NavId = 'home' | 'leaderboard' | 'quests' | 'profile';
 
@@ -37,11 +40,35 @@ interface GameMode {
   onPress: () => void;
 }
 
+interface RewardCellProps {
+  day: number;
+  coins: number;
+  currentDay: number;
+}
+
+function RewardCell({ day, coins, currentDay }: RewardCellProps) {
+  const isPast = day < currentDay;
+  const isToday = day === currentDay;
+  const boxEmoji = isPast ? '📭' : isToday ? '🎁' : '📦';
+  const cellOpacity = day > currentDay ? 0.6 : 1;
+  return (
+    <View style={[homeStyles.rewardCell, isToday && homeStyles.rewardCellToday, { opacity: cellOpacity }]}>
+      <Text style={homeStyles.rewardCellEmoji}>{boxEmoji}</Text>
+      <Text style={homeStyles.rewardCellDay}>Gün {day}</Text>
+      <View style={homeStyles.rewardCoinBadge}>
+        <Text style={homeStyles.rewardCoinText}>🪙 {coins}</Text>
+      </View>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const { user } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeNav, setActiveNav] = useState<NavId>('home');
+  const [rewardModalVisible, setRewardModalVisible] = useState(false);
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   const typedUser = user && typeof user !== 'boolean' ? user : null;
 
@@ -49,6 +76,7 @@ export default function HomeScreen() {
   const HARDCODED_LIVES = 5;
   const HARDCODED_STREAK =
     (typedUser?.prefs as { streakCount?: number } | undefined)?.streakCount ?? 7;
+  const currentDay = Math.min(Math.max(HARDCODED_STREAK, 1), 7);
   const XP_CURRENT = 340;
   const XP_MAX = 500;
   const LEVEL = 12;
@@ -56,6 +84,16 @@ export default function HomeScreen() {
 
   useEffect(() => {
     initSounds().catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
+        Animated.timing(shimmerAnim, { toValue: 0, duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const avatarInitials = useMemo<string>(() => {
@@ -116,10 +154,7 @@ export default function HomeScreen() {
       <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
       <SafeAreaView style={homeStyles.safeArea} edges={['top']}>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={[homeStyles.scrollContent, { paddingBottom: insets.bottom + 80 }]}
-        >
+        <View style={homeStyles.mainContent}>
           {/* User card */}
           <View style={[homeStyles.userCard, { marginHorizontal: 16, marginTop: 8 }]}>
             <View style={homeStyles.userCardTop}>
@@ -148,18 +183,13 @@ export default function HomeScreen() {
               <View style={homeStyles.statBoxArea}>
                 <View style={homeStyles.statBox}>
                   <Ionicons name="cash" size={16} color={Colors.accent.gold} />
-                  <Text style={homeStyles.statBoxValue}>{HARDCODED_COINS.toLocaleString('tr-TR')}</Text>
+                  <Text style={homeStyles.statBoxValue} numberOfLines={1} adjustsFontSizeToFit>{HARDCODED_COINS.toLocaleString('tr-TR')}</Text>
                   <Text style={homeStyles.statBoxLabel}>Puan</Text>
                 </View>
                 <View style={homeStyles.statBox}>
                   <Ionicons name="heart" size={16} color={Colors.wrong} />
-                  <Text style={homeStyles.statBoxValue}>{HARDCODED_LIVES}</Text>
+                  <Text style={homeStyles.statBoxValue} numberOfLines={1} adjustsFontSizeToFit>{HARDCODED_LIVES}</Text>
                   <Text style={homeStyles.statBoxLabel}>Can</Text>
-                </View>
-                <View style={homeStyles.statBox}>
-                  <Ionicons name="flame" size={16} color={Colors.brand.secondary} />
-                  <Text style={homeStyles.statBoxValue}>{HARDCODED_STREAK}</Text>
-                  <Text style={homeStyles.statBoxLabel}>Günlük Seri</Text>
                 </View>
               </View>
             </View>
@@ -168,12 +198,9 @@ export default function HomeScreen() {
           {/* Section header */}
           <View style={homeStyles.sectionHeader}>
             <View style={homeStyles.sectionHeaderLeft}>
-              <Ionicons name="game-controller" size={20} color="#1A1035" />
+              <Ionicons name="game-controller" size={20} color={Colors.text.primary} />
               <Text style={homeStyles.sectionHeaderTitle}>Oyun Modları</Text>
             </View>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={homeStyles.sectionHeaderLink}>Hepsini Gör {'>'}</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Game mode grid */}
@@ -208,9 +235,42 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
-        </ScrollView>
 
-        {/* Bottom nav — fixed outside ScrollView */}
+          {/* Daily reward banner */}
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setRewardModalVisible(true)}
+            style={{ marginHorizontal: Spacing.lg, marginTop: Spacing.md }}
+          >
+            <LinearGradient
+              colors={REWARD_GRADIENT}
+              style={homeStyles.rewardBanner}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <View style={homeStyles.rewardBannerLeft}>
+                <Text style={homeStyles.rewardBannerIcon}>🎁</Text>
+                <View>
+                  <Text style={homeStyles.rewardBannerTitle}>Günlük Ödül</Text>
+                  <Text style={homeStyles.rewardBannerSubtitle}>Bugün oyna, ödülünü kazan!</Text>
+                </View>
+              </View>
+              <Animated.View
+                style={[
+                  homeStyles.rewardBannerGlow,
+                  {
+                    opacity: shimmerAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.7, 1.0],
+                    }),
+                  },
+                ]}
+              />
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Bottom nav — fixed outside main content */}
         <View style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}>
           {NAV_ITEMS.map((item) => (
             <TouchableOpacity
@@ -231,6 +291,40 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        <Modal
+          visible={rewardModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setRewardModalVisible(false)}
+        >
+          <View style={homeStyles.modalOverlay}>
+            <View style={homeStyles.modalCard}>
+              <TouchableOpacity
+                style={homeStyles.modalCloseBtn}
+                onPress={() => setRewardModalVisible(false)}
+              >
+                <Text style={homeStyles.modalCloseBtnText}>×</Text>
+              </TouchableOpacity>
+              <Text style={homeStyles.modalTitle}>GÜNLÜK ÖDÜL</Text>
+              <View style={homeStyles.rewardGrid}>
+                <View style={homeStyles.rewardRow}>
+                  {DAY_REWARDS.slice(0, 3).map((coins, idx) => (
+                    <RewardCell key={idx + 1} day={idx + 1} coins={coins} currentDay={currentDay} />
+                  ))}
+                </View>
+                <View style={homeStyles.rewardRow}>
+                  {DAY_REWARDS.slice(3, 6).map((coins, idx) => (
+                    <RewardCell key={idx + 4} day={idx + 4} coins={coins} currentDay={currentDay} />
+                  ))}
+                </View>
+                <View style={[homeStyles.rewardRow, { justifyContent: 'center' }]}>
+                  <RewardCell day={7} coins={DAY_REWARDS[6]} currentDay={currentDay} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
       </SafeAreaView>
     </View>
