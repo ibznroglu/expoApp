@@ -11,13 +11,10 @@ import { homeStyles } from '@/assets/styles/homeStyle';
 import { Colors, Spacing } from '@/constants/theme';
 
 const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'] as const;
-// Quick mode: spec uses #FF6B35; theme has darker #FF4500
 const QUICK_GRADIENT = ['#FF6B35', '#FFB800'] as const;
-// Friends mode: spec uses blue; theme has teal (#00897B→#00E5CC)
 const FRIENDS_GRADIENT = ['#1565C0', '#42A5F5'] as const;
-// Daily reward banner gradient — not in theme.ts
 const REWARD_GRADIENT = ['#F59E0B', '#F97316'] as const;
-// Coin rewards per streak day
+const NAV_GRADIENT = ['#1A0A4A', '#2D1B69'] as const;
 const DAY_REWARDS = [50, 100, 140, 170, 190, 200, 300];
 
 type NavId = 'home' | 'leaderboard' | 'quests' | 'profile';
@@ -27,6 +24,7 @@ interface NavItem {
   iconName: React.ComponentProps<typeof Ionicons>['name'];
   iconNameActive: React.ComponentProps<typeof Ionicons>['name'];
   label: string;
+  activeColor: string;
   onPress: () => void;
 }
 
@@ -143,10 +141,10 @@ export default function HomeScreen() {
   ];
 
   const NAV_ITEMS: NavItem[] = [
-    { id: 'home',        iconName: 'home-outline',  iconNameActive: 'home',   label: 'Ana Sayfa', onPress: () => {} },
-    { id: 'leaderboard', iconName: 'trophy-outline', iconNameActive: 'trophy', label: 'Sıralama',  onPress: () => showToast.info('Yakında', 'Sıralama yakında geliyor!') },
-    { id: 'quests',      iconName: 'gift-outline',   iconNameActive: 'gift',   label: 'Görevler',  onPress: () => showToast.info('Yakında', 'Görevler yakında geliyor!') },
-    { id: 'profile',     iconName: 'person-outline', iconNameActive: 'person', label: 'Profil',    onPress: () => showToast.info('Yakında', 'Profil yakında geliyor!') },
+    { id: 'home',        iconName: 'home-outline',  iconNameActive: 'home',   label: 'Ana Sayfa', activeColor: '#FF6B35', onPress: () => {} },
+    { id: 'leaderboard', iconName: 'trophy-outline', iconNameActive: 'trophy', label: 'Sıralama',  activeColor: '#FFD700', onPress: () => showToast.info('Yakında', 'Sıralama yakında geliyor!') },
+    { id: 'quests',      iconName: 'gift-outline',   iconNameActive: 'gift',   label: 'Görevler',  activeColor: '#22C55E', onPress: () => showToast.info('Yakında', 'Görevler yakında geliyor!') },
+    { id: 'profile',     iconName: 'person-outline', iconNameActive: 'person', label: 'Profil',    activeColor: '#A78BFA', onPress: () => showToast.info('Yakında', 'Profil yakında geliyor!') },
   ];
 
   return (
@@ -157,40 +155,38 @@ export default function HomeScreen() {
         <View style={homeStyles.mainContent}>
           {/* User card */}
           <View style={[homeStyles.userCard, { marginHorizontal: 16, marginTop: 8 }]}>
-            <View style={homeStyles.userCardTop}>
-              <View style={homeStyles.userCardLeft}>
-                <View style={homeStyles.avatarRow}>
-                  <View style={homeStyles.avatarCircle}>
-                    <Text style={homeStyles.avatarInitials}>{avatarInitials}</Text>
-                  </View>
-                  <View>
-                    <Text style={homeStyles.userNameText} numberOfLines={1}>
-                      {(typedUser?.name as string | undefined) ?? 'Oyuncu'}
-                    </Text>
-                    <View style={homeStyles.levelBadge}>
-                      <Ionicons name="star" size={10} color={Colors.accent.gold} />
-                      <Text style={homeStyles.levelBadgeText}>Sv.{LEVEL}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={homeStyles.xpRow}>
-                  <View style={homeStyles.xpBarTrack}>
-                    <View style={[homeStyles.xpBarFill, { width: `${xpPercent}%` as `${number}%` }]} />
-                  </View>
-                  <Text style={homeStyles.xpLabel}>{XP_CURRENT} / {XP_MAX} XP</Text>
+            <View style={homeStyles.avatarRow}>
+              <View style={homeStyles.avatarCircle}>
+                <Text style={homeStyles.avatarInitials}>{avatarInitials}</Text>
+              </View>
+              <View>
+                <Text style={homeStyles.userNameText} numberOfLines={1}>
+                  {(typedUser?.name as string | undefined) ?? 'Oyuncu'}
+                </Text>
+                <View style={homeStyles.levelBadge}>
+                  <Ionicons name="star" size={10} color={Colors.accent.gold} />
+                  <Text style={homeStyles.levelBadgeText}>Sv.{LEVEL}</Text>
                 </View>
               </View>
-              <View style={homeStyles.statBoxArea}>
-                <View style={homeStyles.statBox}>
-                  <Ionicons name="cash" size={16} color={Colors.accent.gold} />
-                  <Text style={homeStyles.statBoxValue} numberOfLines={1} adjustsFontSizeToFit>{HARDCODED_COINS.toLocaleString('tr-TR')}</Text>
-                  <Text style={homeStyles.statBoxLabel}>Puan</Text>
-                </View>
-                <View style={homeStyles.statBox}>
-                  <Ionicons name="heart" size={16} color={Colors.wrong} />
-                  <Text style={homeStyles.statBoxValue} numberOfLines={1} adjustsFontSizeToFit>{HARDCODED_LIVES}</Text>
-                  <Text style={homeStyles.statBoxLabel}>Can</Text>
-                </View>
+            </View>
+            <View style={homeStyles.xpRow}>
+              <View style={homeStyles.xpBarTrack}>
+                <View style={[homeStyles.xpBarFill, { width: `${xpPercent}%` as `${number}%` }]} />
+              </View>
+              <Text style={homeStyles.xpLabel}>{XP_CURRENT} / {XP_MAX} XP</Text>
+            </View>
+            <View style={homeStyles.statRow}>
+              <View style={homeStyles.statItem}>
+                <Ionicons name="diamond" size={24} color={Colors.accent.gold} />
+                <Text style={homeStyles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+                  {HARDCODED_COINS.toLocaleString('tr-TR')}
+                </Text>
+              </View>
+              <View style={homeStyles.statItem}>
+                <Ionicons name="heart" size={24} color={Colors.wrong} />
+                <Text style={homeStyles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+                  {HARDCODED_LIVES}
+                </Text>
               </View>
             </View>
           </View>
@@ -236,42 +232,35 @@ export default function HomeScreen() {
             ))}
           </View>
 
-          {/* Daily reward banner */}
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => setRewardModalVisible(true)}
-            style={{ marginHorizontal: Spacing.lg, marginTop: Spacing.md }}
-          >
-            <LinearGradient
-              colors={REWARD_GRADIENT}
-              style={homeStyles.rewardBanner}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <View style={homeStyles.rewardBannerLeft}>
-                <Text style={homeStyles.rewardBannerIcon}>🎁</Text>
-                <View>
-                  <Text style={homeStyles.rewardBannerTitle}>Günlük Ödül</Text>
-                  <Text style={homeStyles.rewardBannerSubtitle}>Bugün oyna, ödülünü kazan!</Text>
-                </View>
-              </View>
-              <Animated.View
-                style={[
-                  homeStyles.rewardBannerGlow,
-                  {
-                    opacity: shimmerAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.7, 1.0],
-                    }),
-                  },
-                ]}
-              />
-            </LinearGradient>
-          </TouchableOpacity>
+          {/* Daily reward button — compact centered pill */}
+          <View style={{ alignItems: 'center', marginTop: Spacing.md }}>
+            <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
+              <LinearGradient
+                colors={REWARD_GRADIENT}
+                style={homeStyles.rewardButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="gift" size={48} color={Colors.text.primary} />
+                <Text style={homeStyles.rewardButtonLabel}>Günlük Ödül</Text>
+                <Animated.View
+                  style={[
+                    StyleSheet.absoluteFillObject,
+                    { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 999, opacity: shimmerAnim },
+                  ]}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Bottom nav — fixed outside main content */}
-        <View style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}>
+        {/* Bottom nav — dark gradient */}
+        <LinearGradient
+          colors={NAV_GRADIENT}
+          style={[homeStyles.bottomNav, { paddingBottom: insets.bottom || 8 }]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
           {NAV_ITEMS.map((item) => (
             <TouchableOpacity
               key={item.id}
@@ -279,18 +268,20 @@ export default function HomeScreen() {
               onPress={() => { setActiveNav(item.id); item.onPress(); }}
               activeOpacity={0.7}
             >
-              {activeNav === item.id && <View style={homeStyles.navActiveIndicator} />}
+              {activeNav === item.id && (
+                <View style={[homeStyles.navActiveIndicator, { backgroundColor: item.activeColor }]} />
+              )}
               <Ionicons
                 name={activeNav === item.id ? item.iconNameActive : item.iconName}
-                size={activeNav === item.id ? 26 : 22}
-                color={activeNav === item.id ? Colors.accent.purple : '#9CA3AF'}
+                size={activeNav === item.id ? 28 : 24}
+                color={activeNav === item.id ? item.activeColor : 'rgba(255,255,255,0.4)'}
               />
-              <Text style={[homeStyles.navLabel, activeNav === item.id && homeStyles.navLabelActive]}>
+              <Text style={[homeStyles.navLabel, activeNav === item.id && { color: item.activeColor }]}>
                 {item.label}
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </LinearGradient>
 
         <Modal
           visible={rewardModalVisible}

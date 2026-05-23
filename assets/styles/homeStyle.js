@@ -3,7 +3,7 @@ import { Colors, Spacing, Radius, Typography, Shadows } from '@/constants/theme'
 
 export const homeStyles = StyleSheet.create({
   // Layout
-  container: { flex: 1, backgroundColor: '#0D0527' }, // match dark gradient bottom
+  container: { flex: 1, backgroundColor: '#0D0527' },
   safeArea: { flex: 1 },
   mainContent: {
     flex: 1,
@@ -15,18 +15,16 @@ export const homeStyles = StyleSheet.create({
   // User card
   userCard: {
     borderRadius: Radius.lg,
-    backgroundColor: '#3B1F8C', // no light-card token in theme
+    backgroundColor: '#3B1F8C',
     padding: Spacing.md,
     ...Shadows.button,
   },
-  userCardTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  userCardLeft: { flex: 1, marginRight: Spacing.sm },
   avatarRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.xs },
   avatarCircle: {
     width: 44,
     height: 44,
     borderRadius: Radius.full,
-    backgroundColor: '#FF8C42', // avatar orange — no theme token
+    backgroundColor: '#FF8C42',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -39,7 +37,7 @@ export const homeStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
     fontSize: Typography.size.xl,
     color: Colors.text.primary,
-    maxWidth: 130,
+    maxWidth: 200,
   },
   levelBadge: {
     flexDirection: 'row',
@@ -60,7 +58,7 @@ export const homeStyles = StyleSheet.create({
   xpRow: { marginTop: Spacing.sm, gap: 4 },
   xpBarTrack: {
     height: 6,
-    backgroundColor: 'rgba(0,0,0,0.3)', // dark track inside dark card
+    backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
@@ -76,30 +74,25 @@ export const homeStyles = StyleSheet.create({
     textAlign: 'right',
   },
 
-  // User card stat boxes (right side)
-  statBoxArea: {
-    backgroundColor: 'rgba(0,0,0,0.25)', // overlay on dark card
-    borderRadius: Radius.md,
-    padding: Spacing.sm,
+  // Stat row (below XP bar, full-width horizontal, no box frame)
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: Spacing.xl,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
   },
-  statBox: {
-    backgroundColor: 'rgba(255,255,255,0.08)', // subtle tint
-    borderRadius: Radius.sm,
-    paddingVertical: 6,
-    paddingHorizontal: Spacing.sm,
-    alignItems: 'center',
-    minWidth: 72,
-  },
-  statBoxValue: {
+  statValue: {
     fontFamily: Typography.family.black,
     fontSize: Typography.size.xxl,
     color: Colors.text.primary,
-  },
-  statBoxLabel: {
-    fontFamily: Typography.family.regular,
-    fontSize: Typography.size.sm,
-    color: 'rgba(255,255,255,0.6)',
   },
 
   // Section header
@@ -146,11 +139,11 @@ export const homeStyles = StyleSheet.create({
   gameModeSubtitle: {
     fontFamily: Typography.family.regular,
     fontSize: Typography.size.xs,
-    color: 'rgba(255,255,255,0.75)', // subtitle on gradient card — no theme token
+    color: 'rgba(255,255,255,0.75)',
     marginBottom: Spacing.sm,
   },
   gameModePlayBtn: {
-    backgroundColor: 'rgba(255,255,255,0.25)', // translucent white pill
+    backgroundColor: 'rgba(255,255,255,0.25)',
     borderRadius: Radius.full,
     paddingVertical: 6,
     paddingHorizontal: Spacing.md,
@@ -166,16 +159,15 @@ export const homeStyles = StyleSheet.create({
   },
   gameModeStar: {
     position: 'absolute',
-    color: 'rgba(255,255,255,0.15)', // decorative — no theme token
+    color: 'rgba(255,255,255,0.15)',
     fontSize: 28,
   },
 
-  // Bottom nav
+  // Bottom nav (LinearGradient wrapper in JSX)
   bottomNav: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF', // light theme nav — no theme token
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.08)', // nav border on light bg — no theme token
+    borderTopColor: Colors.accent.purple,
     paddingTop: Spacing.sm,
   },
   navItem: {
@@ -188,66 +180,41 @@ export const homeStyles = StyleSheet.create({
   navLabel: {
     fontFamily: Typography.family.semibold,
     fontSize: Typography.size.xs,
-    color: '#9CA3AF', // inactive gray on light bg — no theme token
+    color: 'rgba(255,255,255,0.4)',
   },
-  navLabelActive: { color: Colors.accent.purple },
   navActiveIndicator: {
     position: 'absolute',
     top: 0,
     width: 28,
     height: 3,
     borderRadius: Radius.full,
-    backgroundColor: Colors.accent.purple,
   },
 
-  // Daily reward banner
-  rewardBanner: {
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    flexDirection: 'row',
+  // Daily reward button (compact centered pill)
+  rewardButtonGradient: {
+    borderRadius: 999,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.xs,
     overflow: 'hidden',
-    minHeight: 64,
   },
-  rewardBannerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    flex: 1,
-  },
-  rewardBannerIcon: {
-    fontSize: 32,
-  },
-  rewardBannerTitle: {
+  rewardButtonLabel: {
     fontFamily: Typography.family.bold,
-    fontSize: Typography.size.lg,
+    fontSize: 18,
     color: Colors.text.primary,
-  },
-  rewardBannerSubtitle: {
-    fontFamily: Typography.family.regular,
-    fontSize: Typography.size.xs,
-    color: 'rgba(255,255,255,0.85)', // near-white on gold bg — no theme token
-  },
-  rewardBannerGlow: {
-    position: 'absolute',
-    right: 16,
-    width: 48,
-    height: 48,
-    borderRadius: Radius.full,
-    backgroundColor: 'rgba(255,255,255,0.3)', // pulsing white circle — no theme token
   },
 
   // Daily reward modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)', // dark overlay — no theme token
+    backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   },
   modalCard: {
-    backgroundColor: '#FFFFFF', // white card — no theme token (theme has only dark surfaces)
+    backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     width: '100%',
@@ -273,7 +240,7 @@ export const homeStyles = StyleSheet.create({
   modalTitle: {
     fontFamily: Typography.family.black,
     fontSize: Typography.size.xl,
-    color: Colors.bg.primary, // '#12082E' dark purple text on white card
+    color: Colors.bg.primary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
     marginTop: Spacing.sm,
@@ -315,7 +282,7 @@ export const homeStyles = StyleSheet.create({
   },
   rewardCoinText: {
     fontFamily: Typography.family.bold,
-    fontSize: 13, // between Typography.size.sm(12) and .md(14) — no exact token
+    fontSize: 13,
     color: Colors.accent.gold,
   },
 });
