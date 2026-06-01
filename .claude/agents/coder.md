@@ -14,6 +14,7 @@ Rules:
 - All code must be in English (variable names, comments, function names)
 - Never modify files not listed in the plan
 - After each file change, note what changed
+- After completing all phases, commit ALL changed files including plan documents in thoughts/ directory. Use conventional commit format.
 
 After implementing the phase:
 ## Phase [N] Implementation Complete
