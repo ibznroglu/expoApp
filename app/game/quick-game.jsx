@@ -44,6 +44,8 @@ export default function QuickGame() {
     new Animated.Value(1),
     new Animated.Value(1),
   ]).current;
+  const timedOutRef = useRef(false);
+  const exitingRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -98,10 +100,10 @@ export default function QuickGame() {
   }, [currentQuestionIndex, questions.length, soundsReady]);
 
   const animateOptionPress = useCallback((index) => {
-    const anim = scaleAnims[index] ?? new Animated.Value(1);
+    if (index >= scaleAnims.length) return;
     Animated.sequence([
-      Animated.timing(anim, { toValue: 0.97, duration: 80, useNativeDriver: true }),
-      Animated.timing(anim, { toValue: 1.0, duration: 120, useNativeDriver: true }),
+      Animated.timing(scaleAnims[index], { toValue: 0.97, duration: 80, useNativeDriver: true }),
+      Animated.timing(scaleAnims[index], { toValue: 1.0, duration: 120, useNativeDriver: true }),
     ]).start();
   }, [scaleAnims]);
 
@@ -132,17 +134,19 @@ export default function QuickGame() {
     if (!currentQuestion || gameCompleted || loading || selectedAnswer !== null) return;
 
     const timer = setInterval(() => {
+      timedOutRef.current = false;
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          if (soundsReady) playSound("gameOver");
-          handleNextQuestion();
+          timedOutRef.current = true;
           return 15;
         }
-        if (prev <= 6 && soundsReady) {
-          playSound("tick");
-        }
+        if (prev <= 6 && soundsReady) playSound("tick");
         return prev - 1;
       });
+      if (timedOutRef.current) {
+        if (soundsReady) playSound("gameOver");
+        handleNextQuestion();
+      }
     }, 1000);
 
     return () => clearInterval(timer);
@@ -171,6 +175,8 @@ export default function QuickGame() {
   }, []);
 
   const confirmExit = useCallback(() => {
+    if (exitingRef.current) return;
+    exitingRef.current = true;
     playUISound('modal');
     setExitModalVisible(false);
     setTimeout(() => router.back(), 200);
@@ -355,7 +361,7 @@ export default function QuickGame() {
                 key={index}
                 style={[
                   s.optionWrapper,
-                  { transform: [{ scale: scaleAnims[index] ?? 1 }] },
+                  { transform: [{ scale: scaleAnims[index] ?? scaleAnims[0] }] },
                   isDimmed && s.optionDimmed,
                 ]}
               >
