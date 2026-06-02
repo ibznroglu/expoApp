@@ -54,7 +54,7 @@ export const quickGameStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.md,
     gap: Spacing.sm,
   },
   exitButton: {
@@ -125,7 +125,7 @@ export const quickGameStyles = StyleSheet.create({
   // Centering wrapper for question + options
   gameContent: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: Spacing.lg,
   },
 
@@ -151,7 +151,7 @@ export const quickGameStyles = StyleSheet.create({
     gap: 10,
   },
   optionWrapper: {
-    height: 56,
+    height: 64,
   },
   optionDimmed: {
     opacity: 0.5,

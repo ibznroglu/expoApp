@@ -332,7 +332,7 @@ export default function QuickGame() {
         <View style={s.categoryBadgeWrap}>
           <View style={s.categoryBadge}>
             <TextCustom style={s.categoryBadgeText} fontSize={11}>
-              {currentQuestion.category?.toUpperCase() ?? 'GENEL KÜLTÜR'}
+              {currentQuestion.category?.toLocaleUpperCase('tr-TR') ?? 'GENEL KÜLTÜR'}
             </TextCustom>
           </View>
         </View>
