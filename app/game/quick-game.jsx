@@ -44,7 +44,6 @@ export default function QuickGame() {
     new Animated.Value(1),
     new Animated.Value(1),
   ]).current;
-  const timedOutRef = useRef(false);
   const exitingRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -130,27 +129,28 @@ export default function QuickGame() {
     [currentQuestion, selectedAnswer, soundsReady, handleNextQuestion, animateOptionPress],
   );
 
+  // Tick down — returns 0 when expired, handleNextQuestion is triggered by the effect below
   useEffect(() => {
     if (!currentQuestion || gameCompleted || loading || selectedAnswer !== null) return;
 
     const timer = setInterval(() => {
-      timedOutRef.current = false;
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          timedOutRef.current = true;
-          return 15;
-        }
+        if (prev <= 1) return 0;
         if (prev <= 6 && soundsReady) playSound("tick");
         return prev - 1;
       });
-      if (timedOutRef.current) {
-        if (soundsReady) playSound("gameOver");
-        handleNextQuestion();
-      }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentQuestion, gameCompleted, loading, soundsReady, handleNextQuestion, selectedAnswer]);
+  }, [currentQuestion, gameCompleted, loading, soundsReady, selectedAnswer]);
+
+  // Detect timeout — separate effect so async state update is visible before acting
+  useEffect(() => {
+    if (timeLeft !== 0) return;
+    if (gameCompleted || loading || selectedAnswer !== null) return;
+    if (soundsReady) playSound("gameOver");
+    handleNextQuestion();
+  }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
 
   const restartGame = useCallback(async () => {
     try {
