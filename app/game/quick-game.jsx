@@ -303,9 +303,7 @@ export default function QuickGame() {
         {/* Header Row */}
         <View style={s.header}>
           <TouchableOpacity onPress={handleExitPress} style={s.exitButton} activeOpacity={0.75}>
-            <View style={s.exitButtonCircle}>
-              <Ionicons name="close" size={18} color={Colors.text.primary} />
-            </View>
+            <Ionicons name="log-out-outline" size={28} color={Colors.text.primary} />
           </TouchableOpacity>
 
           <View style={s.scoreBadge}>
@@ -338,6 +336,9 @@ export default function QuickGame() {
             </TextCustom>
           </View>
         </View>
+
+        {/* Question + Options centered group */}
+        <View style={s.gameContent}>
 
         {/* Question card */}
         <View style={s.questionCard}>
@@ -398,6 +399,8 @@ export default function QuickGame() {
             );
           })}
         </View>
+
+        </View>{/* end gameContent */}
 
         {/* Progress bar */}
         <View style={s.progressTrack}>

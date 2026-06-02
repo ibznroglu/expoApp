@@ -58,15 +58,9 @@ export const quickGameStyles = StyleSheet.create({
     gap: Spacing.sm,
   },
   exitButton: {
-    padding: Spacing.xs,
-  },
-  exitButtonCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.wrong,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 12,
+    padding: 8,
   },
   scoreBadge: {
     backgroundColor: Colors.brand.primary,
@@ -128,6 +122,13 @@ export const quickGameStyles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 
+  // Centering wrapper for question + options
+  gameContent: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: Spacing.lg,
+  },
+
   // Question card
   questionCard: {
     backgroundColor: Colors.bg.card,
@@ -135,7 +136,6 @@ export const quickGameStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border.bright,
     padding: Spacing.xl,
-    marginBottom: Spacing.xl,
     minHeight: 110,
     justifyContent: 'center',
   },
@@ -148,25 +148,22 @@ export const quickGameStyles = StyleSheet.create({
 
   // Answer options
   optionsContainer: {
-    flexGrow: 1,
-    gap: Spacing.sm,
-    marginBottom: Spacing.md,
+    gap: 10,
   },
   optionWrapper: {
-    flex: 1,
+    height: 56,
   },
   optionDimmed: {
     opacity: 0.5,
   },
   optionButton: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    height: '100%',
     backgroundColor: Colors.bg.surface,
     borderWidth: 1.5,
     borderColor: Colors.border.default,
     borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     gap: Spacing.md,
   },
