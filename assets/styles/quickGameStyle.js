@@ -1,207 +1,334 @@
 import { StyleSheet } from "react-native";
+import { Colors, Radius, Spacing, Typography } from "../../constants/theme";
+
 export const quickGameStyles = StyleSheet.create({
-  bg: {
+  // Layout shells
+  root: {
     flex: 1,
-    resizeMode: "cover",
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,50,0.7)",
-  },
-  container: {
+  safeArea: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
-  loadingContainer: {
+  centeredFill: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: Spacing.lg,
   },
+
+  // Loading
   loadingText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: Colors.text.primary,
     textAlign: 'center',
-    marginBottom: 10,
+    fontFamily: Typography.family.bold,
+    marginBottom: Spacing.sm,
   },
   loadingSubText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    fontFamily: Typography.family.regular,
+  },
+
+  // Error
+  errorText: {
+    color: Colors.text.primary,
+    textAlign: 'center',
+    fontFamily: Typography.family.semibold,
+    marginBottom: Spacing.xl,
+  },
+  retryButton: {
+    backgroundColor: Colors.brand.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: Radius.md,
+  },
+  retryButtonText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
+  },
+
+  // Header row
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+    gap: Spacing.sm,
+  },
+  exitButton: {
+    padding: Spacing.xs,
+  },
+  scoreBadge: {
+    backgroundColor: Colors.brand.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.full,
+    flex: 1,
+  },
+  scoreBadgeText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
     textAlign: 'center',
   },
-  errorContainer: {
-    flex: 1,
+  timerCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 3,
+    borderColor: Colors.accent.cyan,
+    backgroundColor: Colors.bg.elevated,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorText: {
-    color: '#fff',
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  retryButton: {
-    backgroundColor: '#FF8C00',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  retryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  scoreContainer: {
-    backgroundColor: 'rgba(255,140,0,0.3)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,140,0,0.5)',
-  },
-  timerContainer: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  questionCounter: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  scoreText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  timerCircleUrgent: {
+    borderColor: Colors.wrong,
   },
   timerText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: Colors.accent.cyan,
+    fontFamily: Typography.family.black,
   },
-  timerWarning: {
-    color: '#FF4136',
+  timerTextUrgent: {
+    color: Colors.wrong,
+  },
+  counterBadge: {
+    backgroundColor: Colors.bg.elevated,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.full,
   },
   counterText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
   },
-  questionContainer: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 30,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+
+  // Category badge
+  categoryBadgeWrap: {
+    alignItems: 'center',
+    marginBottom: Spacing.md,
   },
   categoryBadge: {
-    color: '#FF8C00',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
+    backgroundColor: Colors.accent.purple,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.full,
+  },
+  categoryBadgeText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
+    letterSpacing: 0.8,
+  },
+
+  // Question card
+  questionCard: {
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border.bright,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
+    minHeight: 110,
+    justifyContent: 'center',
   },
   questionText: {
-    color: '#fff',
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
     textAlign: 'center',
     lineHeight: 28,
   },
+
+  // Answer options
   optionsContainer: {
-    marginBottom: 30,
+    flex: 1,
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  optionWrapper: {},
+  optionDimmed: {
+    opacity: 0.5,
   },
   optionButton: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.bg.surface,
+    borderWidth: 1.5,
+    borderColor: Colors.border.default,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.md,
   },
-  selectedOption: {
-    borderColor: '#FF8C00',
+  optionCorrect: {
+    backgroundColor: Colors.correctBg,
+    borderColor: Colors.correct,
   },
-  correctOption: {
-    backgroundColor: 'rgba(0,200,81,0.3)',
-    borderColor: '#00C851',
+  optionWrong: {
+    backgroundColor: Colors.wrongBg,
+    borderColor: Colors.wrong,
   },
-  wrongOption: {
-    backgroundColor: 'rgba(255,65,54,0.3)',
-    borderColor: '#FF4136',
+  optionLetter: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.bg.elevated,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionLetterCorrect: {
+    backgroundColor: Colors.correct,
+  },
+  optionLetterWrong: {
+    backgroundColor: Colors.wrong,
+  },
+  optionLetterText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
   },
   optionText: {
-    color: '#fff',
-    fontSize: 16,
-    lineHeight: 22,
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
+    flex: 1,
+    lineHeight: 20,
   },
   optionTextSelected: {
-    fontWeight: 'bold',
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
   },
-  progressContainer: {
-    height: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 3,
+
+  // Progress bar
+  progressTrack: {
+    height: 4,
+    backgroundColor: Colors.border.white,
+    borderRadius: Radius.full,
     overflow: 'hidden',
   },
-  progressBar: {
+  progressFill: {
     height: '100%',
-    backgroundColor: '#FF8C00',
-    borderRadius: 3,
+    backgroundColor: Colors.brand.primary,
+    borderRadius: Radius.full,
   },
-  resultCard: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    padding: 30,
-    borderRadius: 20,
+
+  // Exit confirm modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
+  modalCard: {
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: Colors.border.bright,
+    padding: Spacing.xxl,
+    width: '100%',
+    alignItems: 'center',
+    gap: Spacing.xl,
   },
-  resultTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  modalTitle: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
     textAlign: 'center',
+    lineHeight: 24,
   },
-  detailText: {
-    color: '#f0f0f0',
-    fontSize: 16,
-    marginBottom: 30,
+  modalButtons: {
+    flexDirection: 'row',
+    width: '100%',
+    gap: Spacing.md,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    backgroundColor: Colors.bg.elevated,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.md,
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.semibold,
+  },
+  modalConfirmBtn: {
+    flex: 1,
+    backgroundColor: Colors.wrong,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.md,
+    alignItems: 'center',
+  },
+  modalConfirmText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
+  },
+
+  // Game Over
+  scoreCircle: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 4,
+    borderColor: Colors.accent.gold,
+    backgroundColor: Colors.bg.card,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  scoreCircleNumber: {
+    color: Colors.accent.gold,
+    fontFamily: Typography.family.black,
+    lineHeight: 56,
+  },
+  scoreCircleLabel: {
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
+    letterSpacing: 1.5,
+  },
+  resultSubtitle: {
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  coinsBadge: {
+    backgroundColor: Colors.bg.elevated,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.accent.gold,
+    marginBottom: Spacing.xl,
+  },
+  coinsBadgeText: {
+    color: Colors.accent.gold,
+    fontFamily: Typography.family.bold,
+    fontSize: 15,
     textAlign: 'center',
   },
   resultButtons: {
     width: '100%',
-    gap: 12,
+    gap: Spacing.md,
   },
   primaryButton: {
-    backgroundColor: '#FF8C00',
-    padding: 16,
-    borderRadius: 12,
+    borderRadius: Radius.md,
+    overflow: 'hidden',
+  },
+  primaryButtonGradient: {
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
+    borderRadius: Radius.md,
+  },
+  primaryButtonText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
   },
   secondaryButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: Colors.bg.elevated,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   secondaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
   },
 });

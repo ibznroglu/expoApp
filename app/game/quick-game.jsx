@@ -1,12 +1,29 @@
-// app/quick-game.jsx
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { quickGameStyles } from "../../assets/styles/quickGameStyle";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { quickGameStyles as s } from "../../assets/styles/quickGameStyle";
 import { getQuestions } from "../../services/questionService";
-import { initSounds, playSound, stopSound, unloadSounds } from "../../utils/sound";
+import {
+  initSounds,
+  playSound,
+  playUISound,
+  stopSound,
+  unloadSounds,
+} from "../../utils/sound";
 import TextCustom from "../components/TextCustom";
+import { Colors } from "../../constants/theme";
+
+const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'];
 
 export default function QuickGame() {
   const router = useRouter();
@@ -19,10 +36,17 @@ export default function QuickGame() {
   const [gameCompleted, setGameCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [soundsReady, setSoundsReady] = useState(false);
+  const [exitModalVisible, setExitModalVisible] = useState(false);
+
+  const scaleAnims = useRef([
+    new Animated.Value(1),
+    new Animated.Value(1),
+    new Animated.Value(1),
+    new Animated.Value(1),
+  ]).current;
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  // ✅ Soruları yükle (stabil)
   const loadQuestions = useCallback(async () => {
     try {
       setLoading(true);
@@ -30,7 +54,6 @@ export default function QuickGame() {
       setQuestions(randomQuestions);
     } catch (error) {
       console.error("Sorular yüklenirken hata:", error);
-      // fallback (aynı kaynaktan geliyorsa bile mevcut davranışı bozmuyor)
       try {
         const fallbackQuestions = await getQuestions(10);
         setQuestions(fallbackQuestions);
@@ -43,20 +66,17 @@ export default function QuickGame() {
     }
   }, []);
 
-  // ✅ İlk yükleme
   useEffect(() => {
     loadQuestions();
   }, [loadQuestions]);
 
-  // ✅ Sesleri hazırla
   useEffect(() => {
     (async () => {
       try {
         await initSounds();
         setSoundsReady(true);
-        console.log("✅ Sounds ready");
       } catch (e) {
-        console.warn("🔇 initSounds failed:", e);
+        console.warn("initSounds failed:", e);
         setSoundsReady(false);
       }
     })();
@@ -66,7 +86,6 @@ export default function QuickGame() {
     };
   }, []);
 
-  // ✅ Sonraki soruya geç (stabil)
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -78,9 +97,17 @@ export default function QuickGame() {
     }
   }, [currentQuestionIndex, questions.length, soundsReady]);
 
-  // ✅ Cevap seçimi (stabil)
+  const animateOptionPress = useCallback((index) => {
+    const anim = scaleAnims[index] ?? new Animated.Value(1);
+    Animated.sequence([
+      Animated.timing(anim, { toValue: 0.97, duration: 80, useNativeDriver: true }),
+      Animated.timing(anim, { toValue: 1.0, duration: 120, useNativeDriver: true }),
+    ]).start();
+  }, [scaleAnims]);
+
   const handleAnswerSelect = useCallback(
     (answerIndex) => {
+      animateOptionPress(answerIndex);
       if (!currentQuestion) return;
       if (selectedAnswer !== null) return;
 
@@ -98,39 +125,29 @@ export default function QuickGame() {
         handleNextQuestion();
       }, 1000);
     },
-    [currentQuestion, selectedAnswer, soundsReady, handleNextQuestion],
+    [currentQuestion, selectedAnswer, soundsReady, handleNextQuestion, animateOptionPress],
   );
 
-  // ✅ Oyun timer'ı (ESLint deps tam)
   useEffect(() => {
     if (!currentQuestion || gameCompleted || loading || selectedAnswer !== null) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
+          if (soundsReady) playSound("gameOver");
           handleNextQuestion();
           return 15;
         }
-
         if (prev <= 6 && soundsReady) {
           playSound("tick");
         }
-
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [
-    currentQuestion,
-    gameCompleted,
-    loading,
-    soundsReady,
-    handleNextQuestion,
-    selectedAnswer,
-  ]);
+  }, [currentQuestion, gameCompleted, loading, soundsReady, handleNextQuestion, selectedAnswer]);
 
-  // ✅ Yeniden başlat
   const restartGame = useCallback(async () => {
     try {
       setLoading(true);
@@ -148,189 +165,280 @@ export default function QuickGame() {
     }
   }, []);
 
+  const handleExitPress = useCallback(() => {
+    playUISound('button');
+    setExitModalVisible(true);
+  }, []);
+
+  const confirmExit = useCallback(() => {
+    playUISound('modal');
+    setExitModalVisible(false);
+    setTimeout(() => router.back(), 200);
+  }, [router]);
+
+  const cancelExit = useCallback(() => {
+    playUISound('button');
+    setExitModalVisible(false);
+  }, []);
+
   // --- UI STATES ---
 
   if (loading) {
     return (
-      <ImageBackground
-        source={{
-          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-        }}
-        style={quickGameStyles.bg}
-      >
-        <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
-          <View style={quickGameStyles.loadingContainer}>
-            <Text style={quickGameStyles.loadingText}>
+      <View style={s.root}>
+        <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <SafeAreaView style={s.safeArea} edges={['top']}>
+          <View style={s.centeredFill}>
+            <TextCustom style={s.loadingText} fontSize={20}>
               Sorular yükleniyor...
-            </Text>
-            <Text style={quickGameStyles.loadingSubText}>
+            </TextCustom>
+            <TextCustom style={s.loadingSubText} fontSize={15}>
               Bilgi yarışması hazırlanıyor
-            </Text>
+            </TextCustom>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </View>
     );
   }
 
   if (questions.length === 0) {
     return (
-      <ImageBackground
-        source={{
-          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-        }}
-        style={quickGameStyles.bg}
-      >
-        <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
-          <View style={quickGameStyles.errorContainer}>
-            <Text style={quickGameStyles.errorText}>Sorular yüklenemedi</Text>
+      <View style={s.root}>
+        <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <SafeAreaView style={s.safeArea} edges={['top']}>
+          <View style={s.centeredFill}>
+            <TextCustom style={s.errorText} fontSize={18}>
+              Sorular yüklenemedi
+            </TextCustom>
             <TouchableOpacity
-              style={quickGameStyles.retryButton}
-              onPress={loadQuestions}
+              style={s.retryButton}
+              onPress={() => { playUISound('button'); loadQuestions(); }}
+              activeOpacity={0.8}
             >
-              <Text style={quickGameStyles.retryButtonText}>Tekrar Dene</Text>
+              <TextCustom style={s.retryButtonText} fontSize={16}>
+                Tekrar Dene
+              </TextCustom>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </View>
     );
   }
 
   if (gameCompleted) {
-    return (
-      <ImageBackground
-        source={{
-          uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-        }}
-        style={quickGameStyles.bg}
-      >
-        <View style={quickGameStyles.overlay} />
-        <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
-          <View style={quickGameStyles.resultCard}>
-            <Text style={quickGameStyles.resultTitle}>Oyun Tamamlandı! 🎉</Text>
-            <Text style={quickGameStyles.scoreText}>Puan: {score}</Text>
-            <Text style={quickGameStyles.detailText}>
-              {questions.length} sorudan {score / 10} doğru
-            </Text>
+    const correctCount = score / 10;
+    const coinsEarned = score * 2;
 
-            <View style={quickGameStyles.resultButtons}>
+    return (
+      <View style={s.root}>
+        <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <SafeAreaView style={s.safeArea} edges={['top']}>
+          <View style={s.centeredFill}>
+
+            <View style={s.scoreCircle}>
+              <TextCustom style={s.scoreCircleNumber} fontSize={52}>
+                {score}
+              </TextCustom>
+              <TextCustom style={s.scoreCircleLabel} fontSize={13}>
+                PUAN
+              </TextCustom>
+            </View>
+
+            <TextCustom style={s.resultSubtitle} fontSize={18}>
+              {correctCount} / {questions.length} Doğru
+            </TextCustom>
+
+            <View style={s.coinsBadge}>
+              <Text style={s.coinsBadgeText}>🪙 {coinsEarned} Jeton Kazandın!</Text>
+            </View>
+
+            <View style={s.resultButtons}>
               <TouchableOpacity
-                style={quickGameStyles.primaryButton}
-                onPress={restartGame}
+                style={s.primaryButton}
+                onPress={() => { playUISound('button'); restartGame(); }}
+                activeOpacity={0.8}
               >
-                <Text style={quickGameStyles.buttonText}>Tekrar Oyna</Text>
+                <LinearGradient
+                  colors={Colors.brand.gradient}
+                  style={s.primaryButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <TextCustom style={s.primaryButtonText} fontSize={16}>
+                    Tekrar Oyna
+                  </TextCustom>
+                </LinearGradient>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={quickGameStyles.secondaryButton}
-                onPress={() => router.back()}
+                style={s.secondaryButton}
+                onPress={() => { playUISound('button'); router.back(); }}
+                activeOpacity={0.8}
               >
-                <Text style={quickGameStyles.secondaryButtonText}>
+                <TextCustom style={s.secondaryButtonText} fontSize={16}>
                   Ana Menü
-                </Text>
+                </TextCustom>
               </TouchableOpacity>
             </View>
+
           </View>
         </SafeAreaView>
-      </ImageBackground>
+      </View>
     );
   }
 
-  // Guard (normalde questions.length===0 yakalıyor ama güvenli)
-  if (!currentQuestion) {
-    return null;
-  }
+  if (!currentQuestion) return null;
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      }}
-      style={quickGameStyles.bg}
-    >
-      <View style={quickGameStyles.overlay} />
-      <SafeAreaView style={quickGameStyles.container} edges={["top"]}>
-        {/* Header */}
-        <View style={quickGameStyles.header}>
-          <View style={quickGameStyles.scoreContainer}>
-            <Text style={quickGameStyles.scoreText}>Puan: {score}</Text>
+    <View style={s.root}>
+      <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+      <SafeAreaView style={s.safeArea} edges={['top']}>
+
+        {/* Header Row */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={handleExitPress} style={s.exitButton} activeOpacity={0.7}>
+            <Ionicons name="close-circle" size={28} color={Colors.text.secondary} />
+          </TouchableOpacity>
+
+          <View style={s.scoreBadge}>
+            <TextCustom style={s.scoreBadgeText} fontSize={14}>
+              {score} Puan
+            </TextCustom>
           </View>
 
-          <View style={quickGameStyles.timerContainer}>
-            <Text
-              style={[
-                quickGameStyles.timerText,
-                timeLeft <= 5 && quickGameStyles.timerWarning,
-              ]}
+          <View style={[s.timerCircle, timeLeft <= 5 && s.timerCircleUrgent]}>
+            <TextCustom
+              style={[s.timerText, timeLeft <= 5 && s.timerTextUrgent]}
+              fontSize={22}
             >
-              ⏱️ {timeLeft}s
-            </Text>
+              {timeLeft}
+            </TextCustom>
           </View>
 
-          <View style={quickGameStyles.questionCounter}>
-            <Text style={quickGameStyles.counterText}>
+          <View style={s.counterBadge}>
+            <TextCustom style={s.counterText} fontSize={14}>
               {currentQuestionIndex + 1}/{questions.length}
-            </Text>
+            </TextCustom>
           </View>
         </View>
 
-        {/* Soru */}
-        <View style={quickGameStyles.questionContainer}>
-          <Text style={quickGameStyles.categoryBadge}>
-            {currentQuestion.category?.toUpperCase() || "GENEL KÜLTÜR"}
-          </Text>
-          <TextCustom style={quickGameStyles.questionText} fontSize={20}>
+        {/* Category badge */}
+        <View style={s.categoryBadgeWrap}>
+          <View style={s.categoryBadge}>
+            <TextCustom style={s.categoryBadgeText} fontSize={11}>
+              {currentQuestion.category?.toUpperCase() ?? 'GENEL KÜLTÜR'}
+            </TextCustom>
+          </View>
+        </View>
+
+        {/* Question card */}
+        <View style={s.questionCard}>
+          <TextCustom style={s.questionText} fontSize={19}>
             {currentQuestion.question}
           </TextCustom>
         </View>
 
-        {/* Seçenekler */}
-        <View style={quickGameStyles.optionsContainer}>
-          {currentQuestion.options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                quickGameStyles.optionButton,
-                selectedAnswer === index && quickGameStyles.selectedOption,
-                selectedAnswer !== null &&
-                  index === currentQuestion.correctAnswer &&
-                  quickGameStyles.correctOption,
-                selectedAnswer !== null &&
-                  selectedAnswer === index &&
-                  selectedAnswer !== currentQuestion.correctAnswer &&
-                  quickGameStyles.wrongOption,
-              ]}
-              onPress={() => handleAnswerSelect(index)}
-              disabled={selectedAnswer !== null}
-            >
-              <Text
+        {/* Answer options */}
+        <View style={s.optionsContainer}>
+          {currentQuestion.options.map((option, index) => {
+            const isSelected = selectedAnswer === index;
+            const isCorrect = selectedAnswer !== null && index === currentQuestion.correctAnswer;
+            const isWrong =
+              selectedAnswer !== null &&
+              isSelected &&
+              selectedAnswer !== currentQuestion.correctAnswer;
+            const isDimmed = selectedAnswer !== null && !isSelected && !isCorrect;
+            const letterLabel = String.fromCharCode(65 + index);
+
+            return (
+              <Animated.View
+                key={index}
                 style={[
-                  quickGameStyles.optionText,
-                  (selectedAnswer === index ||
-                    (selectedAnswer !== null &&
-                      index === currentQuestion.correctAnswer)) &&
-                    quickGameStyles.optionTextSelected,
+                  s.optionWrapper,
+                  { transform: [{ scale: scaleAnims[index] ?? 1 }] },
+                  isDimmed && s.optionDimmed,
                 ]}
               >
-                {String.fromCharCode(65 + index)}. {option}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <TouchableOpacity
+                  style={[
+                    s.optionButton,
+                    isCorrect && s.optionCorrect,
+                    isWrong && s.optionWrong,
+                  ]}
+                  onPress={() => handleAnswerSelect(index)}
+                  disabled={selectedAnswer !== null}
+                  activeOpacity={0.85}
+                >
+                  <View style={[
+                    s.optionLetter,
+                    isCorrect && s.optionLetterCorrect,
+                    isWrong && s.optionLetterWrong,
+                  ]}>
+                    <TextCustom style={s.optionLetterText} fontSize={13}>
+                      {letterLabel}
+                    </TextCustom>
+                  </View>
+
+                  <TextCustom
+                    style={[s.optionText, (isSelected || isCorrect) && s.optionTextSelected]}
+                    fontSize={15}
+                  >
+                    {option}
+                  </TextCustom>
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          })}
         </View>
 
-        {/* İlerleme Çubuğu */}
-        <View style={quickGameStyles.progressContainer}>
+        {/* Progress bar */}
+        <View style={s.progressTrack}>
           <View
             style={[
-              quickGameStyles.progressBar,
-              {
-                width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
-              },
+              s.progressFill,
+              { width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` },
             ]}
           />
         </View>
+
       </SafeAreaView>
-    </ImageBackground>
+
+      {/* Exit confirm modal */}
+      <Modal
+        visible={exitModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={cancelExit}
+      >
+        <View style={s.modalOverlay}>
+          <View style={s.modalCard}>
+            <TextCustom style={s.modalTitle} fontSize={17}>
+              Oyundan ayrılmak istediğine emin misin?
+            </TextCustom>
+            <View style={s.modalButtons}>
+              <TouchableOpacity
+                style={s.modalCancelBtn}
+                onPress={cancelExit}
+                activeOpacity={0.8}
+              >
+                <TextCustom style={s.modalCancelText} fontSize={15}>
+                  Hayır
+                </TextCustom>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={s.modalConfirmBtn}
+                onPress={confirmExit}
+                activeOpacity={0.8}
+              >
+                <TextCustom style={s.modalConfirmText} fontSize={15}>
+                  Evet
+                </TextCustom>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+    </View>
   );
 }
