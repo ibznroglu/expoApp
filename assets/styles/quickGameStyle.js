@@ -60,6 +60,14 @@ export const quickGameStyles = StyleSheet.create({
   exitButton: {
     padding: Spacing.xs,
   },
+  exitButtonCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.wrong,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   scoreBadge: {
     backgroundColor: Colors.brand.primary,
     paddingHorizontal: Spacing.md,
@@ -140,15 +148,18 @@ export const quickGameStyles = StyleSheet.create({
 
   // Answer options
   optionsContainer: {
-    flex: 1,
+    flexGrow: 1,
     gap: Spacing.sm,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
-  optionWrapper: {},
+  optionWrapper: {
+    flex: 1,
+  },
   optionDimmed: {
     opacity: 0.5,
   },
   optionButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.bg.surface,

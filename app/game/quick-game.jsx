@@ -23,7 +23,7 @@ import {
 import TextCustom from "../components/TextCustom";
 import { Colors } from "../../constants/theme";
 
-const BG_GRADIENT = ['#2D1B69', '#1A0A4A', '#0D0527'];
+const BG_GRADIENT = ['#3D1A7A', '#22107A', '#130850', '#080320'];
 
 export default function QuickGame() {
   const router = useRouter();
@@ -302,8 +302,10 @@ export default function QuickGame() {
 
         {/* Header Row */}
         <View style={s.header}>
-          <TouchableOpacity onPress={handleExitPress} style={s.exitButton} activeOpacity={0.7}>
-            <Ionicons name="close-circle" size={28} color={Colors.text.secondary} />
+          <TouchableOpacity onPress={handleExitPress} style={s.exitButton} activeOpacity={0.75}>
+            <View style={s.exitButtonCircle}>
+              <Ionicons name="close" size={18} color={Colors.text.primary} />
+            </View>
           </TouchableOpacity>
 
           <View style={s.scoreBadge}>
