@@ -307,7 +307,7 @@ export default function HomeScreen() {
             <View style={homeStyles.modalCard}>
               <TouchableOpacity
                 style={homeStyles.modalCloseBtn}
-                onPress={() => setRewardModalVisible(false)}
+                onPress={() => { playUISound('button'); setRewardModalVisible(false); }}
               >
                 <Text style={homeStyles.modalCloseBtnText}>×</Text>
               </TouchableOpacity>
