@@ -204,17 +204,18 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
   },
 
-  // Progress bar
+  // Progress bar (below header)
   progressTrack: {
-    height: 4,
-    backgroundColor: Colors.border.white,
-    borderRadius: Radius.full,
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 3,
     overflow: 'hidden',
+    marginBottom: Spacing.md,
   },
   progressFill: {
     height: '100%',
     backgroundColor: Colors.brand.primary,
-    borderRadius: Radius.full,
+    borderRadius: 3,
   },
 
   // Exit confirm modal

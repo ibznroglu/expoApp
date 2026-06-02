@@ -328,6 +328,16 @@ export default function QuickGame() {
           </View>
         </View>
 
+        {/* Progress bar */}
+        <View style={s.progressTrack}>
+          <View
+            style={[
+              s.progressFill,
+              { width: `${(currentQuestionIndex / questions.length) * 100}%` },
+            ]}
+          />
+        </View>
+
         {/* Category badge */}
         <View style={s.categoryBadgeWrap}>
           <View style={s.categoryBadge}>
@@ -401,16 +411,6 @@ export default function QuickGame() {
         </View>
 
         </View>{/* end gameContent */}
-
-        {/* Progress bar */}
-        <View style={s.progressTrack}>
-          <View
-            style={[
-              s.progressFill,
-              { width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` },
-            ]}
-          />
-        </View>
 
       </SafeAreaView>
 
