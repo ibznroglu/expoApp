@@ -148,7 +148,6 @@ export default function QuickGame() {
   useEffect(() => {
     if (timeLeft !== 0) return;
     if (gameCompleted || loading || selectedAnswer !== null) return;
-    if (soundsReady) playSound("gameOver");
     handleNextQuestion();
   }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
 
