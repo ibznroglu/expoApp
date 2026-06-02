@@ -50,17 +50,27 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
   },
 
+  // Exit row (standalone above header)
+  exitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  exitBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   // Header row
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.md,
     gap: Spacing.sm,
-  },
-  exitButton: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    padding: 8,
   },
   scoreBadge: {
     backgroundColor: Colors.brand.primary,
@@ -105,10 +115,19 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.semibold,
   },
 
-  // Category badge
-  categoryBadgeWrap: {
+  // Category block (icon + badge)
+  categoryBlock: {
     alignItems: 'center',
     marginBottom: Spacing.md,
+    gap: Spacing.sm,
+  },
+  categoryIconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryBadge: {
     backgroundColor: Colors.accent.purple,
@@ -216,6 +235,43 @@ export const quickGameStyles = StyleSheet.create({
     height: '100%',
     backgroundColor: Colors.brand.primary,
     borderRadius: 3,
+  },
+
+  // Joker section (visual only)
+  jokerSection: {
+    alignItems: 'center',
+    gap: Spacing.sm,
+    opacity: 0.5,
+    marginTop: Spacing.sm,
+  },
+  jokerSoonLabel: {
+    color: Colors.text.muted,
+    fontFamily: Typography.family.bold,
+    letterSpacing: 1.2,
+  },
+  jokerRow: {
+    flexDirection: 'row',
+    gap: Spacing.xl,
+    justifyContent: 'center',
+  },
+  jokerItem: {
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  jokerBtn: {
+    width: 56,
+    height: 56,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.bg.elevated,
+    borderWidth: 1,
+    borderColor: Colors.border.bright,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  jokerLabel: {
+    color: Colors.text.secondary,
+    fontFamily: Typography.family.semibold,
+    textAlign: 'center',
   },
 
   // Exit confirm modal

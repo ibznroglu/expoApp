@@ -25,6 +25,20 @@ import { Colors } from "../../constants/theme";
 
 const BG_GRADIENT = ['#3D1A7A', '#22107A', '#130850', '#080320'];
 
+const CATEGORY_ICON_MAP = {
+  'coğrafya': 'earth-outline',
+  'tarih':    'book-outline',
+  'bilim':    'flask-outline',
+  'spor':     'football-outline',
+  'edebiyat': 'library-outline',
+};
+
+function getCategoryIcon(category) {
+  if (!category) return 'bulb-outline';
+  const key = category.toLowerCase().trim();
+  return CATEGORY_ICON_MAP[key] ?? 'bulb-outline';
+}
+
 export default function QuickGame() {
   const router = useRouter();
 
@@ -299,12 +313,15 @@ export default function QuickGame() {
       <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
       <SafeAreaView style={s.safeArea} edges={['top']}>
 
-        {/* Header Row */}
-        <View style={s.header}>
-          <TouchableOpacity onPress={handleExitPress} style={s.exitButton} activeOpacity={0.75}>
-            <Ionicons name="log-out-outline" size={28} color={Colors.text.primary} />
+        {/* Exit row — standalone above header */}
+        <View style={s.exitRow}>
+          <TouchableOpacity onPress={handleExitPress} style={s.exitBtn} activeOpacity={0.75}>
+            <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
           </TouchableOpacity>
+        </View>
 
+        {/* Header row — score | timer | counter */}
+        <View style={s.header}>
           <View style={s.scoreBadge}>
             <TextCustom style={s.scoreBadgeText} fontSize={14}>
               {score} Puan
@@ -337,8 +354,15 @@ export default function QuickGame() {
           />
         </View>
 
-        {/* Category badge */}
-        <View style={s.categoryBadgeWrap}>
+        {/* Category icon + badge */}
+        <View style={s.categoryBlock}>
+          <View style={s.categoryIconCircle}>
+            <Ionicons
+              name={getCategoryIcon(currentQuestion.category)}
+              size={48}
+              color={Colors.text.primary}
+            />
+          </View>
           <View style={s.categoryBadge}>
             <TextCustom style={s.categoryBadgeText} fontSize={11}>
               {currentQuestion.category?.toLocaleUpperCase('tr-TR') ?? 'GENEL KÜLTÜR'}
@@ -346,7 +370,7 @@ export default function QuickGame() {
           </View>
         </View>
 
-        {/* Question + Options centered group */}
+        {/* Question + Options + Jokers */}
         <View style={s.gameContent}>
 
         {/* Question card */}
@@ -407,6 +431,31 @@ export default function QuickGame() {
               </Animated.View>
             );
           })}
+        </View>
+
+        {/* Joker row — visual only, disabled */}
+        <View style={s.jokerSection}>
+          <TextCustom style={s.jokerSoonLabel} fontSize={11}>YAKINDA</TextCustom>
+          <View style={s.jokerRow}>
+            <View style={s.jokerItem}>
+              <View style={s.jokerBtn}>
+                <Ionicons name="help-circle-outline" size={28} color={Colors.text.primary} />
+              </View>
+              <TextCustom style={s.jokerLabel} fontSize={10}>50/50</TextCustom>
+            </View>
+            <View style={s.jokerItem}>
+              <View style={s.jokerBtn}>
+                <Ionicons name="flash-outline" size={28} color={Colors.text.primary} />
+              </View>
+              <TextCustom style={s.jokerLabel} fontSize={10}>2x Puan</TextCustom>
+            </View>
+            <View style={s.jokerItem}>
+              <View style={s.jokerBtn}>
+                <Ionicons name="play-skip-forward-outline" size={28} color={Colors.text.primary} />
+              </View>
+              <TextCustom style={s.jokerLabel} fontSize={10}>Pas Geç</TextCustom>
+            </View>
+          </View>
         </View>
 
         </View>{/* end gameContent */}
