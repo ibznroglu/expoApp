@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { showToast } from '@/utils/toast';
-import { initSounds, playSound } from '@/utils/sound';
+import { initSounds, playUISound } from '@/utils/sound';
 import { homeStyles } from '@/assets/styles/homeStyle';
 import { Colors, Spacing } from '@/constants/theme';
 
@@ -122,7 +122,7 @@ export default function HomeScreen() {
       iconName: 'flash',
       gradientColors: QUICK_GRADIENT,
       buttonLabel: '▶ Oyna',
-      onPress: () => { playSound('correct'); router.push('/game/quick-game'); },
+      onPress: () => { playUISound('button'); router.push('/game/quick-game'); },
     },
     {
       id: 'daily',
@@ -131,7 +131,7 @@ export default function HomeScreen() {
       iconName: 'calendar',
       gradientColors: [Colors.modes.daily.from, Colors.modes.daily.to] as [string, string],
       buttonLabel: '▶ Oyna',
-      onPress: () => { playSound('correct'); showToast.info('Yakında', 'Günlük mod yakında geliyor!'); },
+      onPress: () => { playUISound('button'); showToast.info('Yakında', 'Günlük mod yakında geliyor!'); },
     },
     {
       id: 'friends',
@@ -140,7 +140,7 @@ export default function HomeScreen() {
       iconName: 'people',
       gradientColors: FRIENDS_GRADIENT,
       buttonLabel: '▶ Oyna',
-      onPress: () => { playSound('correct'); showToast.info('Yakında', 'Arkadaşlar modu yakında geliyor!'); },
+      onPress: () => { playUISound('button'); showToast.info('Yakında', 'Arkadaşlar modu yakında geliyor!'); },
     },
     {
       id: 'tournament',
@@ -149,7 +149,7 @@ export default function HomeScreen() {
       iconName: 'trophy',
       gradientColors: ['#059669', '#10B981'] as [string, string],
       buttonLabel: '▶ Keşfet',
-      onPress: () => { playSound('correct'); showToast.info('Yakında', 'Turnuvalar yakında geliyor!'); },
+      onPress: () => { playUISound('button'); showToast.info('Yakında', 'Turnuvalar yakında geliyor!'); },
     },
   ];
 
@@ -247,7 +247,7 @@ export default function HomeScreen() {
 
           {/* Daily reward pulse button */}
           <View style={{ alignItems: 'flex-start', marginLeft: 24, marginVertical: Spacing.md }}>
-            <TouchableOpacity activeOpacity={0.85} onPress={() => setRewardModalVisible(true)}>
+            <TouchableOpacity activeOpacity={0.85} onPress={() => { playUISound('daily-prize'); setRewardModalVisible(true); }}>
               <Animated.View
                 style={[
                   homeStyles.rewardCircle,
@@ -279,7 +279,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   key={item.id}
                   style={homeStyles.navItem}
-                  onPress={() => { setActiveNav(item.id); item.onPress(); }}
+                  onPress={() => { playUISound('button'); setActiveNav(item.id); item.onPress(); }}
                   activeOpacity={0.7}
                 >
                   <Ionicons
