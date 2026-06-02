@@ -170,14 +170,14 @@ export default function QuickGame() {
   }, []);
 
   const handleExitPress = useCallback(() => {
-    playUISound('button');
+    playUISound('modal');
     setExitModalVisible(true);
   }, []);
 
   const confirmExit = useCallback(() => {
     if (exitingRef.current) return;
     exitingRef.current = true;
-    playUISound('modal');
+    playUISound('button');
     setExitModalVisible(false);
     setTimeout(() => router.back(), 200);
   }, [router]);
