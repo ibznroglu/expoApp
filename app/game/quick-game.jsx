@@ -506,11 +506,20 @@ export default function QuickGame() {
         {/* Question + Options + Jokers */}
         <View style={s.gameContent}>
 
-        {/* Question card */}
-        <View style={s.questionCard}>
-          <TextCustom style={s.questionText} fontSize={19}>
-            {currentQuestion.question}
-          </TextCustom>
+        {/* Question card — gradient border */}
+        <View style={s.questionCardWrapper}>
+          <LinearGradient
+            colors={['#9B59F5', '#00D4FF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={s.questionCardGradientBorder}
+          >
+            <View style={s.questionCard}>
+              <TextCustom style={s.questionText} fontSize={19}>
+                {currentQuestion.question}
+              </TextCustom>
+            </View>
+          </LinearGradient>
         </View>
 
         {/* Answer options */}

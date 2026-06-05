@@ -174,21 +174,29 @@ export const quickGameStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // Question card
-  questionCard: {
-    backgroundColor: Colors.bg.card,
-    borderRadius: Radius.lg,
-    borderWidth: 1.5,
-    borderColor: '#9B59F5',
-    padding: Spacing.xl,
+  // Question card — gradient border wrapper
+  questionCardWrapper: {
     flex: 1,
     flexShrink: 1,
-    justifyContent: 'center',
+    borderRadius: Radius.lg,
     shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 14,
     elevation: 10,
+  },
+  questionCardGradientBorder: {
+    flex: 1,
+    padding: 1.5,
+    borderRadius: Radius.lg,
+    overflow: 'hidden',
+  },
+  questionCard: {
+    flex: 1,
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.lg,
+    padding: Spacing.xl,
+    justifyContent: 'center',
   },
   questionText: {
     color: Colors.text.primary,
@@ -201,6 +209,8 @@ export const quickGameStyles = StyleSheet.create({
   optionsContainer: {
     gap: 10,
     flexShrink: 1,
+    marginTop: 12,
+    marginBottom: 12,
   },
   optionWrapper: {
     height: 64,
