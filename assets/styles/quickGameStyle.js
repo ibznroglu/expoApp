@@ -168,8 +168,7 @@ export const quickGameStyles = StyleSheet.create({
   // Centering wrapper for question + options
   gameContent: {
     flex: 1,
-    justifyContent: 'flex-start',
-    gap: Spacing.lg,
+    justifyContent: 'space-between',
   },
 
   // Question card
@@ -180,6 +179,7 @@ export const quickGameStyles = StyleSheet.create({
     borderColor: '#9B59F5',
     padding: Spacing.xl,
     minHeight: 110,
+    flexShrink: 1,
     justifyContent: 'center',
     shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },

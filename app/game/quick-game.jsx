@@ -27,17 +27,28 @@ import { Colors, Typography } from "../../constants/theme";
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
 
 const CATEGORY_ICON_MAP = {
-  'coğrafya': 'earth-outline',
-  'tarih':    'book-outline',
-  'bilim':    'flask-outline',
-  'spor':     'football-outline',
-  'edebiyat': 'library-outline',
+  'spor':          'football-outline',
+  'tarih':         'time-outline',
+  'bilim':         'flask-outline',
+  'coğrafya':      'earth-outline',
+  'cografya':      'earth-outline',
+  'edebiyat':      'book-outline',
+  'matematik':     'calculator-outline',
+  'fizik':         'nuclear-outline',
+  'kimya':         'beaker-outline',
+  'biyoloji':      'leaf-outline',
+  'sanat':         'color-palette-outline',
+  'müzik':         'musical-notes-outline',
+  'muzik':         'musical-notes-outline',
+  'teknoloji':     'hardware-chip-outline',
+  'genel kültür':  'globe-outline',
+  'genel kultur':  'globe-outline',
 };
 
 function getCategoryIcon(category) {
-  if (!category) return 'bulb-outline';
+  if (!category) return 'help-circle-outline';
   const key = category.toLowerCase().trim();
-  return CATEGORY_ICON_MAP[key] ?? 'bulb-outline';
+  return CATEGORY_ICON_MAP[key] ?? 'help-circle-outline';
 }
 
 const CIRCUMFERENCE = 251.33;
