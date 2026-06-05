@@ -65,60 +65,66 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Header row
-  header: {
+  // Header card
+  headerCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(20,10,55,0.85)',
+    borderRadius: Radius.lg,
+    borderWidth: 1.5,
+    borderColor: 'rgba(155,89,245,0.45)',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
     marginBottom: Spacing.md,
-    gap: Spacing.sm,
-  },
-  scoreBadge: {
-    backgroundColor: Colors.brand.primary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: Radius.full,
-    flex: 1,
-  },
-  scoreBadgeText: {
-    color: Colors.text.primary,
-    fontFamily: Typography.family.bold,
-    textAlign: 'center',
-  },
-  timerCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 3,
-    borderColor: Colors.accent.cyan,
-    backgroundColor: Colors.bg.elevated,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#00D4FF',
+    shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.35,
     shadowRadius: 16,
-    elevation: 12,
+    elevation: 8,
   },
-  timerCircleUrgent: {
-    borderColor: Colors.wrong,
-    shadowColor: Colors.wrong,
+  headerSection: {
+    alignItems: 'flex-start',
+    minWidth: 64,
   },
-  timerText: {
-    color: Colors.accent.cyan,
+  headerLabel: {
+    color: Colors.text.muted,
+    fontFamily: Typography.family.bold,
+    letterSpacing: 1.5,
+    marginBottom: 2,
+  },
+  headerValue: {
+    color: Colors.accent.gold,
     fontFamily: Typography.family.black,
   },
-  timerTextUrgent: {
-    color: Colors.wrong,
-  },
-  counterBadge: {
-    backgroundColor: Colors.bg.elevated,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: Radius.full,
-  },
-  counterText: {
+  headerValueDim: {
     color: Colors.text.secondary,
     fontFamily: Typography.family.semibold,
+  },
+  timerArcWrapper: {
+    width: 96,
+    height: 96,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  timerArcCenter: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  timerArcNumber: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.black,
+    lineHeight: 30,
+  },
+  timerArcLabel: {
+    color: Colors.text.muted,
+    fontFamily: Typography.family.semibold,
+    letterSpacing: 0.5,
   },
 
   // Category block (icon + badge)
@@ -170,11 +176,16 @@ export const quickGameStyles = StyleSheet.create({
   questionCard: {
     backgroundColor: Colors.bg.card,
     borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border.bright,
+    borderWidth: 1.5,
+    borderColor: '#9B59F5',
     padding: Spacing.xl,
     minHeight: 110,
     justifyContent: 'center',
+    shadowColor: '#9B59F5',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 14,
+    elevation: 10,
   },
   questionText: {
     color: Colors.text.primary,
@@ -217,11 +228,15 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
     backgroundColor: Colors.bg.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border.bright,
+    borderWidth: 2,
+    borderColor: 'rgba(155,89,245,0.8)',
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.md,
     gap: Spacing.md,
+  },
+  optionButtonSelected: {
+    borderColor: '#00D4FF',
+    borderWidth: 2,
   },
   optionCorrect: {
     backgroundColor: Colors.correctBg,
@@ -235,7 +250,7 @@ export const quickGameStyles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(155,89,245,0.25)',
+    backgroundColor: 'rgba(155,89,245,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -260,31 +275,42 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
   },
 
-  // Progress bar (below header)
-  progressTrack: {
-    height: 6,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 3,
-    overflow: 'hidden',
+  // Dot progress (below header)
+  dotProgressRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
     marginBottom: Spacing.md,
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: Colors.brand.primary,
-    borderRadius: 3,
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  progressDotAnswered: {
+    backgroundColor: Colors.accent.purple,
+    borderColor: Colors.accent.purple,
+  },
+  progressDotCurrent: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    elevation: 4,
   },
 
-  // Joker section (visual only)
+  // Joker section
   jokerSection: {
     alignItems: 'center',
     gap: Spacing.sm,
-    opacity: 0.5,
+    opacity: 0.85,
     marginTop: Spacing.sm,
-  },
-  jokerSoonLabel: {
-    color: Colors.text.muted,
-    fontFamily: Typography.family.bold,
-    letterSpacing: 1.2,
   },
   jokerRow: {
     flexDirection: 'row',
@@ -296,10 +322,10 @@ export const quickGameStyles = StyleSheet.create({
     gap: Spacing.xs,
   },
   jokerBtn: {
-    width: 56,
-    height: 56,
+    width: 72,
+    height: 72,
     borderRadius: Radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -307,6 +333,21 @@ export const quickGameStyles = StyleSheet.create({
     color: Colors.text.secondary,
     fontFamily: Typography.family.semibold,
     textAlign: 'center',
+  },
+  jokerCountBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  jokerCountText: {
+    color: Colors.text.primary,
+    fontFamily: Typography.family.bold,
   },
 
   // Exit confirm modal

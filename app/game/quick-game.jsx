@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { Ionicons } from "@expo/vector-icons";
 import { quickGameStyles as s } from "../../assets/styles/quickGameStyle";
 import { getQuestions } from "../../services/questionService";
@@ -21,7 +22,7 @@ import {
   unloadSounds,
 } from "../../utils/sound";
 import TextCustom from "../components/TextCustom";
-import { Colors } from "../../constants/theme";
+import { Colors, Typography } from "../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
 
@@ -37,6 +38,40 @@ function getCategoryIcon(category) {
   if (!category) return 'bulb-outline';
   const key = category.toLowerCase().trim();
   return CATEGORY_ICON_MAP[key] ?? 'bulb-outline';
+}
+
+const CIRCUMFERENCE = 251.33;
+
+function TimerArc({ timeLeft }) {
+  const offset = CIRCUMFERENCE * (1 - timeLeft / 15);
+  const isUrgent = timeLeft <= 5;
+  return (
+    <View style={s.timerArcWrapper}>
+      <Svg width={96} height={96}>
+        <Defs>
+          <SvgLinearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="0">
+            <Stop offset="0" stopColor="#4FC3F7" />
+            <Stop offset="0.5" stopColor="#FF8C00" />
+            <Stop offset="1" stopColor="#FF4136" />
+          </SvgLinearGradient>
+        </Defs>
+        <Circle cx={48} cy={48} r={40} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={5} strokeDasharray={CIRCUMFERENCE} strokeDashoffset={0} />
+        <Circle
+          cx={48} cy={48} r={40} fill="none"
+          stroke={isUrgent ? '#FF4136' : 'url(#timerGrad)'}
+          strokeWidth={5}
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90, 48, 48)"
+        />
+      </Svg>
+      <View style={s.timerArcCenter}>
+        <TextCustom style={s.timerArcNumber} fontSize={26}>{timeLeft}</TextCustom>
+        <TextCustom style={s.timerArcLabel} fontSize={9}>saniye</TextCustom>
+      </View>
+    </View>
+  );
 }
 
 export default function QuickGame() {
@@ -229,6 +264,20 @@ export default function QuickGame() {
     return (
       <View style={s.root}>
         <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={['rgba(138,43,226,0.35)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.7, y: 0.7 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,120,220,0.28)']}
+          start={{ x: 0.3, y: 0.3 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         <SafeAreaView style={s.safeArea} edges={['top']}>
           <View style={s.centeredFill}>
             <TextCustom style={s.loadingText} fontSize={20}>
@@ -247,6 +296,20 @@ export default function QuickGame() {
     return (
       <View style={s.root}>
         <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={['rgba(138,43,226,0.35)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.7, y: 0.7 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,120,220,0.28)']}
+          start={{ x: 0.3, y: 0.3 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         <SafeAreaView style={s.safeArea} edges={['top']}>
           <View style={s.centeredFill}>
             <TextCustom style={s.errorText} fontSize={18}>
@@ -274,6 +337,20 @@ export default function QuickGame() {
     return (
       <View style={s.root}>
         <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={['rgba(138,43,226,0.35)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.7, y: 0.7 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,120,220,0.28)']}
+          start={{ x: 0.3, y: 0.3 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         <SafeAreaView style={s.safeArea} edges={['top']}>
           <View style={s.centeredFill}>
 
@@ -335,9 +412,16 @@ export default function QuickGame() {
     <View style={s.root}>
       <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
       <LinearGradient
-        colors={['rgba(0,212,255,0.07)', 'transparent']}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 0.5 }}
+        colors={['rgba(138,43,226,0.35)', 'transparent']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.7, y: 0.7 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(0,120,220,0.28)']}
+        start={{ x: 0.3, y: 0.3 }}
+        end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
@@ -350,44 +434,38 @@ export default function QuickGame() {
           </TouchableOpacity>
         </View>
 
-        {/* Header row — score | timer | counter */}
-        <View style={s.header}>
-          <View style={s.scoreBadge}>
-            <TextCustom style={s.scoreBadgeText} fontSize={14}>
-              {score} Puan
-            </TextCustom>
+        {/* Header card — PUAN | timer | SORU */}
+        <View style={s.headerCard}>
+          <View style={s.headerSection}>
+            <TextCustom style={s.headerLabel} fontSize={10}>PUAN</TextCustom>
+            <TextCustom style={s.headerValue} fontSize={22}>{score}</TextCustom>
           </View>
 
-          <Animated.View
-            style={[
-              s.timerCircle,
-              timeLeft <= 5 && s.timerCircleUrgent,
-              { transform: [{ scale: pulseAnim }] },
-            ]}
-          >
-            <TextCustom
-              style={[s.timerText, timeLeft <= 5 && s.timerTextUrgent]}
-              fontSize={22}
-            >
-              {timeLeft}
-            </TextCustom>
+          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+            <TimerArc timeLeft={timeLeft} />
           </Animated.View>
 
-          <View style={s.counterBadge}>
-            <TextCustom style={s.counterText} fontSize={14}>
-              {currentQuestionIndex + 1}/{questions.length}
+          <View style={[s.headerSection, { alignItems: 'flex-end' }]}>
+            <TextCustom style={s.headerLabel} fontSize={10}>SORU</TextCustom>
+            <TextCustom style={s.headerValue} fontSize={22}>
+              {currentQuestionIndex + 1}
+              <TextCustom style={s.headerValueDim} fontSize={16}>/{questions.length}</TextCustom>
             </TextCustom>
           </View>
         </View>
 
-        {/* Progress bar */}
-        <View style={s.progressTrack}>
-          <View
-            style={[
-              s.progressFill,
-              { width: `${(currentQuestionIndex / questions.length) * 100}%` },
-            ]}
-          />
+        {/* Dot progress */}
+        <View style={s.dotProgressRow}>
+          {Array.from({ length: questions.length }).map((_, i) => (
+            <View
+              key={i}
+              style={[
+                s.progressDot,
+                i < currentQuestionIndex && s.progressDotAnswered,
+                i === currentQuestionIndex && s.progressDotCurrent,
+              ]}
+            />
+          ))}
         </View>
 
         {/* Category icon + badge */}
@@ -449,6 +527,7 @@ export default function QuickGame() {
                 <TouchableOpacity
                   style={[
                     s.optionButton,
+                    isSelected && !isCorrect && !isWrong && s.optionButtonSelected,
                     isCorrect && s.optionCorrect,
                     isWrong && s.optionWrong,
                   ]}
@@ -478,28 +557,37 @@ export default function QuickGame() {
           })}
         </View>
 
-        {/* Joker row — visual only, disabled */}
+        {/* Joker row */}
         <View style={s.jokerSection}>
-          <TextCustom style={s.jokerSoonLabel} fontSize={11}>YAKINDA</TextCustom>
           <View style={s.jokerRow}>
+
+            {/* x2 — CIFTE SANS */}
             <View style={s.jokerItem}>
-              <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,188,212,0.2)', borderColor: '#00BCD4' }]}>
-                <Ionicons name="help-circle-outline" size={28} color="#00BCD4" />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(155,89,245,0.25)', borderColor: Colors.accent.purple }]}>
+                <TextCustom style={{ color: Colors.accent.purple, fontFamily: Typography.family.black }} fontSize={20}>x2</TextCustom>
               </View>
-              <TextCustom style={s.jokerLabel} fontSize={10}>50/50</TextCustom>
+              <TextCustom style={s.jokerLabel} fontSize={10}>ÇİFTE ŞANS</TextCustom>
+              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
+
+            {/* 50:50 */}
             <View style={s.jokerItem}>
-              <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.15)', borderColor: Colors.accent.gold }]}>
-                <Ionicons name="flash-outline" size={28} color={Colors.accent.gold} />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.12)', borderColor: Colors.accent.gold }]}>
+                <Ionicons name="bulb-outline" size={30} color={Colors.accent.gold} />
               </View>
-              <TextCustom style={s.jokerLabel} fontSize={10}>2x Puan</TextCustom>
+              <TextCustom style={s.jokerLabel} fontSize={10}>50:50</TextCustom>
+              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
+
+            {/* SORU GEC */}
             <View style={s.jokerItem}>
-              <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,107,53,0.2)', borderColor: Colors.brand.primary }]}>
-                <Ionicons name="play-skip-forward-outline" size={28} color={Colors.brand.primary} />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,212,255,0.12)', borderColor: Colors.accent.cyan }]}>
+                <Ionicons name="play-skip-forward-outline" size={30} color={Colors.accent.cyan} />
               </View>
-              <TextCustom style={s.jokerLabel} fontSize={10}>Pas Geç</TextCustom>
+              <TextCustom style={s.jokerLabel} fontSize={10}>SORU GEÇ</TextCustom>
+              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
+
           </View>
         </View>
 
