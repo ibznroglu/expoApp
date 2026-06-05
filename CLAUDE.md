@@ -89,10 +89,15 @@ Styled in `utils/toastConfig.js`.
 
 ## Context Management
 
-- Run /compact or /clear before context reaches 60%
+- Run /compact before context reaches 60%
 - Follow this order for every major task: Research -> Plan -> Implement -> Validate
 - Delegate research tasks to a subagent to keep the main context clean
 - On compaction, preserve: list of changed files, active plan path, running commands
+- After coder finishes, /compact before running code-reviewer
+- After code-reviewer, /compact before running tester
+- For manual testing: if context > 60%, save debug snapshot to thoughts/shared/debug/YYYY-MM-DD_feature.md with: one-line status, repro steps, expected vs actual, current hypothesis, relevant file paths. Then /clear and reload only: plan phase + debug note + 1-2 relevant files
+- Keep phases small — each phase should validate one behavior
+- If manual testing requires more than 3 files or 2 failed hypotheses, split into a micro-phase
 
 ## Constraints
 
