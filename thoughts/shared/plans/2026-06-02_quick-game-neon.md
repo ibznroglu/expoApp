@@ -62,7 +62,7 @@ useEffect(() => {
 }, [timeLeft, selectedAnswer, gameCompleted]);
 ```
 
-**2c.** In the JSX header, wrap timerCircle View in Animated.View with pulse scale:
+**2c.** In the JSX header, replace the `<View style={[s.timerCircle, ...]}>` block (line 331) with an `Animated.View` — preserve the inner TextCustom exactly:
 ```jsx
 <Animated.View
   style={[
@@ -71,7 +71,12 @@ useEffect(() => {
     { transform: [{ scale: pulseAnim }] },
   ]}
 >
-  {/* timerText stays as-is */}
+  <TextCustom
+    style={[s.timerText, timeLeft <= 5 && s.timerTextUrgent]}
+    fontSize={22}
+  >
+    {timeLeft}
+  </TextCustom>
 </Animated.View>
 ```
 
@@ -136,23 +141,52 @@ categoryIconGradient: {
 },
 ```
 
-**4b.** In quick-game.jsx, replace the `categoryIconCircle` View with a LinearGradient:
+**4b.** In quick-game.jsx, replace the `categoryIconCircle` View with a two-layer structure to avoid iOS shadow clipping. The outer `View` carries the shadow/border/glow; the inner `LinearGradient` clips the gradient to the circle via `overflow: 'hidden'`:
+
 ```jsx
-<LinearGradient
-  colors={['rgba(0,212,255,0.25)', 'rgba(155,89,245,0.35)']}
-  start={{ x: 0, y: 0 }}
-  end={{ x: 1, y: 1 }}
-  style={[s.categoryIconCircle, s.categoryIconGradient]}
->
-  <Ionicons
-    name={getCategoryIcon(currentQuestion.category)}
-    size={48}
-    color={Colors.text.primary}
-  />
-</LinearGradient>
+{/* Outer view carries border + glow shadow (no overflow:hidden so iOS shadow renders) */}
+<View style={s.categoryIconOuter}>
+  {/* Inner gradient clips to circle */}
+  <LinearGradient
+    colors={['rgba(0,212,255,0.25)', 'rgba(155,89,245,0.35)']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={s.categoryIconGradient}
+  >
+    <Ionicons
+      name={getCategoryIcon(currentQuestion.category)}
+      size={48}
+      color={Colors.text.primary}
+    />
+  </LinearGradient>
+</View>
 ```
 
-**Risk note:** `overflow: 'hidden'` clips shadow on iOS. If the glow disappears on device, move the shadow to a wrapping View without overflow:hidden.
+Update **4a** styles accordingly — split into two style keys:
+```js
+categoryIconOuter: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  borderWidth: 2,
+  borderColor: '#00D4FF',
+  shadowColor: '#00D4FF',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.7,
+  shadowRadius: 14,
+  elevation: 10,
+},
+categoryIconGradient: {
+  width: 76,   // 80 - 2*borderWidth to fill inside the border
+  height: 76,
+  borderRadius: 38,
+  justifyContent: 'center',
+  alignItems: 'center',
+  overflow: 'hidden',
+},
+```
+
+Remove `categoryIconCircle` from the stylesheet entirely (replaced by `categoryIconOuter` + `categoryIconGradient`). Update the `categoryBadge` reference in JSX — it follows the icon block, no change needed there.
 
 ### Step 5 — Answer buttons: neon border + glow (quickGameStyle.js + quick-game.jsx)
 
@@ -161,11 +195,12 @@ categoryIconGradient: {
 borderColor: Colors.border.bright,   // was Colors.border.default
 ```
 
-**5b.** Update `optionWrapper` — add purple glow:
+**5b.** Update `optionWrapper` — add purple glow. `backgroundColor: 'transparent'` is required so Android `elevation` renders (elevation is a no-op without a backgroundColor on the same view):
 ```js
 optionWrapper: {
   height: 64,
   borderRadius: Radius.md,
+  backgroundColor: 'transparent',
   shadowColor: '#9B59F5',
   shadowOffset: { width: 0, height: 0 },
   shadowOpacity: 0.5,
