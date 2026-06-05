@@ -23,7 +23,7 @@ import {
 import TextCustom from "../components/TextCustom";
 import { Colors } from "../../constants/theme";
 
-const BG_GRADIENT = ['#3D1A7A', '#22107A', '#130850', '#080320'];
+const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
 
 const CATEGORY_ICON_MAP = {
   'coğrafya': 'earth-outline',
@@ -58,6 +58,8 @@ export default function QuickGame() {
     new Animated.Value(1),
     new Animated.Value(1),
   ]).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const pulseLoopRef = useRef(null);
   const exitingRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -164,6 +166,27 @@ export default function QuickGame() {
     if (gameCompleted || loading || selectedAnswer !== null) return;
     handleNextQuestion();
   }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
+
+  // Pulse animation — activates in urgent mode (≤5s), stops when answer selected or game done
+  useEffect(() => {
+    if (timeLeft <= 5 && timeLeft > 0 && selectedAnswer === null && !gameCompleted) {
+      pulseLoopRef.current?.stop();
+      pulseLoopRef.current = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 1.05, duration: 300, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1.0,  duration: 300, useNativeDriver: true }),
+        ])
+      );
+      pulseLoopRef.current.start();
+    } else {
+      if (pulseLoopRef.current) {
+        pulseLoopRef.current.stop();
+        pulseLoopRef.current = null;
+      }
+      pulseAnim.setValue(1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, selectedAnswer, gameCompleted]);
 
   const restartGame = useCallback(async () => {
     try {
@@ -311,6 +334,13 @@ export default function QuickGame() {
   return (
     <View style={s.root}>
       <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={['rgba(0,212,255,0.07)', 'transparent']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 0.5 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
       <SafeAreaView style={s.safeArea} edges={['top']}>
 
         {/* Exit row — standalone above header */}
@@ -328,14 +358,20 @@ export default function QuickGame() {
             </TextCustom>
           </View>
 
-          <View style={[s.timerCircle, timeLeft <= 5 && s.timerCircleUrgent]}>
+          <Animated.View
+            style={[
+              s.timerCircle,
+              timeLeft <= 5 && s.timerCircleUrgent,
+              { transform: [{ scale: pulseAnim }] },
+            ]}
+          >
             <TextCustom
               style={[s.timerText, timeLeft <= 5 && s.timerTextUrgent]}
               fontSize={22}
             >
               {timeLeft}
             </TextCustom>
-          </View>
+          </Animated.View>
 
           <View style={s.counterBadge}>
             <TextCustom style={s.counterText} fontSize={14}>
@@ -356,12 +392,19 @@ export default function QuickGame() {
 
         {/* Category icon + badge */}
         <View style={s.categoryBlock}>
-          <View style={s.categoryIconCircle}>
-            <Ionicons
-              name={getCategoryIcon(currentQuestion.category)}
-              size={48}
-              color={Colors.text.primary}
-            />
+          <View style={s.categoryIconOuter}>
+            <LinearGradient
+              colors={['rgba(0,212,255,0.25)', 'rgba(155,89,245,0.35)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={s.categoryIconGradient}
+            >
+              <Ionicons
+                name={getCategoryIcon(currentQuestion.category)}
+                size={48}
+                color={Colors.text.primary}
+              />
+            </LinearGradient>
           </View>
           <View style={s.categoryBadge}>
             <TextCustom style={s.categoryBadgeText} fontSize={11}>
@@ -399,6 +442,8 @@ export default function QuickGame() {
                   s.optionWrapper,
                   { transform: [{ scale: scaleAnims[index] ?? scaleAnims[0] }] },
                   isDimmed && s.optionDimmed,
+                  isCorrect && s.optionWrapperCorrect,
+                  isWrong   && s.optionWrapperWrong,
                 ]}
               >
                 <TouchableOpacity
@@ -438,20 +483,20 @@ export default function QuickGame() {
           <TextCustom style={s.jokerSoonLabel} fontSize={11}>YAKINDA</TextCustom>
           <View style={s.jokerRow}>
             <View style={s.jokerItem}>
-              <View style={s.jokerBtn}>
-                <Ionicons name="help-circle-outline" size={28} color={Colors.text.primary} />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,188,212,0.2)', borderColor: '#00BCD4' }]}>
+                <Ionicons name="help-circle-outline" size={28} color="#00BCD4" />
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>50/50</TextCustom>
             </View>
             <View style={s.jokerItem}>
-              <View style={s.jokerBtn}>
-                <Ionicons name="flash-outline" size={28} color={Colors.text.primary} />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.15)', borderColor: Colors.accent.gold }]}>
+                <Ionicons name="flash-outline" size={28} color={Colors.accent.gold} />
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>2x Puan</TextCustom>
             </View>
             <View style={s.jokerItem}>
-              <View style={s.jokerBtn}>
-                <Ionicons name="play-skip-forward-outline" size={28} color={Colors.text.primary} />
+              <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,107,53,0.2)', borderColor: Colors.brand.primary }]}>
+                <Ionicons name="play-skip-forward-outline" size={28} color={Colors.brand.primary} />
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>Pas Geç</TextCustom>
             </View>
