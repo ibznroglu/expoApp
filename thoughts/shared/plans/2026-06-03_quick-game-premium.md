@@ -127,7 +127,7 @@ Replace `<View style={s.progressTrack}>` block with:
 
 ### Step 5 — Upgrade background glows in `quick-game.jsx`
 
-Replace the second `LinearGradient` overlay (current cyan overlay) with two new overlays in all render branches (playing, loading, gameOver):
+The two new overlay gradients to add in every render branch:
 
 ```jsx
 {/* Purple glow — top-left */}
@@ -148,11 +148,17 @@ Replace the second `LinearGradient` overlay (current cyan overlay) with two new 
 />
 ```
 
+**Playing branch** (lines ~334–548): replace the existing second `LinearGradient` (the `rgba(0,212,255,0.07)` cyan overlay) with the two new overlays above.
+
+**Loading branch**, **questions.length === 0 branch**, **gameCompleted branch**: each has only one `LinearGradient` (the base BG_GRADIENT). Add both new overlays immediately after that base gradient. Do not remove anything.
+
 ---
 
 ### Step 6 — New `quickGameStyle.js` header card styles
 
-Add (and remove old `scoreBadge`, `scoreBadgeText`, `timerCircle`, `timerCircleUrgent`, `timerText`, `timerTextUrgent`, `counterBadge`, `counterText`):
+Add new keys, and remove these now-unused keys: `scoreBadge`, `scoreBadgeText`, `timerCircle`, `timerCircleUrgent`, `timerText`, `timerTextUrgent`, `counterBadge`, `counterText`, `header`, `jokerSoonLabel`.
+
+Note: `header` becomes orphaned after Step 3 replaces `<View style={s.header}>` with `<View style={s.headerCard}>`. `jokerSoonLabel` becomes orphaned after Step 10 removes the `YAKINDA` label.
 
 ```js
 headerCard: {
@@ -322,33 +328,40 @@ jokerCountBadge: { width: 20, height: 20, borderRadius: 10, backgroundColor: 'rg
 jokerCountText: { color: Colors.text.primary, fontFamily: Typography.family.bold },
 ```
 
-JSX — replace joker buttons:
+JSX — replace the entire content of `<View style={s.jokerSection}>` (remove the `YAKINDA` TextCustom label, keep and update the `jokerRow` wrapper):
+
 ```jsx
-{/* x2 CIFTE SANS */}
-<View style={s.jokerItem}>
-  <View style={[s.jokerBtn, { backgroundColor: 'rgba(155,89,245,0.25)', borderColor: Colors.accent.purple }]}>
-    <TextCustom style={{ color: Colors.accent.purple, fontFamily: Typography.family.black }} fontSize={20}>x2</TextCustom>
-  </View>
-  <TextCustom style={s.jokerLabel} fontSize={10}>ÇİFTE ŞANS</TextCustom>
-  <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
-</View>
+<View style={s.jokerSection}>
+  <View style={s.jokerRow}>
 
-{/* 50:50 */}
-<View style={s.jokerItem}>
-  <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.12)', borderColor: Colors.accent.gold }]}>
-    <Ionicons name="bulb-outline" size={30} color={Colors.accent.gold} />
-  </View>
-  <TextCustom style={s.jokerLabel} fontSize={10}>50:50</TextCustom>
-  <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
-</View>
+    {/* x2 — ÇİFTE ŞANS */}
+    <View style={s.jokerItem}>
+      <View style={[s.jokerBtn, { backgroundColor: 'rgba(155,89,245,0.25)', borderColor: Colors.accent.purple }]}>
+        <TextCustom style={{ color: Colors.accent.purple, fontFamily: Typography.family.black }} fontSize={20}>x2</TextCustom>
+      </View>
+      <TextCustom style={s.jokerLabel} fontSize={10}>ÇİFTE ŞANS</TextCustom>
+      <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
+    </View>
 
-{/* SORU GEC */}
-<View style={s.jokerItem}>
-  <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,212,255,0.12)', borderColor: Colors.accent.cyan }]}>
-    <Ionicons name="play-skip-forward-outline" size={30} color={Colors.accent.cyan} />
+    {/* 50:50 */}
+    <View style={s.jokerItem}>
+      <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.12)', borderColor: Colors.accent.gold }]}>
+        <Ionicons name="bulb-outline" size={30} color={Colors.accent.gold} />
+      </View>
+      <TextCustom style={s.jokerLabel} fontSize={10}>50:50</TextCustom>
+      <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
+    </View>
+
+    {/* SORU GEÇ */}
+    <View style={s.jokerItem}>
+      <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,212,255,0.12)', borderColor: Colors.accent.cyan }]}>
+        <Ionicons name="play-skip-forward-outline" size={30} color={Colors.accent.cyan} />
+      </View>
+      <TextCustom style={s.jokerLabel} fontSize={10}>SORU GEÇ</TextCustom>
+      <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
+    </View>
+
   </View>
-  <TextCustom style={s.jokerLabel} fontSize={10}>SORU GEÇ</TextCustom>
-  <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
 </View>
 ```
 
