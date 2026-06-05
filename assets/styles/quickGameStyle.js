@@ -55,6 +55,7 @@ export const quickGameStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
+    flexShrink: 0,
   },
   exitBtn: {
     width: 44,
@@ -82,6 +83,7 @@ export const quickGameStyles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 16,
     elevation: 8,
+    flexShrink: 0,
   },
   headerSection: {
     alignItems: 'flex-start',
@@ -132,6 +134,7 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
     gap: Spacing.sm,
+    flexShrink: 0,
   },
   categoryIconOuter: {
     width: 80,
@@ -178,7 +181,7 @@ export const quickGameStyles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#9B59F5',
     padding: Spacing.xl,
-    minHeight: 110,
+    flex: 1,
     flexShrink: 1,
     justifyContent: 'center',
     shadowColor: '#9B59F5',
@@ -197,6 +200,7 @@ export const quickGameStyles = StyleSheet.create({
   // Answer options
   optionsContainer: {
     gap: 10,
+    flexShrink: 1,
   },
   optionWrapper: {
     height: 64,
@@ -282,6 +286,7 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: Spacing.md,
+    flexShrink: 0,
   },
   progressDot: {
     width: 8,
@@ -310,7 +315,7 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
     opacity: 0.85,
-    marginTop: Spacing.sm,
+    flexShrink: 0,
   },
   jokerRow: {
     flexDirection: 'row',

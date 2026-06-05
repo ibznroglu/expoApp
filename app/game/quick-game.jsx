@@ -43,6 +43,7 @@ const CATEGORY_ICON_MAP = {
   'teknoloji':     'hardware-chip-outline',
   'genel kültür':  'globe-outline',
   'genel kultur':  'globe-outline',
+  'astronomi':     'planet-outline',
 };
 
 function getCategoryIcon(category) {
