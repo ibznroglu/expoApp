@@ -196,7 +196,8 @@ export const quickGameStyles = StyleSheet.create({
   questionCard: {
     flex: 1,
     borderRadius: Radius.lg,
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.lg,
     justifyContent: 'center',
   },
   questionText: {

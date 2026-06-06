@@ -520,7 +520,12 @@ export default function QuickGame() {
               end={{ x: 1, y: 1 }}
               style={s.questionCard}
             >
-              <TextCustom style={s.questionText} fontSize={19}>
+              <TextCustom
+                style={s.questionText}
+                fontSize={18}
+                adjustsFontSizeToFit
+                numberOfLines={4}
+              >
                 {currentQuestion.question}
               </TextCustom>
             </LinearGradient>
