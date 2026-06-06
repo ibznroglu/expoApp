@@ -523,8 +523,6 @@ export default function QuickGame() {
               <TextCustom
                 style={s.questionText}
                 fontSize={18}
-                adjustsFontSizeToFit
-                numberOfLines={4}
               >
                 {currentQuestion.question}
               </TextCustom>

@@ -179,7 +179,7 @@ export const quickGameStyles = StyleSheet.create({
   // Question card — gradient border wrapper
   questionCardWrapper: {
     flex: 1,
-    minHeight: 80,
+    minHeight: 120,
     borderRadius: Radius.lg,
     shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },
