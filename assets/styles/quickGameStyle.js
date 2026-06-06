@@ -132,7 +132,7 @@ export const quickGameStyles = StyleSheet.create({
   // Category block (icon + badge)
   categoryBlock: {
     alignItems: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: 4,
     gap: Spacing.sm,
     flexShrink: 0,
   },
@@ -173,13 +173,12 @@ export const quickGameStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    gap: 8,
+    gap: 6,
   },
 
   // Question card — gradient border wrapper
   questionCardWrapper: {
-    flexShrink: 1,
-    minHeight: 120,
+    flex: 1,
     borderRadius: Radius.lg,
     shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },
@@ -188,11 +187,13 @@ export const quickGameStyles = StyleSheet.create({
     elevation: 10,
   },
   questionCardGradientBorder: {
+    flex: 1,
     padding: 1.5,
     borderRadius: Radius.lg,
     overflow: 'hidden',
   },
   questionCard: {
+    flex: 1,
     borderRadius: Radius.lg,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
@@ -211,7 +212,7 @@ export const quickGameStyles = StyleSheet.create({
     gap: 8,
   },
   optionWrapper: {
-    height: 52,
+    height: 50,
     borderRadius: Radius.md,
     backgroundColor: 'transparent',
     shadowColor: '#9B59F5',
@@ -293,7 +294,7 @@ export const quickGameStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
-    marginBottom: Spacing.md,
+    marginBottom: 4,
     flexShrink: 0,
   },
   progressDot: {

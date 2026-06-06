@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
+  Dimensions,
   Modal,
   StyleSheet,
   Text,
@@ -25,6 +26,7 @@ import TextCustom from "../components/TextCustom";
 import { Colors, Typography } from "../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
+const screenHeight = Dimensions.get('window').height;
 
 const CATEGORY_ICON_MAP = {
   'spor':          'football-outline',
@@ -523,9 +525,9 @@ export default function QuickGame() {
               <TextCustom
                 style={s.questionText}
                 fontSize={
-                  currentQuestion.question.length > 120 ? 14
-                  : currentQuestion.question.length > 80 ? 16
-                  : 18
+                  screenHeight < 700
+                    ? (currentQuestion.question.length > 100 ? 13 : 15)
+                    : (currentQuestion.question.length > 100 ? 15 : 18)
                 }
               >
                 {currentQuestion.question}
