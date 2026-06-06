@@ -9,6 +9,7 @@ const SOURCES = {
   tick: require("../assets/sounds/tick.mp3"),
   gameOver: require("../assets/sounds/game-over.mp3"),
   completed: require("../assets/sounds/completed.mp3"),
+  bravo: require("../assets/sounds/bravo.mp3"),
   buttonClick: require("../assets/sounds/button-click.wav"),
   bubble: require("../assets/sounds/bubble.wav"),
   dailyPrize: require("../assets/sounds/daily-prize.wav"),
@@ -28,6 +29,7 @@ export const initSounds = async () => {
   players.tick = createAudioPlayer(SOURCES.tick);
   players.gameOver = createAudioPlayer(SOURCES.gameOver);
   players.completed = createAudioPlayer(SOURCES.completed);
+  players.bravo = createAudioPlayer(SOURCES.bravo);
   players.buttonClick = createAudioPlayer(SOURCES.buttonClick);
   players.bubble = createAudioPlayer(SOURCES.bubble);
   players.dailyPrize = createAudioPlayer(SOURCES.dailyPrize);

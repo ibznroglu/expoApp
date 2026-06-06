@@ -100,6 +100,7 @@ export default function QuickGame() {
   const [loading, setLoading] = useState(true);
   const [soundsReady, setSoundsReady] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
+  const [soundPlaying, setSoundPlaying] = useState(false);
 
   const scaleAnims = useRef([
     new Animated.Value(1),
@@ -158,10 +159,9 @@ export default function QuickGame() {
       setSelectedAnswer(null);
       setTimeLeft(15);
     } else {
-      if (soundsReady) playSound("completed");
       setGameCompleted(true);
     }
-  }, [currentQuestionIndex, questions.length, soundsReady]);
+  }, [currentQuestionIndex, questions.length]);
 
   const animateOptionPress = useCallback((index) => {
     if (index >= scaleAnims.length) return;
@@ -215,6 +215,17 @@ export default function QuickGame() {
     if (gameCompleted || loading || selectedAnswer !== null) return;
     handleNextQuestion();
   }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
+
+  // Game-over sound — bravo if perfect score, completed otherwise
+  useEffect(() => {
+    if (!gameCompleted || !soundsReady) return;
+    const isPerfect = score === questions.length * 10;
+    setSoundPlaying(true);
+    playSound(isPerfect ? 'bravo' : 'completed');
+    const ms = isPerfect ? 3500 : 2700;
+    const t = setTimeout(() => setSoundPlaying(false), ms);
+    return () => clearTimeout(t);
+  }, [gameCompleted, soundsReady, score, questions.length]);
 
   // Pulse animation — activates in urgent mode (≤5s), stops when answer selected or game done
   useEffect(() => {
@@ -387,8 +398,9 @@ export default function QuickGame() {
 
             <View style={s.resultButtons}>
               <TouchableOpacity
-                style={s.primaryButton}
+                style={[s.primaryButton, soundPlaying && { opacity: 0.4 }]}
                 onPress={() => { playUISound('button'); restartGame(); }}
+                disabled={soundPlaying}
                 activeOpacity={0.8}
               >
                 <LinearGradient
@@ -404,8 +416,9 @@ export default function QuickGame() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={s.secondaryButton}
+                style={[s.secondaryButton, soundPlaying && { opacity: 0.4 }]}
                 onPress={() => { playUISound('button'); router.back(); }}
+                disabled={soundPlaying}
                 activeOpacity={0.8}
               >
                 <TextCustom style={s.secondaryButtonText} fontSize={16}>
