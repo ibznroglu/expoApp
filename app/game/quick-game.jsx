@@ -522,7 +522,11 @@ export default function QuickGame() {
             >
               <TextCustom
                 style={s.questionText}
-                fontSize={18}
+                fontSize={
+                  currentQuestion.question.length > 120 ? 14
+                  : currentQuestion.question.length > 80 ? 16
+                  : 18
+                }
               >
                 {currentQuestion.question}
               </TextCustom>
