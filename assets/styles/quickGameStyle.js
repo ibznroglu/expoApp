@@ -171,13 +171,15 @@ export const quickGameStyles = StyleSheet.create({
   // Centering wrapper for question + options
   gameContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    gap: 8,
   },
 
   // Question card — gradient border wrapper
   questionCardWrapper: {
-    flex: 0,
-    flexShrink: 1,
+    flex: 1,
+    minHeight: 80,
     borderRadius: Radius.lg,
     shadowColor: '#9B59F5',
     shadowOffset: { width: 0, height: 0 },
@@ -186,12 +188,13 @@ export const quickGameStyles = StyleSheet.create({
     elevation: 10,
   },
   questionCardGradientBorder: {
+    flex: 1,
     padding: 1.5,
     borderRadius: Radius.lg,
     overflow: 'hidden',
   },
   questionCard: {
-    flexShrink: 1,
+    flex: 1,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     justifyContent: 'center',
@@ -202,17 +205,16 @@ export const quickGameStyles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 28,
     flexShrink: 1,
+    flexWrap: 'wrap',
   },
 
   // Answer options
   optionsContainer: {
-    gap: 10,
-    flexShrink: 1,
-    marginTop: 12,
-    marginBottom: 12,
+    flex: 0,
+    gap: 8,
   },
   optionWrapper: {
-    height: 56,
+    height: 52,
     borderRadius: Radius.md,
     backgroundColor: 'transparent',
     shadowColor: '#9B59F5',
@@ -321,10 +323,11 @@ export const quickGameStyles = StyleSheet.create({
 
   // Joker section
   jokerSection: {
+    flex: 0,
     alignItems: 'center',
     gap: Spacing.sm,
     opacity: 0.85,
-    flexShrink: 0,
+    marginTop: 8,
   },
   jokerRow: {
     flexDirection: 'row',
