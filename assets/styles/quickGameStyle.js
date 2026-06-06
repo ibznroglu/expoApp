@@ -176,7 +176,7 @@ export const quickGameStyles = StyleSheet.create({
 
   // Question card — gradient border wrapper
   questionCardWrapper: {
-    flex: 1,
+    flex: 0,
     flexShrink: 1,
     borderRadius: Radius.lg,
     shadowColor: '#9B59F5',
@@ -186,14 +186,12 @@ export const quickGameStyles = StyleSheet.create({
     elevation: 10,
   },
   questionCardGradientBorder: {
-    flex: 1,
     padding: 1.5,
     borderRadius: Radius.lg,
     overflow: 'hidden',
   },
   questionCard: {
-    flex: 1,
-    backgroundColor: Colors.bg.card,
+    flexShrink: 1,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     justifyContent: 'center',
@@ -203,6 +201,7 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
     textAlign: 'center',
     lineHeight: 28,
+    flexShrink: 1,
   },
 
   // Answer options
@@ -213,7 +212,7 @@ export const quickGameStyles = StyleSheet.create({
     marginBottom: 12,
   },
   optionWrapper: {
-    height: 64,
+    height: 56,
     borderRadius: Radius.md,
     backgroundColor: 'transparent',
     shadowColor: '#9B59F5',
