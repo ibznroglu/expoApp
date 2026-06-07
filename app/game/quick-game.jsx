@@ -388,7 +388,7 @@ export default function QuickGame() {
             <View style={s.resultButtons}>
               <TouchableOpacity
                 style={s.primaryButton}
-                onPress={() => { stopSound('bravo'); stopSound('completed'); playSound('buttonClick'); setTimeout(() => restartGame(), 250); }}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); if (soundsReady) playSound('buttonClick'); setTimeout(() => restartGame(), 250); }}
                 activeOpacity={0.8}
               >
                 <LinearGradient
@@ -405,7 +405,7 @@ export default function QuickGame() {
 
               <TouchableOpacity
                 style={s.secondaryButton}
-                onPress={() => { stopSound('bravo'); stopSound('completed'); playSound('buttonClick'); setTimeout(() => router.back(), 300); }}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); if (soundsReady) playSound('buttonClick'); setTimeout(() => router.back(), 300); }}
                 activeOpacity={0.8}
               >
                 <TextCustom style={s.secondaryButtonText} fontSize={16}>
