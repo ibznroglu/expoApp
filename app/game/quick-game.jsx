@@ -100,7 +100,6 @@ export default function QuickGame() {
   const [loading, setLoading] = useState(true);
   const [soundsReady, setSoundsReady] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [soundPlaying, setSoundPlaying] = useState(false);
 
   const scaleAnims = useRef([
     new Animated.Value(1),
@@ -220,11 +219,7 @@ export default function QuickGame() {
   useEffect(() => {
     if (!gameCompleted || !soundsReady) return;
     const isPerfect = score === questions.length * 10;
-    setSoundPlaying(true);
     playSound(isPerfect ? 'bravo' : 'completed');
-    const ms = isPerfect ? 3500 : 2700;
-    const t = setTimeout(() => setSoundPlaying(false), ms);
-    return () => clearTimeout(t);
   }, [gameCompleted, soundsReady, score, questions.length]);
 
   // Pulse animation — activates in urgent mode (≤5s), stops when answer selected or game done
@@ -398,9 +393,8 @@ export default function QuickGame() {
 
             <View style={s.resultButtons}>
               <TouchableOpacity
-                style={[s.primaryButton, soundPlaying && { opacity: 0.4 }]}
-                onPress={() => { playUISound('button'); restartGame(); }}
-                disabled={soundPlaying}
+                style={s.primaryButton}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); playUISound('button'); restartGame(); }}
                 activeOpacity={0.8}
               >
                 <LinearGradient
@@ -416,9 +410,8 @@ export default function QuickGame() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[s.secondaryButton, soundPlaying && { opacity: 0.4 }]}
-                onPress={() => { playUISound('button'); router.back(); }}
-                disabled={soundPlaying}
+                style={s.secondaryButton}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); playUISound('button'); router.back(); }}
                 activeOpacity={0.8}
               >
                 <TextCustom style={s.secondaryButtonText} fontSize={16}>
