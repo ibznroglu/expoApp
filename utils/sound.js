@@ -55,18 +55,24 @@ export const playSound = (key) => {
 };
 
 export const playUISound = (type) => {
-  switch (type) {
-    case 'button':
-      playSound('buttonClick');
-      break;
-    case 'modal':
-      playSound('buttonClick');
-      setTimeout(() => playSound('bubble'), 150);
-      break;
-    case 'daily-prize':
-      playSound('dailyPrize');
-      break;
-  }
+  return new Promise((resolve) => {
+    switch (type) {
+      case 'button':
+        playSound('buttonClick');
+        setTimeout(resolve, 200);
+        break;
+      case 'modal':
+        playSound('buttonClick');
+        setTimeout(() => { playSound('bubble'); setTimeout(resolve, 350); }, 150);
+        break;
+      case 'daily-prize':
+        playSound('dailyPrize');
+        setTimeout(resolve, 300);
+        break;
+      default:
+        resolve();
+    }
+  });
 };
 
 export const stopSound = (key) => {
