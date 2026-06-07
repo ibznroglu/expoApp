@@ -137,15 +137,9 @@ export default function QuickGame() {
   }, [loadQuestions]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await initSounds();
-        setSoundsReady(true);
-      } catch (e) {
-        console.warn("initSounds failed:", e);
-        setSoundsReady(false);
-      }
-    })();
+    initSounds()
+      .then(() => setSoundsReady(true))
+      .catch(() => setSoundsReady(false));
 
     return () => {
       unloadSounds().catch(() => {});
@@ -394,7 +388,7 @@ export default function QuickGame() {
             <View style={s.resultButtons}>
               <TouchableOpacity
                 style={s.primaryButton}
-                onPress={async () => { stopSound('bravo'); stopSound('completed'); await playUISound('button'); restartGame(); }}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); playSound('buttonClick'); setTimeout(() => restartGame(), 250); }}
                 activeOpacity={0.8}
               >
                 <LinearGradient
@@ -411,7 +405,7 @@ export default function QuickGame() {
 
               <TouchableOpacity
                 style={s.secondaryButton}
-                onPress={async () => { stopSound('bravo'); stopSound('completed'); await playUISound('button'); router.back(); }}
+                onPress={() => { stopSound('bravo'); stopSound('completed'); playSound('buttonClick'); setTimeout(() => router.back(), 250); }}
                 activeOpacity={0.8}
               >
                 <TextCustom style={s.secondaryButtonText} fontSize={16}>
