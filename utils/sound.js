@@ -13,6 +13,7 @@ const SOURCES = {
   buttonClick: require("../assets/sounds/button-click.wav"),
   bubble: require("../assets/sounds/bubble.wav"),
   dailyPrize: require("../assets/sounds/daily-prize.wav"),
+  woosh: require("../assets/sounds/woosh.wav"),
 };
 
 export const initSounds = async () => {
@@ -33,6 +34,7 @@ export const initSounds = async () => {
   players.buttonClick = createAudioPlayer(SOURCES.buttonClick);
   players.bubble = createAudioPlayer(SOURCES.bubble);
   players.dailyPrize = createAudioPlayer(SOURCES.dailyPrize);
+  players.woosh = createAudioPlayer(SOURCES.woosh);
 
   Object.values(players).forEach((p) => {
     p.loop = false;

@@ -209,6 +209,12 @@ export default function QuickGame() {
     handleNextQuestion();
   }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
 
+  // Woosh on question transition (skip first question)
+  useEffect(() => {
+    if (currentQuestionIndex === 0 || !soundsReady) return;
+    playSound('woosh');
+  }, [currentQuestionIndex, soundsReady]);
+
   // Game-over sound — bravo if perfect score, completed otherwise
   useEffect(() => {
     if (!gameCompleted || !soundsReady) return;
