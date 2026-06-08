@@ -117,7 +117,9 @@ Import `Easing` — add to the existing `react-native` import.
 }]}>
 ```
 
-**3d. Option Animated.View** — extend existing transform array:
+**3d. Option Animated.View** — extend existing transform array, move dimming to inner TouchableOpacity:
+
+Remove `isDimmed && s.optionDimmed` from the outer `Animated.View` (it conflicts with the native-driver `opacity` animated value). Add `opacity: isDimmed ? 0.5 : 1` to the inner `TouchableOpacity` style array instead.
 
 ```jsx
 <Animated.View
@@ -135,11 +137,22 @@ Import `Easing` — add to the existing `react-native` import.
     },
     isCorrect && s.optionWrapperCorrect,
     isWrong   && s.optionWrapperWrong,
+    // NOTE: isDimmed && s.optionDimmed intentionally removed — conflicts with animated opacity
   ]}
 >
+  <TouchableOpacity
+    style={[
+      s.optionButton,
+      isSelected && !isCorrect && !isWrong && s.optionButtonSelected,
+      isCorrect && s.optionCorrect,
+      isWrong   && s.optionWrong,
+      { opacity: isDimmed ? 0.5 : 1 },  // dimming moved here from outer Animated.View
+    ]}
+    onPress={() => handleAnswerSelect(index)}
+    disabled={selectedAnswer !== null}
+    activeOpacity={0.85}
+  >
 ```
-
-> **Not:** `isDimmed && s.optionDimmed` bu `Animated.View`'dan kaldırılacak. Dimming yerine inner `TouchableOpacity`'e `style={{ opacity: isDimmed ? 0.5 : 1 }}` ekle — Animated native-driver opacity ile çakışmaz.
 
 ---
 
