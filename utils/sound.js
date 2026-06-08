@@ -59,16 +59,19 @@ export const playSound = (key) => {
 export const playUISound = (type) => {
   return new Promise((resolve) => {
     switch (type) {
-      case 'button':
-        playSound('buttonClick');
+      case "button":
+        playSound("buttonClick");
         setTimeout(resolve, 200);
         break;
-      case 'modal':
-        playSound('buttonClick');
-        setTimeout(() => { playSound('bubble'); setTimeout(resolve, 350); }, 150);
+      case "modal":
+        playSound("buttonClick");
+        setTimeout(() => {
+          playSound("bubble");
+          setTimeout(resolve, 350);
+        }, 150);
         break;
-      case 'daily-prize':
-        playSound('dailyPrize');
+      case "daily-prize":
+        playSound("dailyPrize");
         setTimeout(resolve, 300);
         break;
       default:
