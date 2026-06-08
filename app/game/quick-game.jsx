@@ -110,6 +110,7 @@ export default function QuickGame() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const pulseLoopRef = useRef(null);
   const exitingRef = useRef(false);
+  const wooshPlayedForRef = useRef(-1);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -209,9 +210,11 @@ export default function QuickGame() {
     handleNextQuestion();
   }, [timeLeft, gameCompleted, loading, selectedAnswer, soundsReady, handleNextQuestion]);
 
-  // Woosh on question transition (skip first question)
+  // Woosh on every question transition including first
   useEffect(() => {
-    if (currentQuestionIndex === 0 || !soundsReady) return;
+    if (!soundsReady) return;
+    if (wooshPlayedForRef.current === currentQuestionIndex) return;
+    wooshPlayedForRef.current = currentQuestionIndex;
     playSound('woosh');
   }, [currentQuestionIndex, soundsReady]);
 
