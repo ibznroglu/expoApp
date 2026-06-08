@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  Easing,
   Modal,
   StyleSheet,
   Text,
@@ -108,6 +109,19 @@ export default function QuickGame() {
     new Animated.Value(1),
   ]).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  const headerAnim            = useRef(new Animated.Value(0)).current;
+  const categoryScaleAnim     = useRef(new Animated.Value(0)).current;
+  const categoryOpacityAnim   = useRef(new Animated.Value(0)).current;
+  const questionOpacityAnim   = useRef(new Animated.Value(0)).current;
+  const questionTranslateAnim = useRef(new Animated.Value(20)).current;
+  const entranceOptionAnims   = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
+
   const pulseLoopRef = useRef(null);
   const exitingRef = useRef(false);
   const wooshPlayedForRef = useRef(-1);
@@ -218,6 +232,46 @@ export default function QuickGame() {
     playSound('woosh');
   }, [currentQuestionIndex, soundsReady]);
 
+  // Entrance animations — runs on every question transition
+  useEffect(() => {
+    if (questions.length === 0) return;
+
+    categoryScaleAnim.setValue(0);
+    categoryOpacityAnim.setValue(0);
+    questionOpacityAnim.setValue(0);
+    questionTranslateAnim.setValue(20);
+    entranceOptionAnims.forEach(a => a.setValue(0));
+
+    if (currentQuestionIndex === 0) {
+      headerAnim.setValue(0);
+      Animated.timing(headerAnim, {
+        toValue: 1, duration: 350,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }
+
+    Animated.parallel([
+      Animated.parallel([
+        Animated.timing(categoryScaleAnim,   { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        Animated.timing(categoryOpacityAnim, { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+      ]),
+      Animated.sequence([
+        Animated.delay(150),
+        Animated.parallel([
+          Animated.timing(questionOpacityAnim,   { toValue: 1, duration: 250, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(questionTranslateAnim, { toValue: 0, duration: 250, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        ]),
+      ]),
+      Animated.stagger(80,
+        entranceOptionAnims.map(anim =>
+          Animated.spring(anim, { toValue: 1, friction: 6, tension: 80, useNativeDriver: true })
+        )
+      ),
+    ]).start();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestionIndex, questions.length]);
+
   // Game-over sound — bravo if perfect score, completed otherwise
   useEffect(() => {
     if (!gameCompleted || !soundsReady) return;
@@ -252,6 +306,12 @@ export default function QuickGame() {
       const randomQuestions = await getQuestions(10);
       setQuestions(randomQuestions);
       setCurrentQuestionIndex(0);
+      headerAnim.setValue(0);
+      categoryScaleAnim.setValue(0);
+      categoryOpacityAnim.setValue(0);
+      questionOpacityAnim.setValue(0);
+      questionTranslateAnim.setValue(20);
+      entranceOptionAnims.forEach(a => a.setValue(0));
       setScore(0);
       setSelectedAnswer(null);
       setTimeLeft(15);
@@ -261,7 +321,7 @@ export default function QuickGame() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [headerAnim, categoryScaleAnim, categoryOpacityAnim, questionOpacityAnim, questionTranslateAnim, entranceOptionAnims]);
 
   const handleExitPress = useCallback(() => {
     playUISound('modal');
@@ -450,49 +510,59 @@ export default function QuickGame() {
       />
       <SafeAreaView style={s.safeArea} edges={['top']}>
 
-        {/* Exit row — standalone above header */}
-        <View style={s.exitRow}>
-          <TouchableOpacity onPress={handleExitPress} style={s.exitBtn} activeOpacity={0.75}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
-          </TouchableOpacity>
-        </View>
+        <Animated.View style={{
+          opacity: headerAnim,
+          transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-40, 0] }) }],
+        }}>
 
-        {/* Header card — PUAN | timer | SORU */}
-        <View style={s.headerCard}>
-          <View style={s.headerSection}>
-            <TextCustom style={s.headerLabel} fontSize={10}>PUAN</TextCustom>
-            <TextCustom style={s.headerValue} fontSize={22}>{score}</TextCustom>
+          {/* Exit row — standalone above header */}
+          <View style={s.exitRow}>
+            <TouchableOpacity onPress={handleExitPress} style={s.exitBtn} activeOpacity={0.75}>
+              <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
+            </TouchableOpacity>
           </View>
 
-          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-            <TimerArc timeLeft={timeLeft} />
-          </Animated.View>
+          {/* Header card — PUAN | timer | SORU */}
+          <View style={s.headerCard}>
+            <View style={s.headerSection}>
+              <TextCustom style={s.headerLabel} fontSize={10}>PUAN</TextCustom>
+              <TextCustom style={s.headerValue} fontSize={22}>{score}</TextCustom>
+            </View>
 
-          <View style={[s.headerSection, { alignItems: 'flex-end' }]}>
-            <TextCustom style={s.headerLabel} fontSize={10}>SORU</TextCustom>
-            <TextCustom style={s.headerValue} fontSize={22}>
-              {currentQuestionIndex + 1}
-              <TextCustom style={s.headerValueDim} fontSize={16}>/{questions.length}</TextCustom>
-            </TextCustom>
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <TimerArc timeLeft={timeLeft} />
+            </Animated.View>
+
+            <View style={[s.headerSection, { alignItems: 'flex-end' }]}>
+              <TextCustom style={s.headerLabel} fontSize={10}>SORU</TextCustom>
+              <TextCustom style={s.headerValue} fontSize={22}>
+                {currentQuestionIndex + 1}
+                <TextCustom style={s.headerValueDim} fontSize={16}>/{questions.length}</TextCustom>
+              </TextCustom>
+            </View>
           </View>
-        </View>
 
-        {/* Dot progress */}
-        <View style={s.dotProgressRow}>
-          {Array.from({ length: questions.length }).map((_, i) => (
-            <View
-              key={i}
-              style={[
-                s.progressDot,
-                i < currentQuestionIndex && s.progressDotAnswered,
-                i === currentQuestionIndex && s.progressDotCurrent,
-              ]}
-            />
-          ))}
-        </View>
+          {/* Dot progress */}
+          <View style={s.dotProgressRow}>
+            {Array.from({ length: questions.length }).map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  s.progressDot,
+                  i < currentQuestionIndex && s.progressDotAnswered,
+                  i === currentQuestionIndex && s.progressDotCurrent,
+                ]}
+              />
+            ))}
+          </View>
+
+        </Animated.View>
 
         {/* Category icon + badge */}
-        <View style={s.categoryBlock}>
+        <Animated.View style={[s.categoryBlock, {
+          opacity: categoryOpacityAnim,
+          transform: [{ scale: categoryScaleAnim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.0] }) }],
+        }]}>
           <View style={s.categoryIconOuter}>
             <LinearGradient
               colors={['rgba(0,212,255,0.25)', 'rgba(155,89,245,0.35)']}
@@ -512,13 +582,16 @@ export default function QuickGame() {
               {currentQuestion.category?.toLocaleUpperCase('tr-TR') ?? 'GENEL KÜLTÜR'}
             </TextCustom>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Question + Options + Jokers */}
         <View style={s.gameContent}>
 
         {/* Question card — gradient border + gradient bg */}
-        <View style={s.questionCardWrapper}>
+        <Animated.View style={[s.questionCardWrapper, {
+          opacity: questionOpacityAnim,
+          transform: [{ translateY: questionTranslateAnim }],
+        }]}>
           <LinearGradient
             colors={['#9B59F5', '#00D4FF']}
             start={{ x: 0, y: 0 }}
@@ -543,7 +616,7 @@ export default function QuickGame() {
               </TextCustom>
             </LinearGradient>
           </LinearGradient>
-        </View>
+        </Animated.View>
 
         {/* Answer options */}
         <View style={s.optionsContainer}>
@@ -562,10 +635,18 @@ export default function QuickGame() {
                 key={index}
                 style={[
                   s.optionWrapper,
-                  { transform: [{ scale: scaleAnims[index] ?? scaleAnims[0] }] },
-                  isDimmed && s.optionDimmed,
+                  {
+                    opacity: entranceOptionAnims[index] ?? entranceOptionAnims[0],
+                    transform: [
+                      { scale: scaleAnims[index] ?? scaleAnims[0] },
+                      { translateY: (entranceOptionAnims[index] ?? entranceOptionAnims[0]).interpolate({
+                          inputRange: [0, 1], outputRange: [30, 0]
+                      }) },
+                    ],
+                  },
                   isCorrect && s.optionWrapperCorrect,
                   isWrong   && s.optionWrapperWrong,
+                  // NOTE: isDimmed && s.optionDimmed intentionally removed — conflicts with animated opacity
                 ]}
               >
                 <TouchableOpacity
@@ -574,6 +655,7 @@ export default function QuickGame() {
                     isSelected && !isCorrect && !isWrong && s.optionButtonSelected,
                     isCorrect && s.optionCorrect,
                     isWrong && s.optionWrong,
+                    { opacity: isDimmed ? 0.5 : 1 },
                   ]}
                   onPress={() => handleAnswerSelect(index)}
                   disabled={selectedAnswer !== null}
