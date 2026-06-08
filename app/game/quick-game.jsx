@@ -245,7 +245,7 @@ export default function QuickGame() {
     if (currentQuestionIndex === 0) {
       headerAnim.setValue(0);
       Animated.timing(headerAnim, {
-        toValue: 1, duration: 350,
+        toValue: 1, duration: 500,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
@@ -253,19 +253,19 @@ export default function QuickGame() {
 
     Animated.parallel([
       Animated.parallel([
-        Animated.timing(categoryScaleAnim,   { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-        Animated.timing(categoryOpacityAnim, { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        Animated.timing(categoryScaleAnim,   { toValue: 1, duration: 300, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        Animated.timing(categoryOpacityAnim, { toValue: 1, duration: 300, easing: Easing.out(Easing.quad), useNativeDriver: true }),
       ]),
       Animated.sequence([
-        Animated.delay(150),
+        Animated.delay(200),
         Animated.parallel([
-          Animated.timing(questionOpacityAnim,   { toValue: 1, duration: 250, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(questionTranslateAnim, { toValue: 0, duration: 250, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(questionOpacityAnim,   { toValue: 1, duration: 350, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(questionTranslateAnim, { toValue: 0, duration: 350, easing: Easing.out(Easing.quad), useNativeDriver: true }),
         ]),
       ]),
-      Animated.stagger(80,
+      Animated.stagger(120,
         entranceOptionAnims.map(anim =>
-          Animated.spring(anim, { toValue: 1, friction: 6, tension: 80, useNativeDriver: true })
+          Animated.spring(anim, { toValue: 1, friction: 5, tension: 60, useNativeDriver: true })
         )
       ),
     ]).start();
