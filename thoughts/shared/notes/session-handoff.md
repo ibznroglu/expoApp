@@ -14,6 +14,16 @@ Auth screens redesign: signin, signup, verify-email, forgot-password
 - App Store / Play Store quality
 - Use Nunito font, Ionicons, expo-linear-gradient
 
+## Full Backlog (in priority order)
+1. Auth screens redesign (signin, signup, verify-email, forgot-password)
+2. Leaderboard implementation (spec ready at thoughts/shared/plans/leaderboard-spec.md)
+3. Profile screen (with logout button and stats modal)
+4. Upload Questions tool (uploadQuestions.js exists, needs UI solution)
+5. Test infrastructure (Jest + React Native Testing Library — do after Appwrite service layer complete)
+6. Arkadaşla Oyna / multiplayer (WebSocket or Appwrite Realtime, complex)
+7. Turnuva sistemi (not planned yet)
+8. Statistics screen (modal in profile)
+
 ## Important Files
 - constants/theme.ts — all colors, typography, spacing
 - context/AuthContext.js — auth logic, do not change
