@@ -1,189 +1,255 @@
-import { useAuth } from "@/context/AuthContext";
-import { Redirect, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Image,
-  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import { SignInStyles } from "../assets/styles/signinStyle.js";
-import { showToast } from "../utils/toast";
-import TextCustom from "./components/TextCustom";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { Redirect, useRouter } from "expo-router";
+
+import { useAuth } from "@/context/AuthContext";
+import { showToast } from "@/utils/toast";
+import { validateEmail } from "@/utils/emailValidation";
+import { authStyles } from "@/assets/styles/authStyles";
+import { Colors } from "@/constants/theme";
+import BrandMark from "@/components/auth/BrandMark";
+import AuthInput from "@/components/auth/AuthInput";
+import AuthButton from "@/components/auth/AuthButton";
+import GuestNicknameSheet from "@/components/auth/GuestNicknameSheet";
+
+const RESEND_COOLDOWN_SECONDS = 30;
 
 const SignIn = () => {
-  const { session, signin } = useAuth();
+  const { session, signin, signinAsGuest, resendVerification } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ email: false, password: false });
-  const [loading, setLoading] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
+  const [emailError, setEmailError] = useState(undefined);
+  const [passwordError, setPasswordError] = useState(undefined);
+  const [submitting, setSubmitting] = useState(false);
+  const [notVerified, setNotVerified] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [guestSheetVisible, setGuestSheetVisible] = useState(false);
 
-  const handleSubmit = async () => {
-    const emailError = email.trim() === "";
-    const passwordError = password.trim() === "";
+  const cooldownTimer = useRef(null);
 
-    if (emailError || passwordError) {
-      setErrors({ email: emailError, password: passwordError });
-      const message = [];
-      if (emailError) message.push("E-posta");
-      if (passwordError) message.push("Parola");
-      const errorMsg = `${message.join(" ve ")} alanı boş olamaz!`;
-
-      showToast.error("Eksik Bilgi", errorMsg);
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      showToast.error(
-        "Geçersiz E-posta",
-        "Lütfen geçerli bir e-posta adresi giriniz.",
-      );
-      setErrors((prev) => ({ ...prev, email: true }));
-      return;
-    }
-
-    setErrors({ email: false, password: false });
-    setLoading(true);
-
-    try {
-      await signin({ email, password });
-      // Başarılı giriş - toast göster
-      showToast.success("Giriş Başarılı!", "Bilgi Arenası'na hoş geldiniz 🎉");
-    } catch (error) {
-      console.error("Sign in error:", error);
-
-      let errorMessage = "Giriş başarısız";
-      let errorDescription = "E-posta veya parola hatalı!";
-
-      if (error.code === 401 || error.type === "invalid_credentials") {
-        errorMessage = "Kimlik Doğrulama Hatası";
-        errorDescription =
-          "E-posta veya parolanız hatalı. Lütfen tekrar deneyin.";
-      } else if (error.code === 429) {
-        errorMessage = "Çok Fazla İstek";
-        errorDescription = "Lütfen bir süre bekleyip tekrar deneyin.";
-      } else if (error.message?.includes("network") || error.code === 0) {
-        errorMessage = "Ağ Hatası";
-        errorDescription = "İnternet bağlantınızı kontrol edin.";
+  // Clear the countdown interval on unmount.
+  useEffect(() => {
+    return () => {
+      if (cooldownTimer.current) {
+        clearInterval(cooldownTimer.current);
       }
+    };
+  }, []);
 
-      showToast.error(errorMessage, errorDescription);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (session && !redirecting) {
-    setRedirecting(true);
-    // Toast'ı göster ve 2 saniye sonra yönlendir
-    showToast.success("Giriş başarılı!", "Ana sayfaya yönlendiriliyorsunuz...");
-
-    setTimeout(() => {
-      // Burada router kullanmak yerine Redirect component'i zaten çalışacak
-    }, 2000);
-
+  if (session) {
     return <Redirect href="/" />;
   }
 
+  const startResendCooldown = () => {
+    if (cooldownTimer.current) {
+      clearInterval(cooldownTimer.current);
+    }
+    setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    cooldownTimer.current = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          if (cooldownTimer.current) {
+            clearInterval(cooldownTimer.current);
+            cooldownTimer.current = null;
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleEmailSignin = async () => {
+    // Reset previous errors on a new attempt.
+    setEmailError(undefined);
+    setPasswordError(undefined);
+
+    let hasError = false;
+    if (!validateEmail(email).valid) {
+      setEmailError("Geçerli bir e-posta gir");
+      hasError = true;
+    }
+    if (!password.trim()) {
+      setPasswordError("Şifre boş olamaz");
+      hasError = true;
+    }
+    if (hasError) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await signin({ email, password });
+      // On success the session change triggers the redirect automatically.
+    } catch (error) {
+      if (error.code === "EMAIL_NOT_VERIFIED") {
+        setNotVerified(true);
+      } else {
+        showToast.error("Giriş başarısız", "E-posta veya şifre hatalı");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleResend = async () => {
+    const result = await resendVerification({ email, password });
+    if (result?.success) {
+      showToast.success("Mail gönderildi", "Gelen kutunu kontrol et");
+      startResendCooldown();
+    } else {
+      showToast.error("Hata", "Mail gönderilemedi, tekrar dene");
+    }
+  };
+
+  const handleGoogle = () => {
+    showToast.info("Yakında", "Google ile giriş yakında!");
+  };
+
+  const handleApple = () => {
+    showToast.info("Yakında", "Apple ile giriş yakında!");
+  };
+
+  const handleGuestSignin = async (nickname) => {
+    try {
+      await signinAsGuest({ nickname });
+      // On success the session change triggers the redirect automatically.
+      setGuestSheetVisible(false);
+    } catch {
+      showToast.error("Hata", "Misafir girişi başarısız");
+    }
+  };
+
+  const resendLabel =
+    resendCooldown > 0
+      ? `Tekrar gönder (${resendCooldown}s)`
+      : "Doğrulama mailini tekrar gönder";
+
   return (
-    <ImageBackground
-      source={{
-        uri: "https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      }}
-      style={SignInStyles.bg}
-    >
-      <View style={SignInStyles.overlay} />
+    <View style={authStyles.container}>
+      <LinearGradient colors={Colors.gradients.background} style={StyleSheet.absoluteFill} />
+      <View style={authStyles.glowTopLeft} pointerEvents="none" />
+      <View style={authStyles.glowBottomRight} pointerEvents="none" />
 
-      <View style={SignInStyles.container}>
-        <Image
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-          }}
-          style={SignInStyles.logo}
-        />
-
-        <TextCustom style={SignInStyles.headline} fontSize={40}>
-          Bilgi Arenası
-        </TextCustom>
-        <TextCustom style={SignInStyles.subHeadline}>
-          Zekanı Yarıştır!
-        </TextCustom>
-
-        <View style={SignInStyles.form}>
-          <TextInput
-            style={[
-              SignInStyles.input,
-              errors.email && SignInStyles.inputError,
-            ]}
-            placeholder="E-posta"
-            placeholderTextColor="#eee"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              if (errors.email && text.trim() !== "") {
-                setErrors((prev) => ({ ...prev, email: false }));
-              }
-            }}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            editable={!loading}
-          />
-          <TextInput
-            style={[
-              SignInStyles.input,
-              errors.password && SignInStyles.inputError,
-            ]}
-            placeholder="Parola"
-            placeholderTextColor="#eee"
-            secureTextEntry
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (errors.password && text.trim() !== "") {
-                setErrors((prev) => ({ ...prev, password: false }));
-              }
-            }}
-            editable={!loading}
-          />
-
-          <TouchableOpacity
-            style={[
-              SignInStyles.button,
-              loading && SignInStyles.buttonDisabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={loading}
+      <SafeAreaView style={authStyles.safeArea}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={authStyles.flex}
+        >
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={authStyles.scrollContent}
           >
-            <Text style={SignInStyles.buttonText}>
-              {loading ? "Giriş Yapılıyor..." : "Giriş Yap & Başla"}
-            </Text>
-          </TouchableOpacity>
+            <View style={authStyles.brandBlock}>
+              <BrandMark />
+            </View>
 
-          <TouchableOpacity
-            style={SignInStyles.forgotPasswordButton}
-            onPress={() => router.push("/forgot-password")}
-            disabled={loading}
-          >
-            <Text style={SignInStyles.forgotPasswordText}>Şifremi Unuttum</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={SignInStyles.signUpButton}
-            onPress={() => router.push("/signup")}
-            disabled={loading}
-          >
-            <Text style={SignInStyles.signUpText}>
-              Hesabın yok mu? Kayıt Ol
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ImageBackground>
+            <View style={authStyles.form}>
+              <AuthInput
+                icon="mail-outline"
+                placeholder="E-posta"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                error={emailError}
+              />
+              <AuthInput
+                icon="lock-closed-outline"
+                placeholder="Şifre"
+                value={password}
+                onChangeText={setPassword}
+                secureToggle
+                error={passwordError}
+              />
+
+              <Pressable
+                style={authStyles.forgotRow}
+                onPress={() => router.push("/forgot-password")}
+              >
+                <Text style={authStyles.forgotLink}>Şifremi unuttum</Text>
+              </Pressable>
+
+              <AuthButton
+                variant="gradient"
+                label="Giriş yap"
+                loading={submitting}
+                onPress={handleEmailSignin}
+              />
+            </View>
+
+            {notVerified && (
+              <View style={authStyles.banner}>
+                <Text style={authStyles.bannerText}>E-postanı doğrulamadın.</Text>
+                <AuthButton
+                  variant="ghost"
+                  label={resendLabel}
+                  onPress={handleResend}
+                  disabled={resendCooldown > 0}
+                />
+              </View>
+            )}
+
+            <View style={authStyles.dividerRow}>
+              <View style={authStyles.dividerLine} />
+              <Text style={authStyles.dividerLabel}>veya</Text>
+              <View style={authStyles.dividerLine} />
+            </View>
+
+            <View style={authStyles.socialRow}>
+              <View style={authStyles.socialItem}>
+                <AuthButton
+                  variant="social"
+                  label="Google"
+                  icon="logo-google"
+                  onPress={handleGoogle}
+                />
+              </View>
+              <View style={authStyles.socialItem}>
+                <AuthButton
+                  variant="social"
+                  label="Apple"
+                  icon="logo-apple"
+                  onPress={handleApple}
+                />
+              </View>
+            </View>
+
+            <AuthButton
+              variant="ghost"
+              label="Misafir olarak oyna"
+              icon="person-outline"
+              onPress={() => setGuestSheetVisible(true)}
+            />
+
+            <View style={authStyles.footerRow}>
+              <Text style={authStyles.footerText}>Hesabın yok mu?</Text>
+              <Pressable onPress={() => router.push("/signup")}>
+                <Text style={authStyles.footerLink}>Kayıt ol</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+
+      <GuestNicknameSheet
+        visible={guestSheetVisible}
+        onClose={() => setGuestSheetVisible(false)}
+        onSubmit={handleGuestSignin}
+      />
+    </View>
   );
 };
 
