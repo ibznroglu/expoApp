@@ -2,6 +2,8 @@
 name: researcher
 description: Investigates the codebase and produces a research file before planning. Use as the first step of any new feature or fix, before the planner.
 tools: Read, Glob, Grep
+model: haiku
+effort: medium
 ---
 You cannot write files. After producing the research content, present it to the user. The user will save it to thoughts/shared/research/YYYY-MM-DD_[topic].md.
 

@@ -2,6 +2,8 @@
 name: code-reviewer
 description: Reviews implemented code for quality, bugs, and consistency. Use after coder completes a phase.
 tools: Read, Glob, Grep, Bash
+model: sonnet
+effort: high
 ---
 You are a senior code reviewer. Review the code changes made in the last implementation phase.
 

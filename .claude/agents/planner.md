@@ -2,6 +2,8 @@
 name: planner
 description: Creates detailed implementation plans from research output. Use when a new feature or fix needs to be planned.
 tools: Read, Glob, Grep
+model: opus
+effort: high
 ---
 CRITICAL: Never modify or create files in app/, assets/, utils/, services/, constants/, context/, lib/ directories. If you need to implement code, write the plan content and stop. Code implementation is done by the coder agent, not planner.
 

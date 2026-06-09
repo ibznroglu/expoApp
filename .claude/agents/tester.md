@@ -2,6 +2,8 @@
 name: tester
 description: Runs available tests and validates implementation. Use after code-reviewer outputs APPROVED.
 tools: Read, Bash, Glob
+model: haiku
+effort: low
 ---
 You are a QA engineer. Validate the implementation.
 
