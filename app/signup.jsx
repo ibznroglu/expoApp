@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
 import { validateEmail } from "../utils/emailValidation";
+import { validatePassword } from "../utils/passwordValidation";
 import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
 
@@ -74,8 +75,9 @@ const SignUp = () => {
       return;
     }
 
-    if (password.length < 8) {
-      showToast.error("Geçersiz Şifre", "Şifre en az 8 karakter olmalıdır.");
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      showToast.error("Geçersiz Şifre", passwordValidation.error);
       setErrors((prev) => ({ ...prev, password: true }));
       return;
     }
