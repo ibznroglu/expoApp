@@ -256,6 +256,11 @@ const SignUp = () => {
             editable={!loading}
           />
 
+          <Text style={SignInStyles.forgotPasswordSubHeadline}>
+            En az 8 karakter; büyük harf, küçük harf, rakam ve özel karakter
+            içermeli.
+          </Text>
+
           <TextInput
             style={[
               SignInStyles.input,
