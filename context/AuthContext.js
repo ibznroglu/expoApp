@@ -8,7 +8,6 @@ import {
 import { ActivityIndicator, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { account } from "../lib/appwrite";
-import { randomNickname } from "@/utils/nicknameSuggest";
 
 const VERIFICATION_URL =
   process.env.EXPO_PUBLIC_VERIFICATION_URL ||
@@ -85,7 +84,13 @@ const AuthProvider = ({ children }) => {
       setSession(responseSession);
       setUser(responseUser);
     } catch (error) {
-      console.error("Error during sign-in:", error);
+      const isExpected =
+        error?.code === 401 ||
+        error?.code === "EMAIL_NOT_VERIFIED" ||
+        String(error?.message).toLowerCase().includes("invalid credentials");
+      if (!isExpected) {
+        console.error("Error during sign-in:", error);
+      }
       throw error;
     } finally {
       setLoading(false);
@@ -223,31 +228,20 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Signs in as an anonymous guest and assigns a display nickname so the user
-  // appears on the leaderboard. No email-verification gate applies to guests.
-  const signinAsGuest = async ({ nickname }) => {
+  // Signs in as an anonymous guest with an auto-generated MS- display name
+  // derived from the anonymous userId (already unique — no collection query needed).
+  const signinAsGuest = async () => {
     setLoading(true);
     try {
       await account.createAnonymousSession();
-
+      const u = await account.get();
+      const guestName = "MS-" + String(u.$id).slice(0, 6).toUpperCase();
       try {
-        await account.updateName(nickname);
+        await account.updateName(guestName);
       } catch {
-        // Keep going; fallback below ensures a name is set.
+        // Non-blocking: guest stays logged in even without a name.
       }
-
-      let responseUser = await account.get();
-
-      // Fallback once if the name did not stick (e.g. updateName failed).
-      if (!responseUser.name) {
-        try {
-          await account.updateName(randomNickname());
-          responseUser = await account.get();
-        } catch {
-          // Non-blocking: guest stays logged in even without a name.
-        }
-      }
-
+      const responseUser = await account.get();
       setSession(await account.getSession("current"));
       setUser(responseUser);
     } catch (error) {
