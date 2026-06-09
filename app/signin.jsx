@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -93,6 +94,7 @@ const SignIn = () => {
     } catch (error) {
       if (error.code === "EMAIL_NOT_VERIFIED") {
         setNotVerified(true);
+        showToast.info("E-postanı doğrula", "Giriş yapmadan önce e-postandaki doğrulama linkine tıkla.");
       } else {
         showToast.error("Giriş başarısız", "E-posta veya şifre hatalı");
       }
@@ -132,7 +134,7 @@ const SignIn = () => {
 
       <SafeAreaView style={authStyles.safeArea}>
         <KeyboardAvoidingView
-          behavior="padding"
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={authStyles.flex}
         >
           <ScrollView
