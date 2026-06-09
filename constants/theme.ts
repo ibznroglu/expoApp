@@ -53,6 +53,12 @@ export const Colors = {
     tournament: { from: '#1565C0', to: '#42A5F5' },
     leaderboard: { from: '#B7791F', to: '#FFD700' },
   },
+
+  // Gradients
+  gradients: {
+    background: ['#2D1B69', '#1A0A4A', '#0D0527'] as const, // matches home BG_GRADIENT
+    brandButton: ['#FF6B35', '#FFB800'] as const,
+  },
 };
 
 export const Spacing = {
