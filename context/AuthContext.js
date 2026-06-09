@@ -8,6 +8,12 @@ import {
 import { ActivityIndicator, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { account } from "../lib/appwrite";
+import { randomNickname } from "@/utils/nicknameSuggest";
+
+const VERIFICATION_URL =
+  process.env.EXPO_PUBLIC_VERIFICATION_URL ||
+  "https://reset-expo.vercel.app/verify-email";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -54,8 +60,29 @@ const AuthProvider = ({ children }) => {
         email,
         password,
       );
+
+      // Fetch the user and run the verification gate inside a nested try so
+      // that any error after session creation still triggers deleteSession,
+      // preventing checkAuth from finding and restoring an orphaned session.
+      let responseUser;
+      try {
+        responseUser = await account.get();
+      } catch (err) {
+        await account.deleteSession("current");
+        throw err;
+      }
+
+      // Email-verification gate: block unverified email/password logins.
+      // Delete the live session so checkAuth cannot auto-login on next mount
+      // and bypass the gate.
+      if (responseUser.emailVerification === false) {
+        await account.deleteSession("current");
+        throw Object.assign(new Error("Email not verified"), {
+          code: "EMAIL_NOT_VERIFIED",
+        });
+      }
+
       setSession(responseSession);
-      const responseUser = await account.get();
       setUser(responseUser);
     } catch (error) {
       console.error("Error during sign-in:", error);
@@ -171,6 +198,66 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Resends the email-verification link for an unverified email/password account.
+  // Creates a temporary session to call createVerification, then always deletes
+  // it so no live session is left behind.
+  const resendVerification = async ({ email, password }) => {
+    try {
+      await account.createEmailPasswordSession(email, password);
+      try {
+        await account.createVerification(VERIFICATION_URL);
+        return { success: true };
+      } finally {
+        // Always clean up the temporary session, even on verification failure.
+        // Swallow deleteSession errors so a cleanup glitch cannot mask a
+        // successful send and cause the UI to show a false failure.
+        try {
+          await account.deleteSession("current");
+        } catch (cleanupErr) {
+          console.warn("resendVerification: deleteSession cleanup failed", cleanupErr);
+        }
+      }
+    } catch (error) {
+      console.error("Resend verification error:", error);
+      return { success: false, error };
+    }
+  };
+
+  // Signs in as an anonymous guest and assigns a display nickname so the user
+  // appears on the leaderboard. No email-verification gate applies to guests.
+  const signinAsGuest = async ({ nickname }) => {
+    setLoading(true);
+    try {
+      await account.createAnonymousSession();
+
+      try {
+        await account.updateName(nickname);
+      } catch {
+        // Keep going; fallback below ensures a name is set.
+      }
+
+      let responseUser = await account.get();
+
+      // Fallback once if the name did not stick (e.g. updateName failed).
+      if (!responseUser.name) {
+        try {
+          await account.updateName(randomNickname());
+          responseUser = await account.get();
+        } catch {
+          // Non-blocking: guest stays logged in even without a name.
+        }
+      }
+
+      setSession(await account.getSession("current"));
+      setUser(responseUser);
+    } catch (error) {
+      console.error("Error during guest sign-in:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const contextData = {
     session,
     user,
@@ -178,6 +265,8 @@ const AuthProvider = ({ children }) => {
     signout,
     signup,
     createPasswordRecovery,
+    resendVerification,
+    signinAsGuest,
   };
   return (
     <AuthContext.Provider value={contextData}>
