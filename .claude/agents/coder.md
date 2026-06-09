@@ -25,3 +25,7 @@ After implementing the phase:
 
 Run validation commands from the plan. Report results.
 Output final line: "PHASE_COMPLETE: [phase number] [PASSED/FAILED]"
+
+- Implement ONLY the requested phase, then STOP. Do not run code-reviewer or tester, and do not commit or push — the human orchestrates those steps.
+- If the phase cannot be completed exactly as written (e.g. the plan is missing a token, a path, or a decision), do NOT improvise a fix. Stop and report what is missing and your proposed change, then wait.
+- After the phase, run only the validation commands from the plan and report results. End with PHASE_COMPLETE: [phase] [PASSED/FAILED]. Nothing after that line.
