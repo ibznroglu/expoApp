@@ -48,3 +48,6 @@ thoughts/personal/
 
 # MCP server config (contains API keys)
 .mcp.json
+
+# temporary phase-1 proof script
+scripts/_verify-test.mjs

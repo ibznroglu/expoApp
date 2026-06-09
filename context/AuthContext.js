@@ -74,7 +74,7 @@ const AuthProvider = ({ children }) => {
       // Email-verification gate: block unverified email/password logins.
       // Delete the live session so checkAuth cannot auto-login on next mount
       // and bypass the gate.
-      if (responseUser.emailVerification === false) {
+      if (!responseUser.emailVerification) {
         await account.deleteSession("current");
         throw Object.assign(new Error("Email not verified"), {
           code: "EMAIL_NOT_VERIFIED",
@@ -84,13 +84,6 @@ const AuthProvider = ({ children }) => {
       setSession(responseSession);
       setUser(responseUser);
     } catch (error) {
-      const isExpected =
-        error?.code === 401 ||
-        error?.code === "EMAIL_NOT_VERIFIED" ||
-        String(error?.message).toLowerCase().includes("invalid credentials");
-      if (!isExpected) {
-        console.error("Error during sign-in:", error);
-      }
       throw error;
     } finally {
       setLoading(false);
