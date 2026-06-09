@@ -20,7 +20,7 @@ interface AuthButtonProps {
 const VARIANT_ICON_COLOR: Record<AuthButtonVariant, string> = {
   gradient: Colors.text.primary,
   social: Colors.text.primary,
-  ghost: Colors.accent.purpleLight,
+  ghost: Colors.text.primary,
 };
 
 /**
@@ -39,7 +39,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({
 }) => {
   const isDisabled = disabled || loading;
   const iconColor = VARIANT_ICON_COLOR[variant];
-  const labelColor = variant === 'ghost' ? Colors.accent.purpleLight : Colors.text.primary;
+  const labelColor = Colors.text.primary;
 
   const content = loading ? (
     <ActivityIndicator color={Colors.text.primary} />

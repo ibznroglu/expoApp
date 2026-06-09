@@ -52,7 +52,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
     ? Colors.wrong
     : focused
       ? Colors.accent.cyan
-      : Colors.border.bright;
+      : Colors.ui.socialBorder;
   const iconColor = focused ? Colors.accent.cyan : Colors.text.muted;
 
   return (
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: Radius.md,
     borderWidth: 1,
-    backgroundColor: Colors.bg.surface,
+    backgroundColor: Colors.ui.socialBg,
     paddingHorizontal: Spacing.md,
   },
   focusGlow: {
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 10,
-    elevation: 6,
   },
   leadingIcon: {
     marginRight: Spacing.sm,
