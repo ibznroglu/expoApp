@@ -87,6 +87,11 @@ Styled in `utils/toastConfig.js`.
 - **Mixed JS/TS**: newer files use TypeScript; older screens (signin, game) are plain `.jsx`. Follow the existing convention for the file you're editing.
 - **New Architecture** is enabled (`newArchEnabled: true` in `app.json`). Avoid libraries that haven't been migrated.
 
+## Orchestration (human-in-the-loop)
+- The human drives phase transitions. After a delegated subagent returns, STOP and wait. Do NOT auto-invoke the next agent (code-reviewer, tester) or commit/push on your own.
+- Execute only what the current human message asks for — one delegated step per turn.
+- Never commit or push unless the human's message explicitly instructs it.
+
 ## Context Management
 
 - Run /compact before context reaches 60%
