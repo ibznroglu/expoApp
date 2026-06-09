@@ -59,6 +59,13 @@ export const Colors = {
     background: ['#2D1B69', '#1A0A4A', '#0D0527'] as const, // matches home BG_GRADIENT
     brandButton: ['#FF6B35', '#FFB800'] as const,
   },
+
+  // UI surface helpers
+  ui: {
+    socialBg: 'rgba(255,255,255,0.08)',
+    socialBorder: 'rgba(255,255,255,0.15)',
+    overlay: 'rgba(0,0,0,0.6)',
+  },
 };
 
 export const Spacing = {
