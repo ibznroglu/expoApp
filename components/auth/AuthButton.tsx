@@ -113,9 +113,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.ui.socialBorder,
   },
   ghost: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderStyle: 'dashed',
+    backgroundColor: Colors.ui.socialBg,
+    borderWidth: 1.5,
     borderColor: Colors.border.bright,
   },
   disabled: {

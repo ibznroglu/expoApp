@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -20,7 +19,6 @@ import { Colors } from "@/constants/theme";
 import BrandMark from "@/components/auth/BrandMark";
 import AuthInput from "@/components/auth/AuthInput";
 import AuthButton from "@/components/auth/AuthButton";
-import GuestNicknameSheet from "@/components/auth/GuestNicknameSheet";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
@@ -35,7 +33,6 @@ const SignIn = () => {
   const [submitting, setSubmitting] = useState(false);
   const [notVerified, setNotVerified] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [guestSheetVisible, setGuestSheetVisible] = useState(false);
 
   const cooldownTimer = useRef(null);
 
@@ -122,16 +119,6 @@ const SignIn = () => {
     showToast.info("Yakında", "Apple ile giriş yakında!");
   };
 
-  const handleGuestSignin = async (nickname) => {
-    try {
-      await signinAsGuest({ nickname });
-      // On success the session change triggers the redirect automatically.
-      setGuestSheetVisible(false);
-    } catch {
-      showToast.error("Hata", "Misafir girişi başarısız");
-    }
-  };
-
   const resendLabel =
     resendCooldown > 0
       ? `Tekrar gönder (${resendCooldown}s)`
@@ -145,7 +132,7 @@ const SignIn = () => {
 
       <SafeAreaView style={authStyles.safeArea}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior="padding"
           style={authStyles.flex}
         >
           <ScrollView
@@ -227,12 +214,20 @@ const SignIn = () => {
               </View>
             </View>
 
-            <AuthButton
-              variant="ghost"
-              label="Misafir olarak oyna"
-              icon="person-outline"
-              onPress={() => setGuestSheetVisible(true)}
-            />
+            <View style={authStyles.guestButton}>
+              <AuthButton
+                variant="ghost"
+                label="Misafir olarak oyna"
+                icon="person-outline"
+                onPress={async () => {
+                  try {
+                    await signinAsGuest();
+                  } catch {
+                    showToast.error("Hata", "Misafir girişi başarısız");
+                  }
+                }}
+              />
+            </View>
 
             <View style={authStyles.footerRow}>
               <Text style={authStyles.footerText}>Hesabın yok mu?</Text>
@@ -244,11 +239,6 @@ const SignIn = () => {
         </KeyboardAvoidingView>
       </SafeAreaView>
 
-      <GuestNicknameSheet
-        visible={guestSheetVisible}
-        onClose={() => setGuestSheetVisible(false)}
-        onSubmit={handleGuestSignin}
-      />
     </View>
   );
 };

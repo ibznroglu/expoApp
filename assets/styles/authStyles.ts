@@ -34,9 +34,11 @@ export const authStyles = StyleSheet.create({
   // Scroll container
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.xxl,
+  },
+  guestButton: {
+    marginTop: Spacing.lg,
   },
 
   // Brand block
