@@ -186,14 +186,15 @@ export default function QuickGame() {
 
       if (answerIndex === currentQuestion.correctAnswer) {
         setScore((prev) => prev + 10);
-        if (soundsReady) playSound("correct");
-      } else {
-        if (soundsReady) playSound("wrong");
       }
+
+      setTimeout(() => {
+        if (soundsReady) playSound(answerIndex === currentQuestion.correctAnswer ? "correct" : "wrong");
+      }, 0);
 
       answerTimeoutRef.current = setTimeout(() => {
         handleNextQuestion();
-      }, 1000);
+      }, 1200);
     },
     [currentQuestion, selectedAnswer, soundsReady, handleNextQuestion, animateOptionPress],
   );
@@ -225,7 +226,8 @@ export default function QuickGame() {
     if (!soundsReady) return;
     if (wooshPlayedForRef.current === currentQuestionIndex) return;
     wooshPlayedForRef.current = currentQuestionIndex;
-    playSound('woosh');
+    const t = setTimeout(() => playSound('woosh'), 0);
+    return () => clearTimeout(t);
   }, [currentQuestionIndex, soundsReady]);
 
   // Entrance animations — runs on every question transition
