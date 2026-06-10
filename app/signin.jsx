@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -133,11 +131,8 @@ const SignIn = () => {
       <View style={authStyles.glowBottomRight} pointerEvents="none" />
 
       <SafeAreaView style={authStyles.safeArea}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={authStyles.flex}
-        >
           <ScrollView
+            automaticallyAdjustKeyboardInsets={true}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={authStyles.scrollContent}
           >
@@ -238,7 +233,6 @@ const SignIn = () => {
               </Pressable>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
       </SafeAreaView>
 
     </View>
