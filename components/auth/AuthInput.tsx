@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Animated,
   KeyboardTypeOptions,
   StyleSheet,
   TextInput,
@@ -27,10 +28,6 @@ interface AuthInputProps {
   onTrailingPress?: () => void;
 }
 
-/**
- * Themed text input with a leading icon, cyan focus border + glow,
- * an optional show/hide toggle, and an error state.
- */
 const AuthInput: React.FC<AuthInputProps> = ({
   icon,
   placeholder,
@@ -45,20 +42,29 @@ const AuthInput: React.FC<AuthInputProps> = ({
   onTrailingPress,
 }) => {
   const [hidden, setHidden] = useState(secureToggle);
+  const focusAnim = useRef(new Animated.Value(0)).current;
 
   const hasError = Boolean(error);
-  const borderColor = hasError ? Colors.wrong : Colors.ui.socialBorder;
-  const iconColor = Colors.text.muted;
+
+  const handleFocus = () => {
+    Animated.timing(focusAnim, { toValue: 1, duration: 180, useNativeDriver: false }).start();
+  };
+
+  const handleBlur = () => {
+    Animated.timing(focusAnim, { toValue: 0, duration: 180, useNativeDriver: false }).start();
+  };
+
+  const animatedBorderColor = focusAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [Colors.border.cyanSoft, Colors.accent.cyan],
+  });
+
+  const borderColor = hasError ? Colors.wrong : animatedBorderColor;
 
   return (
     <View>
-      <View
-        style={[
-          styles.field,
-          { borderColor },
-        ]}
-      >
-        <Ionicons name={icon} size={20} color={iconColor} style={styles.leadingIcon} />
+      <Animated.View style={[styles.field, { borderColor }]}>
+        <Ionicons name={icon} size={20} color={Colors.text.muted} style={styles.leadingIcon} />
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -69,6 +75,8 @@ const AuthInput: React.FC<AuthInputProps> = ({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           editable={editable}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
         {secureToggle && (
           <TouchableOpacity
@@ -90,7 +98,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
             <Ionicons name={trailingIcon} size={20} color={Colors.accent.cyan} />
           </TouchableOpacity>
         )}
-      </View>
+      </Animated.View>
       {hasError && (
         <ThemedText
           size={Typography.size.sm}
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: Radius.md,
     borderWidth: 1,
-    backgroundColor: Colors.ui.socialBg,
+    backgroundColor: Colors.bg.input,
     paddingHorizontal: Spacing.md,
   },
   leadingIcon: {

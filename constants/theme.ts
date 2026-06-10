@@ -6,6 +6,7 @@ export const Colors = {
     card: '#231450',
     surface: '#2A1960',
     elevated: '#321F72',
+    input: '#1C1640',
   },
 
   // Brand
@@ -43,6 +44,7 @@ export const Colors = {
     default: 'rgba(155,89,245,0.2)',
     bright: 'rgba(155,89,245,0.4)',
     white: 'rgba(255,255,255,0.1)',
+    cyanSoft: 'rgba(0,212,255,0.22)',
   },
 
   // Game modes

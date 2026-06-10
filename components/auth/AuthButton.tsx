@@ -108,14 +108,14 @@ const styles = StyleSheet.create({
     ...Shadows.button,
   },
   social: {
-    backgroundColor: Colors.ui.socialBg,
+    backgroundColor: Colors.bg.input,
     borderWidth: 1,
-    borderColor: Colors.ui.socialBorder,
+    borderColor: Colors.border.cyanSoft,
   },
   ghost: {
-    backgroundColor: Colors.ui.socialBg,
+    backgroundColor: Colors.bg.input,
     borderWidth: 1.5,
-    borderColor: Colors.border.bright,
+    borderColor: Colors.border.cyanSoft,
   },
   disabled: {
     opacity: 0.6,
