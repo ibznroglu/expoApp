@@ -15,9 +15,10 @@
 
 ### Network detection
 react-native-appwrite wraps a failed fetch as `AppwriteException` with `.code === 0`
-(no HTTP status) and a "Network request failed" message. Detect with the SAME
-condition already used in `signup.jsx` / `forgot-password.jsx`:
-`error?.code === 0 || error?.message?.toLowerCase().includes("network")`.
+(no HTTP status) and a "Network request failed" message. Use the fullest form from
+`signup.jsx` (lines 158–160) as the reference:
+`error?.message?.includes("network") || error?.message?.includes("Network") || error?.code === 0`
+Note: `forgot-password.jsx` uses a shorter variant; `signup.jsx` is the canonical form.
 
 ### Reuse existing Turkish strings (consistency)
 Match signup/forgot-password exactly: title **"Ağ Hatası"**, description
@@ -29,7 +30,7 @@ Match signup/forgot-password exactly: title **"Ağ Hatası"**, description
    already re-thrown and surfaced by the caller's toast). Keep the `throw`.
 2. `app/signin.jsx` `handleEmailSignin` catch — add a network branch BETWEEN the
    `EMAIL_NOT_VERIFIED` branch and the final else:
-   `else if (error?.code === 0 || error?.message?.toLowerCase().includes("network")) { showToast.error("Ağ Hatası", "İnternet bağlantınızı kontrol edin."); }`
+   `else if (error?.message?.includes("network") || error?.message?.includes("Network") || error?.code === 0) { showToast.error("Ağ Hatası", "İnternet bağlantınızı kontrol edin."); }`
 3. `app/signin.jsx` guest inline handler — change `catch {` → `catch (error) {`
    and add the same network branch before the generic error toast.
 
@@ -80,6 +81,6 @@ Manual device check (airplane mode, iOS + Android):
 Human drives transitions; one delegated step per turn; commit only when told.
 
 ```
-@coder @thoughts/shared/plans/2026-06-10_signin-polish-3.md implement ONLY Phase 1. In context/AuthContext.js remove the guest-signin console.error (keep throw). In app/signin.jsx add a network-error branch (error.code === 0 || message includes "network") to BOTH the handleEmailSignin catch and the guest inline handler (change `catch {` to `catch (error) {`), using showToast.error("Ağ Hatası","İnternet bağlantınızı kontrol edin.") to match signup. Run npm run lint && npx tsc --noEmit. STOP. No review/test/commit. Output PHASE_COMPLETE.
+@coder @thoughts/shared/plans/2026-06-10_signin-polish-3.md implement ONLY Phase 1. In context/AuthContext.js remove the guest-signin console.error (keep throw). In app/signin.jsx add a network-error branch (error?.message?.includes("network") || error?.message?.includes("Network") || error?.code === 0) to BOTH the handleEmailSignin catch and the guest inline handler (change `catch {` to `catch (error) {`), using showToast.error("Ağ Hatası","İnternet bağlantınızı kontrol edin."). Run npm run lint && npx tsc --noEmit. STOP. No review/test/commit. Output PHASE_COMPLETE.
 ```
 Then `@code-reviewer`, `@tester`, human commits. Repeat for Phase 2.
