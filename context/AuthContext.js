@@ -228,7 +228,9 @@ const AuthProvider = ({ children }) => {
     try {
       await account.createAnonymousSession();
       const u = await account.get();
-      const guestName = "MS-" + String(u.$id).slice(0, 6).toUpperCase();
+      const tail = String(u.$id).slice(-4).toUpperCase();
+      const rand = Math.random().toString(36).slice(2, 5).toUpperCase();
+      const guestName = `MS-${tail}${rand}`;
       try {
         await account.updateName(guestName);
       } catch {
