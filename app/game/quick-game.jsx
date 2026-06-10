@@ -125,6 +125,7 @@ export default function QuickGame() {
   const pulseLoopRef = useRef(null);
   const exitingRef = useRef(false);
   const wooshPlayedForRef = useRef(-1);
+  const answerTimeoutRef = useRef(null);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -195,7 +196,7 @@ export default function QuickGame() {
         if (soundsReady) playSound("wrong");
       }
 
-      setTimeout(() => {
+      answerTimeoutRef.current = setTimeout(() => {
         handleNextQuestion();
       }, 1000);
     },
@@ -240,7 +241,7 @@ export default function QuickGame() {
     categoryOpacityAnim.setValue(0);
     questionOpacityAnim.setValue(0);
     questionTranslateAnim.setValue(20);
-    entranceOptionAnims.forEach(a => a.setValue(0));
+    entranceOptionAnims.forEach(a => { a.stopAnimation(); a.setValue(0); });
 
     if (currentQuestionIndex === 0) {
       headerAnim.setValue(0);
@@ -265,10 +266,14 @@ export default function QuickGame() {
       ]),
       Animated.stagger(120,
         entranceOptionAnims.map(anim =>
-          Animated.spring(anim, { toValue: 1, friction: 5, tension: 60, useNativeDriver: true })
+          Animated.timing(anim, { toValue: 1, duration: 220, easing: Easing.out(Easing.quad), useNativeDriver: true })
         )
       ),
     ]).start();
+
+    return () => {
+      clearTimeout(answerTimeoutRef.current);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestionIndex, questions.length]);
 
@@ -632,7 +637,7 @@ export default function QuickGame() {
 
             return (
               <Animated.View
-                key={index}
+                key={(currentQuestion?.$id ?? currentQuestionIndex) + '-' + index}
                 style={[
                   s.optionWrapper,
                   {
