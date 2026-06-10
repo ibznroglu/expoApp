@@ -51,3 +51,4 @@ thoughts/personal/
 
 # temporary phase-1 proof script
 scripts/_verify-test.mjs
+scripts/_emailverify-probe.mjs
