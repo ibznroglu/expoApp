@@ -115,12 +115,7 @@ export default function QuickGame() {
   const categoryOpacityAnim   = useRef(new Animated.Value(0)).current;
   const questionOpacityAnim   = useRef(new Animated.Value(0)).current;
   const questionTranslateAnim = useRef(new Animated.Value(20)).current;
-  const entranceOptionAnims   = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
+  const optionsEntranceAnim   = useRef(new Animated.Value(0)).current;
 
   const pulseLoopRef = useRef(null);
   const exitingRef = useRef(false);
@@ -241,7 +236,7 @@ export default function QuickGame() {
     categoryOpacityAnim.setValue(0);
     questionOpacityAnim.setValue(0);
     questionTranslateAnim.setValue(20);
-    entranceOptionAnims.forEach(a => { a.stopAnimation(); a.setValue(0); });
+    optionsEntranceAnim.setValue(0);
 
     if (currentQuestionIndex === 0) {
       headerAnim.setValue(0);
@@ -264,11 +259,7 @@ export default function QuickGame() {
           Animated.timing(questionTranslateAnim, { toValue: 0, duration: 350, easing: Easing.out(Easing.quad), useNativeDriver: true }),
         ]),
       ]),
-      Animated.stagger(120,
-        entranceOptionAnims.map(anim =>
-          Animated.timing(anim, { toValue: 1, duration: 220, easing: Easing.out(Easing.quad), useNativeDriver: true })
-        )
-      ),
+      Animated.timing(optionsEntranceAnim, { toValue: 1, duration: 280, easing: Easing.out(Easing.quad), useNativeDriver: true }),
     ]).start();
 
     return () => {
@@ -316,7 +307,7 @@ export default function QuickGame() {
       categoryOpacityAnim.setValue(0);
       questionOpacityAnim.setValue(0);
       questionTranslateAnim.setValue(20);
-      entranceOptionAnims.forEach(a => a.setValue(0));
+      optionsEntranceAnim.setValue(0);
       setScore(0);
       setSelectedAnswer(null);
       setTimeLeft(15);
@@ -326,7 +317,7 @@ export default function QuickGame() {
     } finally {
       setLoading(false);
     }
-  }, [headerAnim, categoryScaleAnim, categoryOpacityAnim, questionOpacityAnim, questionTranslateAnim, entranceOptionAnims]);
+  }, [headerAnim, categoryScaleAnim, categoryOpacityAnim, questionOpacityAnim, questionTranslateAnim, optionsEntranceAnim]);
 
   const handleExitPress = useCallback(() => {
     playUISound('modal');
@@ -641,12 +632,10 @@ export default function QuickGame() {
                 style={[
                   s.optionWrapper,
                   {
-                    opacity: entranceOptionAnims[index] ?? entranceOptionAnims[0],
+                    opacity: optionsEntranceAnim,
                     transform: [
                       { scale: scaleAnims[index] ?? scaleAnims[0] },
-                      { translateY: (entranceOptionAnims[index] ?? entranceOptionAnims[0]).interpolate({
-                          inputRange: [0, 1], outputRange: [30, 0]
-                      }) },
+                      { translateY: optionsEntranceAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) },
                     ],
                   },
                   isCorrect && s.optionWrapperCorrect,
