@@ -44,16 +44,11 @@ const AuthInput: React.FC<AuthInputProps> = ({
   trailingIcon,
   onTrailingPress,
 }) => {
-  const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(secureToggle);
 
   const hasError = Boolean(error);
-  const borderColor = hasError
-    ? Colors.wrong
-    : focused
-      ? Colors.accent.cyan
-      : Colors.ui.socialBorder;
-  const iconColor = focused ? Colors.accent.cyan : Colors.text.muted;
+  const borderColor = hasError ? Colors.wrong : Colors.ui.socialBorder;
+  const iconColor = Colors.text.muted;
 
   return (
     <View>
@@ -61,7 +56,6 @@ const AuthInput: React.FC<AuthInputProps> = ({
         style={[
           styles.field,
           { borderColor },
-          focused && !hasError && styles.focusGlow,
         ]}
       >
         <Ionicons name={icon} size={20} color={iconColor} style={styles.leadingIcon} />
@@ -75,8 +69,6 @@ const AuthInput: React.FC<AuthInputProps> = ({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           editable={editable}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
         />
         {secureToggle && (
           <TouchableOpacity
@@ -121,12 +113,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: Colors.ui.socialBg,
     paddingHorizontal: Spacing.md,
-  },
-  focusGlow: {
-    shadowColor: Colors.accent.cyan,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
   },
   leadingIcon: {
     marginRight: Spacing.sm,
