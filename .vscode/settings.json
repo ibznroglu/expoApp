@@ -8,5 +8,6 @@
   "files.watcherExclude": {
     "**/node_modules/**": true
   },
-  "typescript.tsserver.experimental.enableProjectDiagnostics": false
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
