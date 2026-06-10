@@ -240,7 +240,6 @@ const AuthProvider = ({ children }) => {
       setSession(await account.getSession("current"));
       setUser(responseUser);
     } catch (error) {
-      console.error("Error during guest sign-in:", error);
       throw error;
     } finally {
       setLoading(false);

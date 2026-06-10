@@ -93,6 +93,8 @@ const SignIn = () => {
       if (error.code === "EMAIL_NOT_VERIFIED") {
         setNotVerified(true);
         showToast.info("E-postanı doğrula", "Giriş yapmadan önce e-postandaki doğrulama linkine tıkla.");
+      } else if (error?.message?.includes("network") || error?.message?.includes("Network") || error?.code === 0) {
+        showToast.error("Ağ Hatası", "İnternet bağlantınızı kontrol edin.");
       } else {
         showToast.error("Giriş başarısız", "E-posta veya şifre hatalı");
       }
@@ -219,8 +221,12 @@ const SignIn = () => {
                 onPress={async () => {
                   try {
                     await signinAsGuest();
-                  } catch {
-                    showToast.error("Hata", "Misafir girişi başarısız");
+                  } catch (error) {
+                    if (error?.message?.includes("network") || error?.message?.includes("Network") || error?.code === 0) {
+                      showToast.error("Ağ Hatası", "İnternet bağlantınızı kontrol edin.");
+                    } else {
+                      showToast.error("Hata", "Misafir girişi başarısız");
+                    }
                   }
                 }}
               />
