@@ -5,6 +5,7 @@ import {
   Dimensions,
   Easing,
   Modal,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -583,7 +584,12 @@ export default function QuickGame() {
         </Animated.View>
 
         {/* Question + Options + Jokers */}
-        <View style={s.gameContent}>
+        <ScrollView
+          style={s.gameContentScroll}
+          contentContainerStyle={s.gameContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
 
         {/* Question card — gradient border + gradient bg */}
         <Animated.View style={[s.questionCardWrapper, {
@@ -604,11 +610,10 @@ export default function QuickGame() {
             >
               <TextCustom
                 style={s.questionText}
-                fontSize={
-                  screenHeight < 700
-                    ? (currentQuestion.question.length > 100 ? 13 : 15)
-                    : (currentQuestion.question.length > 100 ? 15 : 18)
-                }
+                fontSize={screenHeight < 700 ? 16 : 18}
+                adjustsFontSizeToFit
+                numberOfLines={5}
+                minimumFontScale={0.6}
               >
                 {currentQuestion.question}
               </TextCustom>
@@ -713,7 +718,7 @@ export default function QuickGame() {
           </View>
         </View>
 
-        </View>{/* end gameContent */}
+        </ScrollView>{/* end gameContent */}
 
       </SafeAreaView>
 

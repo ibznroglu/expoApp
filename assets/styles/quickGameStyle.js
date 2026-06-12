@@ -1,5 +1,7 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { Colors, Radius, Spacing, Typography } from "../../constants/theme";
+
+const screenHeight = Dimensions.get('window').height;
 
 export const quickGameStyles = StyleSheet.create({
   // Layout shells
@@ -168,9 +170,12 @@ export const quickGameStyles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 
-  // Centering wrapper for question + options
-  gameContent: {
+  // ScrollView shell + content container for question + options
+  gameContentScroll: {
     flex: 1,
+  },
+  gameContent: {
+    flexGrow: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     gap: 6,
@@ -198,12 +203,12 @@ export const quickGameStyles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
     justifyContent: 'center',
+    maxHeight: screenHeight * 0.25,
   },
   questionText: {
     color: Colors.text.primary,
     fontFamily: Typography.family.bold,
     textAlign: 'center',
-    lineHeight: 26,
   },
 
   // Answer options
@@ -212,7 +217,7 @@ export const quickGameStyles = StyleSheet.create({
     gap: 8,
   },
   optionWrapper: {
-    height: 50,
+    height: Math.max(screenHeight * 0.058, 42),
     borderRadius: Radius.md,
     backgroundColor: 'transparent',
     shadowColor: '#9B59F5',
@@ -325,7 +330,7 @@ export const quickGameStyles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
     opacity: 0.85,
-    marginTop: 8,
+    marginTop: screenHeight * 0.008,
   },
   jokerRow: {
     flexDirection: 'row',
@@ -337,8 +342,8 @@ export const quickGameStyles = StyleSheet.create({
     gap: Spacing.xs,
   },
   jokerBtn: {
-    width: 72,
-    height: 72,
+    width: Math.max(screenHeight * 0.085, 48),
+    height: Math.max(screenHeight * 0.085, 48),
     borderRadius: Radius.md,
     borderWidth: 1.5,
     justifyContent: 'center',
