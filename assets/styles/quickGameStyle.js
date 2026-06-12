@@ -292,6 +292,43 @@ export const quickGameStyles = StyleSheet.create({
     color: Colors.text.primary,
     fontFamily: Typography.family.bold,
   },
+  optionGradientBorder: {
+    height: '100%',
+    padding: 1.5,
+    borderRadius: Radius.md,
+    overflow: 'hidden',
+  },
+  optionGradientBorderSelected: {
+    padding: 2.5,
+  },
+  optionButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    backgroundColor: Colors.bg.surface,
+    borderRadius: Radius.md - 2,
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.md,
+  },
+  optionWrapperSelected: {
+    shadowColor: Colors.accent.gold,
+    shadowOpacity: 0.85,
+    shadowRadius: 14,
+    elevation: 12,
+  },
+  optionLetterGradient: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  optionLetterTextOnGradient: {
+    color: Colors.bg.primary,
+    fontFamily: Typography.family.bold,
+  },
 
   // Dot progress (below header)
   dotProgressRow: {
@@ -342,6 +379,7 @@ export const quickGameStyles = StyleSheet.create({
     gap: Spacing.xs,
   },
   jokerBtn: {
+    position: 'relative',
     width: Math.max(screenHeight * 0.085, 48),
     height: Math.max(screenHeight * 0.085, 48),
     borderRadius: Radius.md,
@@ -355,15 +393,18 @@ export const quickGameStyles = StyleSheet.create({
     textAlign: 'center',
   },
   jokerCountBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: Colors.accent.badge,
+    borderWidth: 1.5,
+    borderColor: Colors.bg.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 2,
+    zIndex: 2,
   },
   jokerCountText: {
     color: Colors.text.primary,

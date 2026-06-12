@@ -632,6 +632,7 @@ export default function QuickGame() {
               selectedAnswer !== currentQuestion.correctAnswer;
             const isDimmed = selectedAnswer !== null && !isSelected && !isCorrect;
             const letterLabel = String.fromCharCode(65 + index);
+            const isFeedback = isCorrect || isWrong;
 
             return (
               <Animated.View
@@ -647,38 +648,76 @@ export default function QuickGame() {
                   },
                   isCorrect && s.optionWrapperCorrect,
                   isWrong   && s.optionWrapperWrong,
+                  isSelected && !isFeedback && s.optionWrapperSelected,
                   // NOTE: isDimmed && s.optionDimmed intentionally removed — conflicts with animated opacity
                 ]}
               >
-                <TouchableOpacity
-                  style={[
-                    s.optionButton,
-                    isSelected && !isCorrect && !isWrong && s.optionButtonSelected,
-                    isCorrect && s.optionCorrect,
-                    isWrong && s.optionWrong,
-                    { opacity: isDimmed ? 0.5 : 1 },
-                  ]}
-                  onPress={() => handleAnswerSelect(index)}
-                  disabled={selectedAnswer !== null}
-                  activeOpacity={0.85}
-                >
-                  <View style={[
-                    s.optionLetter,
-                    isCorrect && s.optionLetterCorrect,
-                    isWrong && s.optionLetterWrong,
-                  ]}>
-                    <TextCustom style={s.optionLetterText} fontSize={13}>
-                      {letterLabel}
-                    </TextCustom>
-                  </View>
-
-                  <TextCustom
-                    style={[s.optionText, (isSelected || isCorrect) && s.optionTextSelected]}
-                    fontSize={15}
+                {isFeedback ? (
+                  <TouchableOpacity
+                    style={[
+                      s.optionButton,
+                      isSelected && !isCorrect && !isWrong && s.optionButtonSelected,
+                      isCorrect && s.optionCorrect,
+                      isWrong && s.optionWrong,
+                      { opacity: isDimmed ? 0.5 : 1 },
+                    ]}
+                    onPress={() => handleAnswerSelect(index)}
+                    disabled={selectedAnswer !== null}
+                    activeOpacity={0.85}
                   >
-                    {option}
-                  </TextCustom>
-                </TouchableOpacity>
+                    <View style={[
+                      s.optionLetter,
+                      isCorrect && s.optionLetterCorrect,
+                      isWrong && s.optionLetterWrong,
+                    ]}>
+                      <TextCustom style={s.optionLetterText} fontSize={13}>
+                        {letterLabel}
+                      </TextCustom>
+                    </View>
+
+                    <TextCustom
+                      style={[s.optionText, (isSelected || isCorrect) && s.optionTextSelected]}
+                      fontSize={15}
+                    >
+                      {option}
+                    </TextCustom>
+                  </TouchableOpacity>
+                ) : (
+                  <LinearGradient
+                    colors={Colors.gradients.option}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[
+                      s.optionGradientBorder,
+                      isSelected && s.optionGradientBorderSelected,
+                      { opacity: isDimmed ? 0.5 : 1 },
+                    ]}
+                  >
+                    <TouchableOpacity
+                      style={s.optionButtonInner}
+                      onPress={() => handleAnswerSelect(index)}
+                      disabled={selectedAnswer !== null}
+                      activeOpacity={0.85}
+                    >
+                      <LinearGradient
+                        colors={Colors.gradients.option}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={s.optionLetterGradient}
+                      >
+                        <TextCustom style={s.optionLetterTextOnGradient} fontSize={13}>
+                          {letterLabel}
+                        </TextCustom>
+                      </LinearGradient>
+                      <TextCustom
+                        style={[s.optionText, isSelected && s.optionTextSelected]}
+                        fontSize={15}
+                      >
+                        {option}
+                      </TextCustom>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                )}
               </Animated.View>
             );
           })}
@@ -692,27 +731,27 @@ export default function QuickGame() {
             <View style={s.jokerItem}>
               <View style={[s.jokerBtn, { backgroundColor: 'rgba(155,89,245,0.25)', borderColor: Colors.accent.purple }]}>
                 <TextCustom style={{ color: Colors.accent.purple, fontFamily: Typography.family.black }} fontSize={20}>x2</TextCustom>
+                <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>ÇİFTE ŞANS</TextCustom>
-              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
 
             {/* 50:50 */}
             <View style={s.jokerItem}>
               <View style={[s.jokerBtn, { backgroundColor: 'rgba(255,215,0,0.12)', borderColor: Colors.accent.gold }]}>
                 <Ionicons name="bulb-outline" size={30} color={Colors.accent.gold} />
+                <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>50:50</TextCustom>
-              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
 
             {/* SORU GEC */}
             <View style={s.jokerItem}>
               <View style={[s.jokerBtn, { backgroundColor: 'rgba(0,212,255,0.12)', borderColor: Colors.accent.cyan }]}>
                 <Ionicons name="play-skip-forward-outline" size={30} color={Colors.accent.cyan} />
+                <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
               </View>
               <TextCustom style={s.jokerLabel} fontSize={10}>SORU GEÇ</TextCustom>
-              <View style={s.jokerCountBadge}><TextCustom style={s.jokerCountText} fontSize={10}>2</TextCustom></View>
             </View>
 
           </View>

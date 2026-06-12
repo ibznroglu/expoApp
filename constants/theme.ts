@@ -23,6 +23,7 @@ export const Colors = {
     cyan: '#00D4FF',
     gold: '#FFD700',
     goldDark: '#E5B800',
+    badge: '#FF4500',
   },
 
   // Semantic
@@ -60,6 +61,7 @@ export const Colors = {
   gradients: {
     background: ['#2D1B69', '#1A0A4A', '#0D0527'] as const, // matches home BG_GRADIENT
     brandButton: ['#FF6B35', '#FFB800'] as const,
+    option: ['#FFD700', '#FF8C00'] as const,
   },
 
   // UI surface helpers
