@@ -92,10 +92,16 @@ const AuthProvider = ({ children }) => {
 
   const signout = async () => {
     setLoading(true);
-    await account.deleteSession("current");
-    setSession(null);
-    setUser(null);
-    setLoading(false);
+    try {
+      await account.deleteSession("current");
+      setSession(null);
+      setUser(null);
+    } catch (error) {
+      console.error("Çıkış yapılırken hata:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
   // AuthContext.js - signup fonksiyonunu şu şekilde değiştir:
   // AuthContext.js - web için farklı bir yaklaşım
@@ -246,9 +252,20 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Anonymous (guest) sessions have no email. signinAsGuest also sets an
+  // "MS-" display name but that updateName call is best-effort and may fail,
+  // so the empty-email check is the reliable primary signal.
+  const isUserObject = user && typeof user === "object";
+  const isGuest = Boolean(
+    isUserObject &&
+      (user.email === "" ||
+        (typeof user.name === "string" && user.name.startsWith("MS-")))
+  );
+
   const contextData = {
     session,
     user,
+    isGuest,
     signin,
     signout,
     signup,
