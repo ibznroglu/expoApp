@@ -15,17 +15,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { Ionicons } from "@expo/vector-icons";
-import { quickGameStyles as s } from "../../assets/styles/quickGameStyle";
-import { getQuestions } from "../../services/questionService";
+import { quickGameStyles as s } from "../../../assets/styles/quickGameStyle";
+import { getQuestions } from "../../../services/questionService";
 import {
   initSounds,
   playSound,
   playUISound,
   stopSound,
   unloadSounds,
-} from "../../utils/sound";
-import TextCustom from "../components/TextCustom";
-import { Colors, Typography } from "../../constants/theme";
+} from "../../../utils/sound";
+import TextCustom from "../../components/TextCustom";
+import { Colors, Typography } from "../../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
 const screenHeight = Dimensions.get('window').height;
@@ -132,13 +132,7 @@ export default function QuickGame() {
       setQuestions(randomQuestions);
     } catch (error) {
       console.error("Sorular yüklenirken hata:", error);
-      try {
-        const fallbackQuestions = await getQuestions(10);
-        setQuestions(fallbackQuestions);
-      } catch (e) {
-        console.error("Fallback sorular da yüklenemedi:", e);
-        setQuestions([]);
-      }
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
@@ -317,6 +311,7 @@ export default function QuickGame() {
       setGameCompleted(false);
     } catch (error) {
       console.error("Oyun yeniden başlatılırken hata:", error);
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
