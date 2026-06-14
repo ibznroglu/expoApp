@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,11 +10,13 @@ import ThemedText from '@/components/ThemedText';
 import AuthButton from '@/components/auth/AuthButton';
 import { profileStyles } from '@/assets/styles/profileStyle';
 import { showToast } from '@/utils/toast';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function ProfileScreen() {
   const { user, isGuest, signout } = useAuth();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const typedUser = user && typeof user !== 'boolean' ? user : null;
   const displayName: string = (typedUser?.name as string | undefined) ?? 'Oyuncu';
@@ -28,29 +30,24 @@ export default function ProfileScreen() {
   }, [displayName]);
 
   const handleSignout = () => {
-    Alert.alert(
-      'Çıkış Yap',
-      'Hesabından çıkmak istediğine emin misin?',
-      [
-        { text: 'Vazgeç', style: 'cancel' },
-        {
-          text: 'Çıkış Yap',
-          style: 'destructive',
-          onPress: async () => {
-            setSigningOut(true);
-            try {
-              await signout();
-              // Session becomes null → app/(app)/_layout.tsx redirects to /signin automatically.
-              // Do NOT reset signingOut here — component unmounts.
-            } catch {
-              setSigningOut(false);
-              showToast.error('Hata', 'Çıkış yapılamadı, tekrar dene');
-            }
-          },
-        },
-      ],
-      { cancelable: true },
-    );
+    setLogoutModalVisible(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setSigningOut(true);
+    try {
+      await signout();
+      // Session becomes null → app/(app)/_layout.tsx redirects to /signin automatically.
+      // Do NOT reset signingOut here — component unmounts.
+    } catch {
+      setSigningOut(false);
+      setLogoutModalVisible(false);
+      showToast.error('Hata', 'Çıkış yapılamadı, tekrar dene');
+    }
+  };
+
+  const handleCancelLogout = () => {
+    setLogoutModalVisible(false);
   };
 
   return (
@@ -151,6 +148,18 @@ export default function ProfileScreen() {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <ConfirmModal
+        visible={logoutModalVisible}
+        icon="log-out-outline"
+        title="Çıkış Yap"
+        message="Hesabından çıkmak istediğine emin misin?"
+        confirmLabel="Çıkış Yap"
+        cancelLabel="Vazgeç"
+        destructive
+        loading={signingOut}
+        onConfirm={handleConfirmLogout}
+        onCancel={handleCancelLogout}
+      />
     </View>
   );
 }

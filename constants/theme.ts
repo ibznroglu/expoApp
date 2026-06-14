@@ -24,6 +24,7 @@ export const Colors = {
     gold: '#FFD700',
     goldDark: '#E5B800',
     badge: '#FF4500',
+    teal: '#00E5CC',
   },
 
   // Semantic
@@ -62,6 +63,7 @@ export const Colors = {
     background: ['#2D1B69', '#1A0A4A', '#0D0527'] as const, // matches home BG_GRADIENT
     brandButton: ['#FF6B35', '#FFB800'] as const,
     option: ['#FFD700', '#FF8C00'] as const,
+    modal: ['#00E5CC', '#00B8D4', '#0091A7'] as const,
   },
 
   // UI surface helpers
@@ -136,5 +138,12 @@ export const Shadows = {
     shadowOpacity: 0.6,
     shadowRadius: 20,
     elevation: 15,
+  },
+  modalGlow: {
+    shadowColor: '#00E5CC',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 10,
   },
 };
