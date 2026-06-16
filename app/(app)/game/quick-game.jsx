@@ -4,7 +4,6 @@ import {
   Animated,
   Dimensions,
   Easing,
-  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,6 +24,7 @@ import {
   unloadSounds,
 } from "../../../utils/sound";
 import TextCustom from "../../components/TextCustom";
+import ConfirmModal from '@/components/ConfirmModal';
 import { Colors, Typography } from "../../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
@@ -318,20 +318,17 @@ export default function QuickGame() {
   }, [headerAnim, categoryScaleAnim, categoryOpacityAnim, questionOpacityAnim, questionTranslateAnim, optionsEntranceAnim]);
 
   const handleExitPress = useCallback(() => {
-    playUISound('modal');
     setExitModalVisible(true);
   }, []);
 
   const confirmExit = useCallback(() => {
     if (exitingRef.current) return;
     exitingRef.current = true;
-    playUISound('button');
     setExitModalVisible(false);
     setTimeout(() => router.back(), 200);
   }, [router]);
 
   const cancelExit = useCallback(() => {
-    playUISound('button');
     setExitModalVisible(false);
   }, []);
 
@@ -757,40 +754,16 @@ export default function QuickGame() {
       </SafeAreaView>
 
       {/* Exit confirm modal */}
-      <Modal
+      <ConfirmModal
         visible={exitModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={cancelExit}
-      >
-        <View style={s.modalOverlay}>
-          <View style={s.modalCard}>
-            <TextCustom style={s.modalTitle} fontSize={17}>
-              Oyundan ayrılmak istediğine emin misin?
-            </TextCustom>
-            <View style={s.modalButtons}>
-              <TouchableOpacity
-                style={s.modalCancelBtn}
-                onPress={cancelExit}
-                activeOpacity={0.8}
-              >
-                <TextCustom style={s.modalCancelText} fontSize={15}>
-                  Hayır
-                </TextCustom>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={s.modalConfirmBtn}
-                onPress={confirmExit}
-                activeOpacity={0.8}
-              >
-                <TextCustom style={s.modalConfirmText} fontSize={15}>
-                  Evet
-                </TextCustom>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        title="Oyundan Ayrıl"
+        message="Oyundan ayrılmak istediğine emin misin? İlerlemen kaydedilmeyecek."
+        confirmLabel="Evet"
+        cancelLabel="Hayır"
+        destructive
+        onConfirm={confirmExit}
+        onCancel={cancelExit}
+      />
 
     </View>
   );

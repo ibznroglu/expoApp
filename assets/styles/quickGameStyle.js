@@ -411,58 +411,6 @@ export const quickGameStyles = StyleSheet.create({
     fontFamily: Typography.family.bold,
   },
 
-  // Exit confirm modal
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.65)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.xl,
-  },
-  modalCard: {
-    backgroundColor: Colors.bg.card,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border.bright,
-    padding: Spacing.xxl,
-    width: '100%',
-    alignItems: 'center',
-    gap: Spacing.xl,
-  },
-  modalTitle: {
-    color: Colors.text.primary,
-    fontFamily: Typography.family.bold,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    width: '100%',
-    gap: Spacing.md,
-  },
-  modalCancelBtn: {
-    flex: 1,
-    backgroundColor: Colors.bg.elevated,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-  },
-  modalCancelText: {
-    color: Colors.text.primary,
-    fontFamily: Typography.family.semibold,
-  },
-  modalConfirmBtn: {
-    flex: 1,
-    backgroundColor: Colors.wrong,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-  },
-  modalConfirmText: {
-    color: Colors.text.primary,
-    fontFamily: Typography.family.bold,
-  },
-
   // Game Over
   scoreCircle: {
     width: 140,
