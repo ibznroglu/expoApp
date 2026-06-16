@@ -21,14 +21,6 @@ export const profileStyles = StyleSheet.create({
     paddingVertical: Spacing.md,
     gap: Spacing.md,
   },
-  backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.bg.input,
-  },
 
   // Identity card
   identityCard: {

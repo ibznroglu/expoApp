@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { ActivityIndicator, Animated, Modal, Pressable, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, Modal, Pressable, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography } from '@/constants/theme';
@@ -37,32 +37,10 @@ export default function ConfirmModal({
   singleButton = false,
   loading = false,
 }: ConfirmModalProps) {
-  const scale = useRef(new Animated.Value(0.9)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     if (visible) {
       playUISound('modal');
-      scale.setValue(0.9);
-      opacity.setValue(0);
-      Animated.parallel([
-        Animated.spring(scale, {
-          toValue: 1,
-          friction: 8,
-          tension: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      scale.setValue(0.9);
-      opacity.setValue(0);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const handleConfirm = () => {
@@ -88,8 +66,8 @@ export default function ConfirmModal({
     >
       {/* Backdrop — tap to cancel (guarded while loading) */}
       <Pressable style={styles.overlay} onPress={handleRequestClose}>
-        {/* Inner card — stops tap propagation to backdrop; Animated.View owns sizing+transform so gradientBorder only handles visual border/depth */}
-        <Animated.View style={{ width: '100%', maxWidth: 340, transform: [{ scale }], opacity }}>
+        {/* Inner card — stops tap propagation to backdrop */}
+        <View style={{ width: '100%', maxWidth: 340 }}>
           <Pressable onPress={() => {}} style={{ width: '100%' }}>
           <LinearGradient
             colors={Colors.gradients.modal}
@@ -184,7 +162,7 @@ export default function ConfirmModal({
             </View>
           </LinearGradient>
           </Pressable>
-        </Animated.View>
+        </View>
       </Pressable>
     </Modal>
   );

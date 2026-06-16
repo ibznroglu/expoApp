@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import AuthButton from '@/components/auth/AuthButton';
 import { profileStyles } from '@/assets/styles/profileStyle';
 import { showToast } from '@/utils/toast';
 import ConfirmModal from '@/components/ConfirmModal';
+import BackButton from '@/components/BackButton';
 
 export default function ProfileScreen() {
   const { user, isGuest, signout } = useAuth();
@@ -61,13 +62,7 @@ export default function ProfileScreen() {
         >
           {/* Header */}
           <View style={profileStyles.header}>
-            <TouchableOpacity
-              style={profileStyles.backButton}
-              onPress={() => router.back()}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
-            </TouchableOpacity>
+            <BackButton />
             <ThemedText weight="bold" size={Typography.size.xl}>Profil</ThemedText>
           </View>
 

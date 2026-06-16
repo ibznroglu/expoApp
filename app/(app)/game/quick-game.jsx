@@ -25,6 +25,7 @@ import {
 } from "../../../utils/sound";
 import TextCustom from "../../components/TextCustom";
 import ConfirmModal from '@/components/ConfirmModal';
+import BackButton from '@/components/BackButton';
 import { Colors, Typography } from "../../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
@@ -508,9 +509,7 @@ export default function QuickGame() {
 
           {/* Exit row — standalone above header */}
           <View style={s.exitRow}>
-            <TouchableOpacity onPress={handleExitPress} style={s.exitBtn} activeOpacity={0.75}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
-            </TouchableOpacity>
+            <BackButton onPress={handleExitPress} />
           </View>
 
           {/* Header card — PUAN | timer | SORU */}
