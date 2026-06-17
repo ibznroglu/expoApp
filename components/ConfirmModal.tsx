@@ -13,7 +13,7 @@ type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 const CORNER_CUT = 16;
 const BORDER_THICKNESS = 3;
-const DEFAULT_CARD = { width: 340, height: 200 };
+const DEFAULT_CARD = { width: 300, height: 200 };
 
 interface ConfirmModalProps {
   visible: boolean;
@@ -125,7 +125,7 @@ export default function ConfirmModal({
                 >
                   <Ionicons
                     name={icon}
-                    size={30}
+                    size={26}
                     color={destructive ? Colors.wrong : Colors.text.primary}
                   />
                 </View>

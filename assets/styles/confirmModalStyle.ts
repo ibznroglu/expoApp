@@ -10,8 +10,8 @@ export const confirmModalStyles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
 iconCircle: {
-    width: 56,
-    height: 56,
+    width: 48,
+    height: 48,
     borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
@@ -41,7 +41,7 @@ iconCircle: {
     flex: 1,
   },
   dangerButton: {
-    height: 52,
+    height: 48,
     flex: 1,
     borderRadius: Radius.md,
     alignItems: 'center',
@@ -50,7 +50,7 @@ iconCircle: {
   },
   cardOuter: {
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 300,
     alignSelf: 'center' as const,
     ...Shadows.modalGlow,
   },
@@ -66,9 +66,9 @@ iconCircle: {
   content: {
     position: 'relative' as const,
     backgroundColor: 'transparent',
-    paddingHorizontal: 24,
-    paddingVertical: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     alignItems: 'center' as const,
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
 });

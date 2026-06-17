@@ -147,7 +147,7 @@ export default function ProfileScreen() {
         visible={logoutModalVisible}
         icon="log-out-outline"
         title="Çıkış Yap"
-        message="Hesabından çıkmak istediğine emin misin?"
+        message={"Hesabından çıkmak istediğine\nemin misin?"}
         confirmLabel="Çıkış Yap"
         cancelLabel="Vazgeç"
         destructive
