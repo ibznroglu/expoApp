@@ -9,21 +9,7 @@ export const confirmModalStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
   },
-  gradientBorder: {
-    borderRadius: Radius.lg,
-    padding: 1.5,
-    overflow: 'hidden',
-    ...Shadows.modalGlow,
-  },
-  card: {
-    borderRadius: Radius.lg,
-    backgroundColor: Colors.bg.card,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  iconCircle: {
+iconCircle: {
     width: 56,
     height: 56,
     borderRadius: Radius.full,
@@ -61,5 +47,28 @@ export const confirmModalStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.wrong,
+  },
+  cardOuter: {
+    width: '100%',
+    maxWidth: 340,
+    alignSelf: 'center' as const,
+    ...Shadows.modalGlow,
+  },
+  cardWrapper: {
+    width: '100%',
+    position: 'relative' as const,
+  },
+  svgBackground: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+  },
+  content: {
+    position: 'relative' as const,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    alignItems: 'center' as const,
+    gap: Spacing.md,
   },
 });

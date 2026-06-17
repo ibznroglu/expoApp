@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
-import { ActivityIndicator, Modal, Pressable, TouchableOpacity, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, LayoutChangeEvent, Modal, Pressable, TouchableOpacity, View } from 'react-native';
+import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography } from '@/constants/theme';
 import ThemedText from '@/components/ThemedText';
 import AuthButton from '@/components/auth/AuthButton';
 import { confirmModalStyles as styles } from '@/assets/styles/confirmModalStyle';
 import { playUISound } from '@/utils/sound';
+import { octagonPath, octagonInnerPath } from '@/utils/octagonPath';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+
+const CORNER_CUT = 16;
+const BORDER_THICKNESS = 3;
+const DEFAULT_CARD = { width: 340, height: 200 };
 
 interface ConfirmModalProps {
   visible: boolean;
@@ -37,6 +42,17 @@ export default function ConfirmModal({
   singleButton = false,
   loading = false,
 }: ConfirmModalProps) {
+  const [cardSize, setCardSize] = useState(DEFAULT_CARD);
+
+  const handleCardLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    if (width > 0 && height > 0) {
+      setCardSize((prev) =>
+        prev.width === width && prev.height === height ? prev : { width, height },
+      );
+    }
+  };
+
   useEffect(() => {
     if (visible) {
       playUISound('modal');
@@ -66,16 +82,39 @@ export default function ConfirmModal({
     >
       {/* Backdrop — tap to cancel (guarded while loading) */}
       <Pressable style={styles.overlay} onPress={handleRequestClose}>
-        {/* Inner card — stops tap propagation to backdrop */}
-        <View style={{ width: '100%', maxWidth: 340 }}>
-          <Pressable onPress={() => {}} style={{ width: '100%' }}>
-          <LinearGradient
-            colors={Colors.gradients.modal}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientBorder}
-          >
-            <View style={styles.card}>
+        <View style={styles.cardOuter}>
+          {/* Inner card — stops tap propagation to backdrop */}
+          <Pressable onPress={() => {}} style={styles.cardWrapper} onLayout={handleCardLayout}>
+            <Svg
+              width={cardSize.width}
+              height={cardSize.height}
+              style={styles.svgBackground}
+              pointerEvents="none"
+            >
+              <Defs>
+                <SvgLinearGradient id="frameGrad" x1="0" y1="0" x2="1" y2="1">
+                  <Stop offset="0" stopColor={Colors.gradients.modalFrame[0]} />
+                  <Stop offset="1" stopColor={Colors.gradients.modalFrame[1]} />
+                </SvgLinearGradient>
+                <SvgLinearGradient id="fillGrad" x1="0" y1="0" x2="1" y2="1">
+                  <Stop offset="0" stopColor={Colors.gradients.modalFill[0]} />
+                  <Stop offset="1" stopColor={Colors.gradients.modalFill[1]} />
+                </SvgLinearGradient>
+              </Defs>
+              <Path
+                d={octagonPath({ width: cardSize.width, height: cardSize.height, cut: CORNER_CUT })}
+                fill="url(#frameGrad)"
+              />
+              <Path
+                d={octagonInnerPath(
+                  { width: cardSize.width, height: cardSize.height, cut: CORNER_CUT },
+                  BORDER_THICKNESS,
+                )}
+                fill="url(#fillGrad)"
+              />
+            </Svg>
+
+            <View style={styles.content}>
               {/* Optional icon */}
               {icon && (
                 <View
@@ -160,7 +199,6 @@ export default function ConfirmModal({
                 </View>
               )}
             </View>
-          </LinearGradient>
           </Pressable>
         </View>
       </Pressable>

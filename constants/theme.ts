@@ -64,6 +64,10 @@ export const Colors = {
     brandButton: ['#FF6B35', '#FFB800'] as const,
     option: ['#FFD700', '#FF8C00'] as const,
     modal: ['#00E5CC', '#00B8D4', '#0091A7'] as const,
+    // Outer octagon frame — glowing teal diagonal
+    modalFrame: ['#00E5CC', '#0091A7'] as const,
+    // Inner octagon fill — dark teal -> navy diagonal
+    modalFill: ['#0E3A44', '#0A1430'] as const,
   },
 
   // UI surface helpers
