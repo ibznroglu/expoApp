@@ -6,7 +6,7 @@ import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme'
 import ThemedText from '@/components/ThemedText';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
-type AuthButtonVariant = 'gradient' | 'social' | 'ghost';
+type AuthButtonVariant = 'gradient' | 'social' | 'ghost' | 'solid';
 
 interface AuthButtonProps {
   label: string;
@@ -15,12 +15,15 @@ interface AuthButtonProps {
   icon?: IoniconName;
   loading?: boolean;
   disabled?: boolean;
+  gradientColors?: readonly [string, string];
+  solidColor?: string;
 }
 
 const VARIANT_ICON_COLOR: Record<AuthButtonVariant, string> = {
   gradient: Colors.text.primary,
   social: Colors.text.primary,
   ghost: Colors.text.primary,
+  solid: Colors.text.primary,
 };
 
 /**
@@ -36,6 +39,8 @@ const AuthButton: React.FC<AuthButtonProps> = ({
   icon,
   loading = false,
   disabled = false,
+  gradientColors,
+  solidColor,
 }) => {
   const isDisabled = disabled || loading;
   const iconColor = VARIANT_ICON_COLOR[variant];
@@ -61,13 +66,26 @@ const AuthButton: React.FC<AuthButtonProps> = ({
         style={[isDisabled && styles.disabled]}
       >
         <LinearGradient
-          colors={Colors.gradients.brandButton}
+          colors={gradientColors ?? Colors.gradients.brandButton}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={[styles.base, styles.gradient]}
         >
           {content}
         </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
+  if (variant === 'solid') {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={onPress}
+        disabled={isDisabled}
+        style={[styles.base, styles.solid, isDisabled && styles.disabled, { backgroundColor: solidColor ?? Colors.brand.primary }]}
+      >
+        {content}
       </TouchableOpacity>
     );
   }
@@ -105,6 +123,9 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   gradient: {
+    ...Shadows.button,
+  },
+  solid: {
     ...Shadows.button,
   },
   social: {

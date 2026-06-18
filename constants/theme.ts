@@ -39,6 +39,8 @@ export const Colors = {
     secondary: 'rgba(255,255,255,0.7)',
     muted: 'rgba(255,255,255,0.4)',
     hint: 'rgba(255,255,255,0.25)',
+    dark: '#2A1240' as const,
+    darkMuted: '#6B5A8A' as const,
   },
 
   // Borders
@@ -68,6 +70,9 @@ export const Colors = {
     modalFrame: ['#00E5CC', '#0091A7'] as const,
     // Inner octagon fill — dark teal -> navy diagonal
     modalFill: ['#0E3A44', '#0A1430'] as const,
+    profileBg: ['#E8B894', '#D49B72'] as const,
+    profileFrame: ['#FF8A5B', '#FF6B35'] as const,
+    profileCardFill: ['#0E3A44', '#0A1430'] as const,
   },
 
   // UI surface helpers
@@ -75,6 +80,9 @@ export const Colors = {
     socialBg: 'rgba(255,255,255,0.08)',
     socialBorder: 'rgba(255,255,255,0.15)',
     overlay: 'rgba(0,0,0,0.6)',
+    chipBg: 'rgba(255,255,255,0.06)' as const,
+    chipTeal: 'rgba(0,229,204,0.18)' as const,
+    chipGold: 'rgba(255,215,0,0.18)' as const,
   },
 };
 
@@ -85,6 +93,7 @@ export const Spacing = {
   lg: 16,
   xl: 24,
   xxl: 32,
+  xxxl: 40,
 };
 
 export const Radius = {
