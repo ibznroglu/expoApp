@@ -88,18 +88,18 @@ Styled in `utils/toastConfig.js`.
 - **New Architecture** is enabled (`newArchEnabled: true` in `app.json`). Avoid libraries that haven't been migrated.
 
 ## Orchestration (human-in-the-loop)
-- The human drives phase transitions. After a delegated subagent returns, STOP and wait. Do NOT auto-invoke the next agent (code-reviewer, tester) or commit/push on your own.
+- Pipeline: researcher → planner → plan-reviewer → coder → code-reviewer → tester; human drives every transition (STOP and wait).
+- Coder: ONE phase per turn, ends with PHASE_COMPLETE, never commits/pushes.
+- code-reviewer: verdict only (APPROVED / NEEDS_REVISION with file:line), never edits files, never runs commands; lint+tsc run automatically via the PostToolUse hook.
+- Commits: only at the END of a feature, never per-phase. Two commits: feat(...) for code, then docs(plans): for the plan file, separately.
+- Plans live in thoughts/shared/plans/YYYY-MM-DD_[topic].md.
 - Execute only what the current human message asks for — one delegated step per turn.
-- Never commit or push unless the human's message explicitly instructs it.
 
 ## Context Management
 
-- Run /compact before context reaches 60%
-- Follow this order for every major task: Research -> Plan -> Implement -> Validate
+- /compact at ~55-60% context, especially before running an agent.
 - Delegate research tasks to a subagent to keep the main context clean
 - On compaction, preserve: list of changed files, active plan path, running commands
-- After coder finishes, /compact before running code-reviewer
-- After code-reviewer, /compact before running tester
 - For manual testing: if context > 60%, save debug snapshot to thoughts/shared/debug/YYYY-MM-DD_feature.md with: one-line status, repro steps, expected vs actual, current hypothesis, relevant file paths. Then /clear and reload only: plan phase + debug note + 1-2 relevant files
 - Keep phases small — each phase should validate one behavior
 - If manual testing requires more than 3 files or 2 failed hypotheses, split into a micro-phase
@@ -109,8 +109,9 @@ Styled in `utils/toastConfig.js`.
 - Do not fix the same error more than twice — run /clear and write a better prompt
 - Do not touch node_modules or .expo directories
 - Never write to .env files
-- Commit before making large changes
 - All file names, folder names, variable names, function names, and code comments must be in English. No Turkish characters in identifiers or comments. User-facing string literals (UI text, toast messages, labels) must use correct Turkish with proper characters (ş, ğ, ı, ö, ü, ç etc.).
+- Theme tokens only: all colors via Colors.*, spacing via Spacing.*, font sizes via Typography.size.* — NO hardcoded hex or raw numbers outside the theme file.
+- Appwrite access goes through a service module in services/ (questionService.js; authService in progress) — never import the SDK (account/databases) directly into screens/components.
 
 ## Compaction Instructions
 
@@ -129,7 +130,7 @@ When compacting, drop:
 
 - Kitchen sink session: starting one task, asking something unrelated, returning to first task. Fix: /clear between unrelated tasks.
 - Correcting over and over: if Claude is wrong twice in a row, /clear and write a better prompt.
-- Over-specified CLAUDE.md: if CLAUDE.md grows too long, Claude ignores rules. Keep it under 200 lines, move reference content to skills.
+- Over-specified CLAUDE.md: if CLAUDE.md grows too long, Claude ignores rules. Keep it under 200 lines.
 - Trust-then-verify gap: never ship code without verification. Always run lint or tests.
 - Infinite exploration: never investigate without scope. Use subagents so exploration doesn't consume main context.
 
