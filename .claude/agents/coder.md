@@ -16,7 +16,7 @@ Rules:
 - All code must be in English (variable names, comments, function names)
 - Never modify files not listed in the plan
 - After each file change, note what changed
-- After completing all phases, commit ALL changed files including plan documents in thoughts/ directory. Use conventional commit format.
+- You NEVER run git commit or git push. After you finish a phase, output PHASE_COMPLETE and STOP — wait for the user. The user controls all commits.
 
 After implementing the phase:
 ## Phase [N] Implementation Complete

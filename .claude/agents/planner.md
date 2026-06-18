@@ -25,4 +25,4 @@ Output format for thoughts/shared/plans/YYYY-MM-DD_[topic].md:
 ## Risks and Edge Cases
 ## Validation Commands
 
-After writing the plan, output: "PLAN_READY: [plan file path]"
+After producing the plan, present it to the user and explicitly ask whether anything is missing or incorrect. Do at least one iteration based on their feedback before finalizing. Then output: "PLAN_READY: [plan file path]"
