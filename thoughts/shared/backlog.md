@@ -68,3 +68,15 @@ app.json needs android.package and ios.bundleIdentifier set before publishing. P
 - When adding new questions, check the uploadQuestions skippedReview report for false positives.
 - Small-screen (iPhone SE / 640dp) device test pending — İsa has no small device and declined simulators; verify when possible.
 - "commit" always means commit + PUSH (recurring reminder).
+
+---
+
+## Leaderboard V2 — full per-category system (deferred; see leaderboard-spec.md)
+
+The existing thoughts/shared/plans/leaderboard-spec.md describes a full per-category leaderboard with a categories collection, a category-specific game screen, game_results + leaderboard_stats collections, and a scheduled recompute-ranks Appwrite Function. This is the V2 target. We are deferring it because: (a) the current quick-game is NOT category-based (10 random mixed questions), so per-category needs a new category-game mode first; (b) a CRON Function for ranks is over-engineering at current scale — query-time ranking suffices; (c) average-score+min-5-games ranking is debatable vs total-score. V2 also has good ideas to keep: display-name enforcement on signup, cleanup-user-stats Function on account deletion (needed for Layer 3 / store compliance), and the documented edge cases. Revisit when the game becomes category-based and scale grows.
+
+---
+
+## V1 leaderboard decisions (being built now)
+
+Global (not per-category) leaderboard. Single userStats collection (userId, userName, totalScore, gamesPlayed, bestScore, totalCorrect, totalQuestions, lastPlayedAt). Ranking by totalScore DESC. Rank computed at query time (no Function). Score writes require users("verified") role — guests (MS-*) are ephemeral (play, see local score, never persisted, never on leaderboard; they get persistence after Layer 2 account conversion). Profile Skor chip = totalScore, Doğruluk chip = totalCorrect/totalQuestions. scoreService.js matches questionService/authService patterns.
