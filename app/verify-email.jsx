@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SignInStyles } from "../assets/styles/signinStyle.js";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { account } from "../lib/appwrite";
 import { showToast } from "../utils/toast";
 import TextCustom from "./components/TextCustom";
@@ -80,7 +81,7 @@ export default function VerifyEmailScreen() {
     >
       {status === "verifying" && (
         <>
-          <ActivityIndicator size="large" color="#007AFF" />
+          <LoadingSpinner />
           <TextCustom style={{ marginTop: 20, textAlign: "center" }}>
             E-posta adresiniz doğrulanıyor...
           </TextCustom>

@@ -28,6 +28,7 @@ import {
 import TextCustom from "../../components/TextCustom";
 import ConfirmModal from '@/components/ConfirmModal';
 import BackButton from '@/components/BackButton';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Colors, Typography } from "../../../constants/theme";
 
 const BG_GRADIENT = ['#4A1E8A', '#2D1280', '#150960', '#080325', '#030115'];
@@ -356,37 +357,7 @@ export default function QuickGame() {
 
   // --- UI STATES ---
 
-  if (loading) {
-    return (
-      <View style={s.root}>
-        <LinearGradient colors={BG_GRADIENT} style={StyleSheet.absoluteFill} />
-        <LinearGradient
-          colors={['rgba(138,43,226,0.35)', 'transparent']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.7, y: 0.7 }}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
-        />
-        <LinearGradient
-          colors={['transparent', 'rgba(0,120,220,0.28)']}
-          start={{ x: 0.3, y: 0.3 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
-        />
-        <SafeAreaView style={s.safeArea} edges={['top']}>
-          <View style={s.centeredFill}>
-            <TextCustom style={s.loadingText} fontSize={20}>
-              Sorular yükleniyor...
-            </TextCustom>
-            <TextCustom style={s.loadingSubText} fontSize={15}>
-              Bilgi yarışması hazırlanıyor
-            </TextCustom>
-          </View>
-        </SafeAreaView>
-      </View>
-    );
-  }
+  if (loading) return <LoadingSpinner fullscreen label="Sorular yükleniyor…" />;
 
   if (questions.length === 0) {
     return (

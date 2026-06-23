@@ -5,8 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   signIn,
   signUp,
@@ -131,9 +130,7 @@ const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={contextData}>
       {loading ? (
-        <SafeAreaView style={styles.container}>
-          <ActivityIndicator size="large" />
-        </SafeAreaView>
+        <LoadingSpinner fullscreen label="Yükleniyor…" />
       ) : (
         children
       )}
@@ -144,13 +141,6 @@ const AuthProvider = ({ children }) => {
 const useAuth = () => {
   return useContext(AuthContext);
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export { AuthContext, AuthProvider, useAuth };
 
