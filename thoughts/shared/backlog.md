@@ -77,6 +77,12 @@ The existing thoughts/shared/plans/leaderboard-spec.md describes a full per-cate
 
 ---
 
+## LoadingSpinner — use consistently for ALL blocking async work (ongoing convention)
+
+A reusable `<LoadingSpinner>` exists at `components/LoadingSpinner.tsx` (built-in Animated API — NOT reanimated, which caused a worklets native-version mismatch; logo-ready empty center for a future logo; coral→gold rotating arc; props `size?/label?/fullscreen?`). RULE for the rest of the project: every NEW blocking/backend async operation must show `<LoadingSpinner>` (fullscreen for full-page waits, inline for in-section). Already wired: AuthContext auth gate, quick-game question load/restart, verify-email. When building new screens/features (leaderboard screen, Layer 2 guest→account, stats screen, account deletion, etc.), add the spinner to their loading states. DO NOT add it to intentionally-silent/background ops: fire-and-forget writes like `submitScore`, and the profile `getUserStats` fetch (chips show `"—"`). When the game logo is ready, drop it into the spinner's empty center and rotate the logo instead of (or with) the arc.
+
+---
+
 ## V1 leaderboard decisions (being built now)
 
 Global (not per-category) leaderboard. Single userStats collection (userId, userName, totalScore, gamesPlayed, bestScore, totalCorrect, totalQuestions, lastPlayedAt). Ranking by totalScore DESC. Rank computed at query time (no Function). Score writes require users("verified") role — guests (MS-*) are ephemeral (play, see local score, never persisted, never on leaderboard; they get persistence after Layer 2 account conversion). Profile Skor chip = totalScore, Doğruluk chip = totalCorrect/totalQuestions. scoreService.js matches questionService/authService patterns.
