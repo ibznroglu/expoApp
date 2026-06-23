@@ -16,6 +16,8 @@ import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 're
 import { Ionicons } from "@expo/vector-icons";
 import { quickGameStyles as s } from "../../../assets/styles/quickGameStyle";
 import { getQuestions } from "../../../services/questionService";
+import { useAuth } from "../../../context/AuthContext";
+import { submitScore } from "../../../services/scoreService";
 import {
   initSounds,
   playSound,
@@ -93,6 +95,7 @@ function TimerArc({ timeLeft }) {
 
 export default function QuickGame() {
   const router = useRouter();
+  const { user, isGuest } = useAuth();
 
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -123,6 +126,7 @@ export default function QuickGame() {
   const exitingRef = useRef(false);
   const wooshPlayedForRef = useRef(-1);
   const answerTimeoutRef = useRef(null);
+  const scoreSubmittedRef = useRef(false);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -273,6 +277,22 @@ export default function QuickGame() {
     playSound(isPerfect ? 'bravo' : 'completed');
   }, [gameCompleted, soundsReady, score, questions.length]);
 
+  // Score submission — fire once per completed game for eligible non-guest users
+  useEffect(() => {
+    if (!gameCompleted || scoreSubmittedRef.current) return;
+    scoreSubmittedRef.current = true;
+    if (isGuest || !user?.$id || score <= 0) return;
+
+    const correctCount = score / 10;
+    submitScore({
+      userId: user.$id,
+      userName: user.name || "Oyuncu",
+      score,
+      correctCount,
+      questionCount: questions.length,
+    }).catch(() => {});
+  }, [gameCompleted, isGuest, user, score, questions.length]);
+
   // Pulse animation — activates in urgent mode (≤5s), stops when answer selected or game done
   useEffect(() => {
     if (timeLeft <= 5 && timeLeft > 0 && selectedAnswer === null && !gameCompleted) {
@@ -310,6 +330,7 @@ export default function QuickGame() {
       setSelectedAnswer(null);
       setTimeLeft(15);
       setGameCompleted(false);
+      scoreSubmittedRef.current = false;
     } catch (error) {
       console.error("Oyun yeniden başlatılırken hata:", error);
       setQuestions([]);

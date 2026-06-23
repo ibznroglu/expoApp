@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,15 +11,33 @@ import { showToast } from '@/utils/toast';
 import ConfirmModal from '@/components/ConfirmModal';
 import BackButton from '@/components/BackButton';
 import ProfileCard from '@/components/ProfileCard';
+import { getUserStats } from '@/services/scoreService';
 
 export default function ProfileScreen() {
   const { user, isGuest, signout } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [stats, setStats] = useState<{ totalScore: number; accuracy: number | null; rank: number } | null>(null);
 
   const typedUser = user && typeof user !== 'boolean' ? user : null;
   const displayName: string = (typedUser?.name as string | undefined) ?? 'Oyuncu';
   const email: string = (typedUser?.email as string | undefined) ?? '';
+
+  useEffect(() => {
+    if (isGuest) return;
+    const userId = typedUser?.$id as string | undefined;
+    if (!userId) return;
+    let cancelled = false;
+    getUserStats(userId).then((result) => {
+      if (!cancelled) setStats(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isGuest, typedUser]);
+
+  const scoreValue = stats ? String(stats.totalScore) : '—';
+  const accuracyValue = stats?.accuracy != null ? `%${stats.accuracy}` : '—';
 
   const handleSignout = () => {
     setLogoutModalVisible(true);
@@ -58,7 +76,7 @@ export default function ProfileScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* Identity Card */}
-          <ProfileCard name={displayName} email={email} isGuest={isGuest} />
+          <ProfileCard name={displayName} email={email} isGuest={isGuest} scoreValue={scoreValue} accuracyValue={accuracyValue} />
 
           {/* Actions */}
           <View style={profileStyles.section}>

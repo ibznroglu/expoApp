@@ -19,6 +19,8 @@ interface ProfileCardProps {
   name: string;
   email: string;
   isGuest: boolean;
+  scoreValue?: string;
+  accuracyValue?: string;
 }
 
 function localClamp(w: number, h: number, cut: number): number {
@@ -26,7 +28,7 @@ function localClamp(w: number, h: number, cut: number): number {
   return Math.max(0, Math.min(cut, maxCut));
 }
 
-export default function ProfileCard({ name, email, isGuest }: ProfileCardProps) {
+export default function ProfileCard({ name, email, isGuest, scoreValue, accuracyValue }: ProfileCardProps) {
   const initials = useMemo(() => {
     const source = name?.trim() || email?.trim() || '';
     const parts = source.split(/\s+/);
@@ -167,12 +169,12 @@ export default function ProfileCard({ name, email, isGuest }: ProfileCardProps) 
         </View>
         <View style={cardStyles.chipRow}>
           {[
-            { label: 'Skor', style: cardStyles.chipSkor, labelColor: Colors.accent.gold },
-            { label: 'Doğruluk', style: cardStyles.chipGold, labelColor: Colors.accent.teal },
-          ].map(({ label, style, labelColor }) => (
+            { label: 'Skor', value: scoreValue ?? '—', style: cardStyles.chipSkor, labelColor: Colors.accent.gold },
+            { label: 'Doğruluk', value: accuracyValue ?? '—', style: cardStyles.chipGold, labelColor: Colors.accent.teal },
+          ].map(({ label, value, style, labelColor }) => (
             <View key={label} style={style}>
               <ThemedText weight="bold" size={Typography.size.md} color={labelColor}>{label}</ThemedText>
-              <ThemedText weight="regular" size={Typography.size.sm} color={Colors.text.secondary}>Yakında</ThemedText>
+              <ThemedText weight="regular" size={Typography.size.sm} color={Colors.text.secondary}>{value}</ThemedText>
             </View>
           ))}
         </View>
