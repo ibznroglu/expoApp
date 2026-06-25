@@ -20,9 +20,9 @@
 
 ---
 
-## Score / leaderboard / stats data model (NEXT — foundational)
+## Score / leaderboard / stats data model (DONE — V1 shipped)
 
-The app has no user-writable persistence yet: quick-game score lives only in local React state; only collection is read-only `questions`. Need to design the Appwrite data model for: per-user score/stats (games played, accuracy, total score, streak), and a leaderboard. Many things depend on this: the verified-role permission layer (email verification fix), guest→account conversion (Layer 2), and the profile "Skor"/"Doğruluk" chips + a statistics screen (currently "Yakında" placeholders, no fake data). Design must account for guests (MS-*) — how guest scores are handled vs verified users. This is the next major task.
+DONE — built as Leaderboard V1 (userStats collection + scoreService + score submission + profile chips). See DONE.md for full details. Remaining related work: leaderboard SCREEN UI + Home 'Sıralama' tile (not yet built), Layer 2, stats screen.
 
 ---
 
@@ -34,13 +34,13 @@ The profile "Hesabını Kaydet" button is currently disabled/"Yakında" (it was 
 
 ## Profile Layer 3 — account deletion + statistics screen
 
-Account deletion is an App Store / Play Store REQUIREMENT for publish. Also: wire real data into the profile "Skor"/"Doğruluk" chips and build a statistics screen (both currently "Yakında"). Depends on the data model.
+Account deletion is an App Store / Play Store REQUIREMENT for publish (also needs cleanup of the user's userStats doc on deletion — see Leaderboard V2 notes). Plus build a statistics screen (profile Skor/Doğruluk chips already show real data from V1; a fuller stats screen is still TODO).
 
 ---
 
 ## Appwrite service layer — userService / stats service
 
-authService is done. A userService (profile/stats reads-writes) and any leaderboard service are deferred until the score data model exists. Match questionService/authService patterns.
+authService is done. The score data model now exists (Leaderboard V1); a userService for profile/stats reads-writes can be built when needed. scoreService.js already covers leaderboard/stats reads. Match questionService/authService patterns.
 
 ---
 
@@ -83,6 +83,7 @@ A reusable `<LoadingSpinner>` exists at `components/LoadingSpinner.tsx` (built-i
 
 ---
 
-## V1 leaderboard decisions (being built now)
+## V1 leaderboard decisions (DONE — shipped)
 
 Global (not per-category) leaderboard. Single userStats collection (userId, userName, totalScore, gamesPlayed, bestScore, totalCorrect, totalQuestions, lastPlayedAt). Ranking by totalScore DESC. Rank computed at query time (no Function). Score writes require users("verified") role — guests (MS-*) are ephemeral (play, see local score, never persisted, never on leaderboard; they get persistence after Layer 2 account conversion). Profile Skor chip = totalScore, Doğruluk chip = totalCorrect/totalQuestions. scoreService.js matches questionService/authService patterns.
+

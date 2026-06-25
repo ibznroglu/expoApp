@@ -49,9 +49,11 @@ EXPO_PUBLIC_APPWRITE_PACKAGE_NAME  # Android
 EXPO_PUBLIC_VERIFICATION_URL       # defaults to reset-expo.vercel.app/verify-email
 ```
 
-Exports: `client`, `account`, `databases` — imported wherever Appwrite is needed.
+Exports: `client`, `account`, `databases` — but these must ONLY be imported inside services/ modules, never directly in screens/components (see Constraints).
 
 Database: `"expoAppNew"` with collection `"questions"` schema: `{ question, options[], correctAnswer, category, difficulty, explanation }`.
+
+Collection `userStats` (active): per-user stats `{userId, userName, totalScore, gamesPlayed, bestScore, totalCorrect, totalQuestions, lastPlayedAt}`; create permission users/verified, row security ON, per-doc owner permissions. Collection `tasks` is dead/unused.
 
 ### Questions — `services/questionService.js`
 
@@ -62,7 +64,7 @@ Database: `"expoAppNew"` with collection `"questions"` schema: `{ question, opti
 
 - 10 questions, 15-second timer per question
 - Sound effects via `utils/sound.js` (correct, wrong, completed, tick, game-over in `assets/sounds/`)
-- Score tracked locally; no backend persistence yet
+- Score persisted to Appwrite via services/scoreService.js (submitScore upserts userStats; verified-users only, guests not persisted).
 
 ### Styling
 
@@ -89,9 +91,12 @@ Styled in `utils/toastConfig.js`.
 
 ## Orchestration (human-in-the-loop)
 - Pipeline: researcher → planner → plan-reviewer → coder → code-reviewer → tester; human drives every transition (STOP and wait).
-- Coder: ONE phase per turn, ends with PHASE_COMPLETE, never commits/pushes.
-- code-reviewer: verdict only (APPROVED / NEEDS_REVISION with file:line), never edits files, never runs commands; lint+tsc run automatically via the PostToolUse hook.
-- Commits: only at the END of a feature, never per-phase. Two commits: feat(...) for code, then docs(plans): for the plan file, separately.
+- Coder: ONE phase per turn, ends with PHASE_COMPLETE, never commits/pushes — and NEVER runs other agents. Every coder prompt must include a hard STOP instruction ("do NOT run code-reviewer/tester/any agent, do NOT commit, wait for me"), because the main agent has auto-chained agents when this is missing.
+- code-reviewer: verdict only (APPROVED / NEEDS_REVISION with file:line), never edits files, never runs commands. The code-reviewer has NO Bash tool.
+- tester: verdict only (READY_TO_PUSH / NEEDS_FIXES with file:line), runs lint+tsc, but NEVER edits or writes files — not via Edit/Write nor via Bash shell redirection. If it finds issues it reports them for the coder to fix.
+- Never skip code-reviewer or tester; "looks correct" is not a substitute for a verdict. If an agent exceeds its role, verify independently.
+- Commits use the /commit skill (manual /commit): it splits feat(code)/docs(plans)/chore(.claude) and ALWAYS pushes.
+- Built-in Animated API for animations, NOT react-native-reanimated (reanimated pulled in a worklets native-version mismatch that broke app launch).
 - Plans live in thoughts/shared/plans/YYYY-MM-DD_[topic].md.
 - Execute only what the current human message asks for — one delegated step per turn.
 
@@ -111,7 +116,7 @@ Styled in `utils/toastConfig.js`.
 - Never write to .env files
 - All file names, folder names, variable names, function names, and code comments must be in English. No Turkish characters in identifiers or comments. User-facing string literals (UI text, toast messages, labels) must use correct Turkish with proper characters (ş, ğ, ı, ö, ü, ç etc.).
 - Theme tokens only: all colors via Colors.*, spacing via Spacing.*, font sizes via Typography.size.* — NO hardcoded hex or raw numbers outside the theme file.
-- Appwrite access goes through a service module in services/ (questionService.js; authService in progress) — never import the SDK (account/databases) directly into screens/components.
+- Appwrite access goes through a service module in services/ (questionService.js, authService.js, scoreService.js — match their mapDoc + named-export pattern) — never import the SDK (account/databases) directly into screens/components.
 
 ## Compaction Instructions
 
