@@ -95,6 +95,7 @@ Styled in `utils/toastConfig.js`.
 - code-reviewer: verdict only (APPROVED / NEEDS_REVISION with file:line), never edits files, never runs commands. The code-reviewer has NO Bash tool.
 - tester: verdict only (READY_TO_PUSH / NEEDS_FIXES with file:line), runs lint+tsc, but NEVER edits or writes files — not via Edit/Write nor via Bash shell redirection. If it finds issues it reports them for the coder to fix.
 - Never skip code-reviewer or tester; "looks correct" is not a substitute for a verdict. If an agent exceeds its role, verify independently.
+- Verdicts are terminal for the turn. When plan-reviewer / code-reviewer / tester returns a verdict, the main agent MUST NOT edit or create any file (including plan/research/docs files) and MUST NOT spawn any agent in response. NEEDS_REVISION → the human routes it to planner; NEEDS_FIXES → the human routes it to coder. The main agent applying the "Required Changes" itself is a defect — the same failure mode as coder auto-chaining.
 - Commits use the /commit skill (manual /commit): it splits feat(code)/docs(plans)/chore(.claude) and ALWAYS pushes.
 - Built-in Animated API for animations, NOT react-native-reanimated (reanimated pulled in a worklets native-version mismatch that broke app launch).
 - Plans live in thoughts/shared/plans/YYYY-MM-DD_[topic].md.
