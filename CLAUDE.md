@@ -90,12 +90,13 @@ Styled in `utils/toastConfig.js`.
 - **New Architecture** is enabled (`newArchEnabled: true` in `app.json`). Avoid libraries that haven't been migrated.
 
 ## Orchestration (human-in-the-loop)
-- Pipeline: researcher → planner → plan-reviewer → coder → code-reviewer → tester; human drives every transition (STOP and wait).
+- Pipeline: researcher → HUMAN → planner → HUMAN → plan-reviewer → HUMAN → coder → HUMAN → code-reviewer → HUMAN → tester → HUMAN; human drives every transition (STOP and wait).
 - Coder: ONE phase per turn, ends with PHASE_COMPLETE, never commits/pushes — and NEVER runs other agents. Every coder prompt must include a hard STOP instruction ("do NOT run code-reviewer/tester/any agent, do NOT commit, wait for me"), because the main agent has auto-chained agents when this is missing.
 - code-reviewer: verdict only (APPROVED / NEEDS_REVISION with file:line), never edits files, never runs commands. The code-reviewer has NO Bash tool.
 - tester: verdict only (READY_TO_PUSH / NEEDS_FIXES with file:line), runs lint+tsc, but NEVER edits or writes files — not via Edit/Write nor via Bash shell redirection. If it finds issues it reports them for the coder to fix.
 - Never skip code-reviewer or tester; "looks correct" is not a substitute for a verdict. If an agent exceeds its role, verify independently.
 - Verdicts are terminal for the turn. When plan-reviewer / code-reviewer / tester returns a verdict, the main agent MUST NOT edit or create any file (including plan/research/docs files) and MUST NOT spawn any agent in response. NEEDS_REVISION → the human routes it to planner; NEEDS_FIXES → the human routes it to coder. The main agent applying the "Required Changes" itself is a defect — the same failure mode as coder auto-chaining.
+- When a subagent returns, the main agent's turn ENDS: output the subagent's verdict/report verbatim and stop. A verdict line (APPROVED / NEEDS_REVISION / READY_TO_PUSH / NEEDS_FIXES / PHASE_COMPLETE) is always the LAST content of the turn — any tool call or agent spawn after it is a defect. "The next pipeline step" is never a reason to spawn: the human advances the pipeline, not you.
 - Commits use the /commit skill (manual /commit): it splits feat(code)/docs(plans)/chore(.claude) and ALWAYS pushes.
 - Built-in Animated API for animations, NOT react-native-reanimated (reanimated pulled in a worklets native-version mismatch that broke app launch).
 - Plans live in thoughts/shared/plans/YYYY-MM-DD_[topic].md.
