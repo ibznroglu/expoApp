@@ -27,6 +27,13 @@ export const Colors = {
     teal: '#00E5CC',
   },
 
+  // Leaderboard rank medal colors
+  rank: {
+    gold: '#FFD700' as const,
+    silver: '#C0C0C0' as const,
+    bronze: '#CD7F32' as const,
+  },
+
   // Semantic
   correct: '#22C55E',
   correctBg: 'rgba(34,197,94,0.15)',
@@ -83,6 +90,7 @@ export const Colors = {
     chipBg: 'rgba(255,255,255,0.06)' as const,
     chipTeal: 'rgba(0,229,204,0.18)' as const,
     chipGold: 'rgba(255,215,0,0.18)' as const,
+    selfRowBg: 'rgba(0,212,255,0.12)' as const,
   },
 };
 
