@@ -131,6 +131,60 @@ function Podium({
   );
 }
 
+// A single leaderboard list row (rank 4+). Current-user rows are highlighted cyan.
+function LeaderboardRow({
+  entry,
+  isSelf,
+}: {
+  entry: LeaderboardEntry;
+  isSelf: boolean;
+}) {
+  return (
+    <View style={isSelf ? [leaderboardStyles.row, leaderboardStyles.rowSelf] : leaderboardStyles.row}>
+      <ThemedText style={leaderboardStyles.rowRank}>{entry.rank}</ThemedText>
+      <View style={leaderboardStyles.rowAvatar}>
+        <ThemedText style={leaderboardStyles.rowAvatarText}>
+          {getInitials(entry.userName)}
+        </ThemedText>
+      </View>
+      <View style={leaderboardStyles.rowNameWrap}>
+        <ThemedText style={leaderboardStyles.rowName} numberOfLines={1}>
+          {entry.userName}
+        </ThemedText>
+        {entry.accuracy != null && (
+          <ThemedText style={leaderboardStyles.rowAccuracy}>{`%${entry.accuracy}`}</ThemedText>
+        )}
+      </View>
+      <ThemedText style={leaderboardStyles.rowScore}>
+        {entry.totalScore.toLocaleString('tr-TR')}
+      </ThemedText>
+    </View>
+  );
+}
+
+// Persistent bottom bar showing the logged-in user's own rank when their
+// row falls outside the fetched leaderboard slice (never rendered for guests).
+function SelfPinBar({ stats }: { stats: LeaderboardEntry }) {
+  return (
+    <View style={leaderboardStyles.pinBar}>
+      <ThemedText style={leaderboardStyles.pinRank}>{stats.rank}</ThemedText>
+      <View style={leaderboardStyles.pinAvatar}>
+        <ThemedText style={leaderboardStyles.pinAvatarText}>
+          {getInitials(stats.userName)}
+        </ThemedText>
+      </View>
+      <View style={leaderboardStyles.pinNameWrap}>
+        <ThemedText style={leaderboardStyles.pinName} numberOfLines={1}>
+          {stats.userName}
+        </ThemedText>
+      </View>
+      <ThemedText style={leaderboardStyles.pinScore}>
+        {stats.totalScore.toLocaleString('tr-TR')}
+      </ThemedText>
+    </View>
+  );
+}
+
 export default function LeaderboardScreen() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [selfStats, setSelfStats] = useState<LeaderboardEntry | null>(null);
@@ -166,6 +220,13 @@ export default function LeaderboardScreen() {
   const listEntries = entries.slice(3);
   const podiumEntries = entries.slice(0, 3);
 
+  // Pin the self-row only for a logged-in user whose row is NOT in the
+  // fetched slice (podium + list). Guests and never-played users get no bar.
+  const selfInList = currentUserId
+    ? entries.some((e) => e.userId === currentUserId)
+    : false;
+  const showPin = !isGuest && !!selfStats && !selfInList;
+
   return (
     <View style={leaderboardStyles.container}>
       <LinearGradient colors={Colors.gradients.background} style={StyleSheet.absoluteFill} />
@@ -177,7 +238,9 @@ export default function LeaderboardScreen() {
         <FlatList<LeaderboardEntry>
           data={listEntries}
           keyExtractor={(item) => item.id}
-          renderItem={null}
+          renderItem={({ item }) => (
+            <LeaderboardRow entry={item} isSelf={item.userId === currentUserId} />
+          )}
           ListHeaderComponent={
             podiumEntries.length > 0 ? (
               <Podium entries={podiumEntries} currentUserId={currentUserId} />
@@ -187,6 +250,12 @@ export default function LeaderboardScreen() {
           contentContainerStyle={leaderboardStyles.listContent}
           showsVerticalScrollIndicator={false}
         />
+        {showPin && <SelfPinBar stats={selfStats!} />}
+        {isGuest && !showPin && (
+          <ThemedText style={leaderboardStyles.guestHint}>
+            Sıralamada yer almak için hesap oluştur
+          </ThemedText>
+        )}
       </SafeAreaView>
     </View>
   );

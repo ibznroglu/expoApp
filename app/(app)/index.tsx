@@ -155,7 +155,7 @@ export default function HomeScreen() {
 
   const NAV_ITEMS: NavItem[] = [
     { id: 'home',        iconName: 'home-outline',  iconNameActive: 'home',   label: 'Ana Sayfa', activeColor: '#FF6B35', onPress: () => {} },
-    { id: 'leaderboard', iconName: 'bar-chart-outline', iconNameActive: 'bar-chart', label: 'Sıralama',  activeColor: '#00D4FF', onPress: () => showToast.info('Yakında', 'Sıralama yakında geliyor!') },
+    { id: 'leaderboard', iconName: 'bar-chart-outline', iconNameActive: 'bar-chart', label: 'Sıralama',  activeColor: '#00D4FF', onPress: () => { playUISound('button'); router.push('/leaderboard' as any); } },
     { id: 'quests',      iconName: 'gift-outline',   iconNameActive: 'gift',   label: 'Görevler',  activeColor: '#22C55E', onPress: () => showToast.info('Yakında', 'Görevler yakında geliyor!') },
     { id: 'profile',     iconName: 'person-outline', iconNameActive: 'person', label: 'Profil',    activeColor: '#A78BFA', onPress: () => { playUISound('button'); router.push('/profile' as any); } },
   ];
